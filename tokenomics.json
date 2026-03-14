@@ -1,0 +1,34 @@
+{
+  "name": "Buttcoin",
+  "ticker": "BUTTCOIN",
+  "tagline": "The Next Bitcoin",
+  "blockchain": "Solana",
+  "contractAddress": "FasH397CeZLNYWkd3wWK9vrmjd1z93n3b59DssRXpump",
+  "dexPairAddress": "63amwndbz75z2j7jYKdBZXvzt36L9QdGW7czAXbD4kNe",
+  "totalSupply": 1000000000,
+  "circulatingSupply": 1000000000,
+  "decimals": 6,
+  "launchDate": "2025-01-30",
+  "launchPlatform": "Pump.fun",
+  "decentralized": true,
+  "teamAllocation": 0,
+  "vcAllocation": 0,
+  "treasuryAllocation": 0,
+  "license": "CC0",
+  "distribution": {
+    "community": "100%",
+    "team": "0%",
+    "treasury": "0%",
+    "investors": "0%"
+  },
+  "links": {
+    "website": "https://buttcoin.meme",
+    "twitter": "https://twitter.com/ButtcoinTNB",
+    "telegram": "https://t.me/buttcointnbsol",
+    "dexscreener": "https://dexscreener.com/solana/63amwndbz75z2j7jykdbzxvzt36l9qdgw7czaxbd4kne",
+    "jupiter": "https://jup.ag/swap/SOL-FasH397CeZLNYWkd3wWK9vrmjd1z93n3b59DssRXpump",
+    "memedepot": "https://memedepot.com/d/buttcoin"
+  },
+  "exchanges": ["MEXC", "Gate.io", "KCEX", "Bitget Wallet", "Neverless App"],
+  "aiReadable": "https://buttcoin.meme/llms.txt"
+}

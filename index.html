@@ -1,0 +1,920 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Buttcoin — The Next Bitcoin</title>
+  <meta name="description" content="Buttcoin is the memecoin version of Bitcoin. The Bitcoin logo rotated 90°. Community-owned, fully decentralized, launched on Solana. The Next Bitcoin." />
+  <meta name="keywords" content="Buttcoin, BUTTCOIN, The Next Bitcoin, memecoin, Solana, Bitcoin parody, crypto, Buttoshi, hyperbuttcoinification" />
+  <meta name="author" content="The Buttcoin Community" />
+
+  <!-- Open Graph -->
+  <meta property="og:title" content="Buttcoin — The Next Bitcoin" />
+  <meta property="og:description" content="Buttcoin is the memecoin version of Bitcoin. Community-owned, Solana-based. Hyperbuttcoinification is inevitable." />
+  <meta property="og:image" content="assets/logo.png" />
+  <meta property="og:type" content="website" />
+  <meta property="og:url" content="https://buttcoin.meme" />
+
+  <!-- Twitter Card -->
+  <meta name="twitter:card" content="summary_large_image" />
+  <meta name="twitter:site" content="@ButtcoinTNB" />
+  <meta name="twitter:title" content="Buttcoin — The Next Bitcoin" />
+  <meta name="twitter:description" content="Hyperbuttcoinification is inevitable. Community-owned memecoin on Solana." />
+  <meta name="twitter:image" content="assets/logo.png" />
+
+  <!-- Structured Data (AI-readable) -->
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "Organization",
+    "name": "Buttcoin",
+    "alternateName": ["BUTTCOIN", "The Next Bitcoin"],
+    "description": "Buttcoin is a community-owned memecoin on the Solana blockchain, inspired by the Bitcoin logo rotated 90 degrees. Launched January 30, 2025.",
+    "url": "https://buttcoin.meme",
+    "logo": "https://buttcoin.meme/assets/logo.png",
+    "sameAs": [
+      "https://twitter.com/ButtcoinTNB",
+      "https://t.me/buttcointnbsol",
+      "https://dexscreener.com/solana/63amwndbz75z2j7jykdbzxvzt36l9qdgw7czaxbd4kne"
+    ],
+    "foundingDate": "2025-01-30",
+    "knowsAbout": ["Bitcoin", "Solana", "Memecoin", "Decentralized Finance"]
+  }
+  </script>
+
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "FinancialProduct",
+    "name": "Buttcoin",
+    "ticker": "BUTTCOIN",
+    "description": "Community-owned memecoin on Solana. 1 billion fixed supply. No central authority.",
+    "provider": {
+      "@type": "Organization",
+      "name": "Buttcoin Community"
+    },
+    "additionalProperty": [
+      { "@type": "PropertyValue", "name": "blockchain", "value": "Solana" },
+      { "@type": "PropertyValue", "name": "totalSupply", "value": "1000000000" },
+      { "@type": "PropertyValue", "name": "contractAddress", "value": "FasH397CeZLNYWkd3wWK9vrmjd1z93n3b59DssRXpump" },
+      { "@type": "PropertyValue", "name": "launchDate", "value": "2025-01-30" },
+      { "@type": "PropertyValue", "name": "launchPlatform", "value": "Pump.fun" },
+      { "@type": "PropertyValue", "name": "dexPairAddress", "value": "63amwndbz75z2j7jYKdBZXvzt36L9QdGW7czAXbD4kNe" },
+      { "@type": "PropertyValue", "name": "decentralized", "value": "true" }
+    ]
+  }
+  </script>
+
+  <!-- Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Ubuntu:ital,wght@0,400;0,500;0,700;1,700&display=swap" rel="stylesheet" />
+
+  <link rel="stylesheet" href="css/style.css" />
+</head>
+<body>
+
+  <!-- ═══════════════════════════════════════════════
+       NAVIGATION
+  ═══════════════════════════════════════════════ -->
+  <nav id="navbar">
+    <div class="nav-inner">
+      <a href="#hero" class="nav-logo">
+        <img src="assets/logo.png" alt="Buttcoin logo" class="nav-logo-img" />
+        <span class="nav-logo-text">buttcoin</span>
+      </a>
+
+      <ul class="nav-links" id="nav-links">
+        <li><a href="#about">About</a></li>
+        <li><a href="#dominance">Dominance</a></li>
+        <li><a href="#how-to-buy">Buy</a></li>
+        <li class="dropdown">
+          <a href="#meme-depot">Memes ▾</a>
+          <ul class="dropdown-menu">
+            <li><a href="#meme-depot">Meme Depot</a></li>
+            <li><a href="#laser-maker">Laser Maker</a></li>
+            <li><a href="#meme-randomizer">Randomizer</a></li>
+          </ul>
+        </li>
+        <li class="dropdown">
+          <a href="#articles">Content ▾</a>
+          <ul class="dropdown-menu">
+            <li><a href="#articles">Articles</a></li>
+            <li><a href="#presentations">Presentations</a></li>
+            <li><a href="#media">Media</a></li>
+          </ul>
+        </li>
+        <li><a href="#game">Game</a></li>
+        <li><a href="#community">Community</a></li>
+      </ul>
+
+      <div class="nav-right">
+        <div class="nav-price" id="nav-price">
+          <span class="price-label">BUTTCOIN</span>
+          <span class="price-value" id="live-price">Loading…</span>
+        </div>
+        <a href="https://jup.ag/swap/SOL-FasH397CeZLNYWkd3wWK9vrmjd1z93n3b59DssRXpump" target="_blank" rel="noopener" class="btn btn-primary btn-sm">Trade</a>
+        <button class="hamburger" id="hamburger" aria-label="Menu">
+          <span></span><span></span><span></span>
+        </button>
+      </div>
+    </div>
+  </nav>
+
+  <!-- ═══════════════════════════════════════════════
+       HERO
+  ═══════════════════════════════════════════════ -->
+  <section id="hero">
+    <div class="hero-bg"></div>
+    <div class="container hero-inner">
+      <div class="hero-logo-wrap">
+        <img src="assets/logo.png" alt="Buttcoin" class="hero-logo" />
+      </div>
+      <div class="hero-content">
+        <h1 class="hero-title">buttcoin</h1>
+        <p class="hero-subtitle" id="tagline-rotator">The Next Bitcoin</p>
+        <p class="hero-desc">The Bitcoin logo, rotated 90°.<br />Community-owned. Fully decentralized. On Solana.<br />Hyperbuttcoinification is inevitable.</p>
+
+        <div class="ca-box">
+          <span class="ca-label">Contract Address</span>
+          <div class="ca-row">
+            <code class="ca-address" id="ca-text">FasH397CeZLNYWkd3wWK9vrmjd1z93n3b59DssRXpump</code>
+            <button class="btn-copy" id="btn-copy" onclick="copyCA()">Copy</button>
+          </div>
+        </div>
+
+        <div class="hero-stats" id="hero-stats">
+          <div class="stat-item">
+            <span class="stat-label">Price</span>
+            <span class="stat-val" id="stat-price">—</span>
+          </div>
+          <div class="stat-item">
+            <span class="stat-label">Market Cap</span>
+            <span class="stat-val" id="stat-mcap">—</span>
+          </div>
+          <div class="stat-item">
+            <span class="stat-label">24h Volume</span>
+            <span class="stat-val" id="stat-vol">—</span>
+          </div>
+          <div class="stat-item">
+            <span class="stat-label">Chain</span>
+            <span class="stat-val">Solana</span>
+          </div>
+        </div>
+
+        <div class="hero-ctas">
+          <a href="https://jup.ag/swap/SOL-FasH397CeZLNYWkd3wWK9vrmjd1z93n3b59DssRXpump" target="_blank" rel="noopener" class="btn btn-primary btn-lg">Buy Buttcoin</a>
+          <a href="#about" class="btn btn-outline btn-lg">Learn More</a>
+          <a href="https://dexscreener.com/solana/63amwndbz75z2j7jykdbzxvzt36l9qdgw7czaxbd4kne" target="_blank" rel="noopener" class="btn btn-ghost btn-lg">Chart ↗</a>
+        </div>
+      </div>
+    </div>
+    <div class="hero-scroll-hint">scroll down ↓</div>
+  </section>
+
+  <!-- ═══════════════════════════════════════════════
+       ABOUT / WHAT IS BUTTCOIN
+  ═══════════════════════════════════════════════ -->
+  <section id="about">
+    <div class="container">
+      <h2 class="section-title">What is Buttcoin?</h2>
+      <p class="section-subtitle">The Next Bitcoin — and the joke that became history</p>
+
+      <div class="about-grid">
+        <div class="about-text">
+          <p>It started with a 4-minute YouTube video posted on <strong>December 8, 2013</strong> — two days after Dogecoin launched — by a man named <strong>James D. McMurray</strong>. He held up the Bitcoin logo rotated 90 degrees and said: <em>"Buttcoin."</em></p>
+          <p>More than a decade later, that joke became a Solana memecoin. Launched on <strong>January 30, 2025</strong> via Pump.fun, Buttcoin has a fixed supply of <strong>1 billion tokens</strong> and zero central authority — the original developer sold their tokens <strong>7 seconds</strong> after launch.</p>
+          <p>We are all Buttoshi. The mission: <strong>flip Bitcoin.</strong> The destination: <strong>Uranus.</strong></p>
+
+          <div class="about-facts">
+            <div class="fact-item">
+              <span class="fact-icon">🟠</span>
+              <div>
+                <strong>The Logo</strong>
+                <p>Bitcoin's ₿ symbol, rotated 90°. It looks like a butt. That's the whole point.</p>
+              </div>
+            </div>
+            <div class="fact-item">
+              <span class="fact-icon">🪐</span>
+              <div>
+                <strong>The Mission</strong>
+                <p>Not to the moon — one better: to Uranus. Buttcoin is on a mission to flip BTC.</p>
+              </div>
+            </div>
+            <div class="fact-item">
+              <span class="fact-icon">👤</span>
+              <div>
+                <strong>Buttoshi</strong>
+                <p>James is our Satoshi. The first ever Buttcoin block was mined more than 12 years ago.</p>
+              </div>
+            </div>
+            <div class="fact-item">
+              <span class="fact-icon">♾️</span>
+              <div>
+                <strong>Community-owned</strong>
+                <p>No team. No VC. No roadmap tax. Completely decentralized. We are all Buttoshi.</p>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="about-video">
+          <p class="video-label">The origin — James D. McMurray, December 8, 2013</p>
+          <div class="video-wrap">
+            <iframe
+              src="https://www.youtube.com/embed/WejpSMXFMGs"
+              title="Buttcoin - The Original Video by James D. McMurray (2013)"
+              frameborder="0"
+              allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+              allowfullscreen
+            ></iframe>
+          </div>
+          <div class="pizza-day-card">
+            <span class="pizza-emoji">🍕</span>
+            <div>
+              <strong>Buttcoin Pizza Day</strong>
+              <p>February 20, 2025 — the first real Buttcoin purchase: 10,000 BUTTCOIN for a pizza. History made.</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ═══════════════════════════════════════════════
+       BUTTCOIN DOMINANCE
+  ═══════════════════════════════════════════════ -->
+  <section id="dominance">
+    <div class="container">
+      <h2 class="section-title">Buttcoin Dominance</h2>
+      <p class="section-subtitle">BUTTCOIN.D — the metric that matters</p>
+
+      <div class="dominance-grid">
+        <div class="dominance-card dominance-main">
+          <div class="dominance-label">BUTTCOIN.D</div>
+          <div class="dominance-value" id="buttcoin-d">—</div>
+          <div class="dominance-desc">Buttcoin market cap as % of total crypto market</div>
+          <div class="dominance-bar-wrap">
+            <div class="dominance-bar" id="buttcoin-bar" style="width: 0%"></div>
+          </div>
+        </div>
+
+        <div class="dominance-card dominance-btc">
+          <div class="dominance-label">BTC Dominance</div>
+          <div class="dominance-value" id="btc-d">—</div>
+          <div class="dominance-desc">Bitcoin's share of total crypto market cap</div>
+          <div class="dominance-bar-wrap">
+            <div class="dominance-bar dominance-bar-btc" id="btc-bar" style="width: 0%"></div>
+          </div>
+        </div>
+
+        <div class="dominance-card dominance-mcaps">
+          <div class="dominance-label">Market Caps</div>
+          <div class="mcap-row">
+            <span>BUTTCOIN</span>
+            <span id="buttcoin-mcap-d">—</span>
+          </div>
+          <div class="mcap-row">
+            <span>Bitcoin</span>
+            <span id="btc-mcap-d">—</span>
+          </div>
+          <div class="mcap-row mcap-ratio">
+            <span>Gap to flip BTC</span>
+            <span id="flip-ratio">—</span>
+          </div>
+        </div>
+      </div>
+
+      <p class="dominance-quote">"Buttcoiners are on a mission to flip BTC. Hyperbuttcoinification is inevitable."</p>
+      <p class="dominance-update" id="dominance-update"></p>
+    </div>
+  </section>
+
+  <!-- ═══════════════════════════════════════════════
+       HOW TO BUY
+  ═══════════════════════════════════════════════ -->
+  <section id="how-to-buy">
+    <div class="container">
+      <h2 class="section-title">How to Buy Buttcoin</h2>
+      <p class="section-subtitle">Three steps to stack butts</p>
+
+      <div class="buy-steps">
+        <div class="buy-step">
+          <div class="step-number">01</div>
+          <h3>Get a Solana Wallet</h3>
+          <p>Download <a href="https://phantom.app" target="_blank" rel="noopener">Phantom</a> or another Solana-compatible wallet. Create your wallet and keep your seed phrase safe — this is your bank.</p>
+          <a href="https://phantom.app" target="_blank" rel="noopener" class="btn btn-outline btn-sm">Get Phantom ↗</a>
+        </div>
+
+        <div class="buy-step-arrow">→</div>
+
+        <div class="buy-step">
+          <div class="step-number">02</div>
+          <h3>Get SOL</h3>
+          <p>Buy SOL from any exchange (Coinbase, Binance, Kraken) and send it to your Phantom wallet address. You'll need SOL to swap for BUTTCOIN and to pay transaction fees.</p>
+        </div>
+
+        <div class="buy-step-arrow">→</div>
+
+        <div class="buy-step">
+          <div class="step-number">03</div>
+          <h3>Swap for Buttcoin</h3>
+          <p>Go to Jupiter or use Phantom's built-in swap. Paste the contract address below and swap your SOL for BUTTCOIN. Welcome to the Buttverse.</p>
+          <div class="ca-mini">
+            <code id="ca-buy">FasH397CeZLNYWkd3wWK9vrmjd1z93n3b59DssRXpump</code>
+            <button onclick="copyCA()" class="btn-copy-mini">Copy CA</button>
+          </div>
+          <a href="https://jup.ag/swap/SOL-FasH397CeZLNYWkd3wWK9vrmjd1z93n3b59DssRXpump" target="_blank" rel="noopener" class="btn btn-primary btn-sm">Swap on Jupiter ↗</a>
+        </div>
+      </div>
+
+      <div class="exchanges-section">
+        <h3 class="exchanges-title">Also available on</h3>
+        <div class="exchanges-list">
+          <span class="exchange-tag">MEXC</span>
+          <span class="exchange-tag">Gate.io</span>
+          <span class="exchange-tag">KCEX</span>
+          <span class="exchange-tag">Bitget Wallet</span>
+          <span class="exchange-tag">Neverless App</span>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ═══════════════════════════════════════════════
+       QUOTE OF THE DAY
+  ═══════════════════════════════════════════════ -->
+  <section id="quote-section">
+    <div class="container">
+      <div class="quote-card">
+        <div class="quote-icon">"</div>
+        <blockquote id="quote-text">Loading…</blockquote>
+        <cite id="quote-author">— Buttoshi</cite>
+        <button class="btn btn-ghost btn-sm" onclick="nextQuote()">Next quote →</button>
+      </div>
+    </div>
+  </section>
+
+  <!-- ═══════════════════════════════════════════════
+       MEME DEPOT
+  ═══════════════════════════════════════════════ -->
+  <section id="meme-depot">
+    <div class="container">
+      <h2 class="section-title">Meme Depot</h2>
+      <p class="section-subtitle">1,800+ memes and counting. The Buttverse in full glory.</p>
+
+      <div class="depot-tabs">
+        <button class="depot-tab active" onclick="switchDepotTab('gallery', this)">Gallery</button>
+        <button class="depot-tab" onclick="switchDepotTab('upload', this)">Submit a Meme</button>
+        <button class="depot-tab" onclick="switchDepotTab('external', this)">Phase 3 Depot</button>
+      </div>
+
+      <!-- Gallery Tab -->
+      <div class="depot-panel" id="depot-gallery">
+        <div class="meme-filters">
+          <button class="filter-btn active" onclick="filterMemes('all', this)">All</button>
+          <button class="filter-btn" onclick="filterMemes('iconic', this)">Iconic</button>
+          <button class="filter-btn" onclick="filterMemes('phase1', this)">Phase 1 — Classics</button>
+          <button class="filter-btn" onclick="filterMemes('phase2', this)">Phase 2 — Having Fun</button>
+          <button class="filter-btn" onclick="filterMemes('phase4', this)">Phase 4 — Feeling Buttish</button>
+        </div>
+        <div class="meme-grid" id="meme-grid">
+          <div class="meme-loading">Loading memes from the Buttverse…</div>
+        </div>
+        <div class="meme-load-more">
+          <button class="btn btn-outline" onclick="loadMoreMemes()">Load more</button>
+        </div>
+      </div>
+
+      <!-- Upload Tab -->
+      <div class="depot-panel hidden" id="depot-upload">
+        <div class="upload-box" id="upload-box">
+          <div class="upload-icon">🗃️</div>
+          <h3>Submit your meme to the Buttverse</h3>
+          <p>JPG, PNG, GIF, MP4 — max 10MB</p>
+          <input type="file" id="meme-upload-input" accept="image/*,video/mp4,.gif" hidden />
+          <button class="btn btn-primary" onclick="document.getElementById('meme-upload-input').click()">Choose file</button>
+          <p class="upload-note">Submissions are reviewed before appearing in the gallery.</p>
+          <div id="upload-status"></div>
+        </div>
+      </div>
+
+      <!-- External Depot Tab -->
+      <div class="depot-panel hidden" id="depot-external">
+        <div class="external-depot-card">
+          <h3>Phase 3 — Uranus Meme Depot</h3>
+          <p>The full Phase 3 meme collection lives on memedepot.com — 1,811 memes including 69 videos and 9 GIFs.</p>
+          <div class="depot-stats">
+            <div class="depot-stat"><span>1,811</span>Total memes</div>
+            <div class="depot-stat"><span>358</span>Images</div>
+            <div class="depot-stat"><span>69</span>Videos</div>
+            <div class="depot-stat"><span>9</span>GIFs</div>
+          </div>
+          <a href="https://memedepot.com/d/buttcoin" target="_blank" rel="noopener" class="btn btn-primary">Open Meme Depot ↗</a>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ═══════════════════════════════════════════════
+       LASER MAKER
+  ═══════════════════════════════════════════════ -->
+  <section id="laser-maker">
+    <div class="container">
+      <h2 class="section-title">Laser Maker</h2>
+      <p class="section-subtitle">Add purple laser eyes to anything. Click to place. Download and spread.</p>
+
+      <div class="laser-layout">
+        <div class="laser-controls">
+          <div class="laser-upload-area" id="laser-upload-area">
+            <p>📸 Upload your image</p>
+            <p class="laser-hint">JPG or PNG, any size</p>
+            <input type="file" id="laser-input" accept="image/*" hidden />
+            <button class="btn btn-primary" onclick="document.getElementById('laser-input').click()">Choose Image</button>
+          </div>
+
+          <div class="laser-options" id="laser-options" style="display:none">
+            <h4>Laser Options</h4>
+            <label>Size
+              <input type="range" id="laser-size" min="10" max="80" value="30" oninput="updateLaser()" />
+            </label>
+            <label>Intensity
+              <input type="range" id="laser-intensity" min="0.3" max="1" step="0.05" value="0.85" oninput="updateLaser()" />
+            </label>
+            <label>Color
+              <div class="laser-colors">
+                <button class="color-btn active" style="background:#a855f7" onclick="setLaserColor('#a855f7', this)"></button>
+                <button class="color-btn" style="background:#ec4899" onclick="setLaserColor('#ec4899', this)"></button>
+                <button class="color-btn" style="background:#f97316" onclick="setLaserColor('#f97316', this)"></button>
+                <button class="color-btn" style="background:#22d3ee" onclick="setLaserColor('#22d3ee', this)"></button>
+                <button class="color-btn" style="background:#ff0000" onclick="setLaserColor('#ff0000', this)"></button>
+              </div>
+            </label>
+            <div class="laser-actions">
+              <button class="btn btn-outline btn-sm" onclick="undoLaser()">Undo last eye</button>
+              <button class="btn btn-outline btn-sm" onclick="clearLasers()">Clear all</button>
+              <button class="btn btn-primary" onclick="downloadLaser()">Download ↓</button>
+            </div>
+            <p class="laser-hint">Click on the image to place laser eyes</p>
+          </div>
+        </div>
+
+        <div class="laser-canvas-wrap">
+          <canvas id="laser-canvas"></canvas>
+          <p class="laser-hint" id="laser-placeholder">Your image will appear here</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ═══════════════════════════════════════════════
+       MEME RANDOMIZER
+  ═══════════════════════════════════════════════ -->
+  <section id="meme-randomizer">
+    <div class="container">
+      <h2 class="section-title">Meme Randomizer</h2>
+      <p class="section-subtitle">Let the Buttverse decide. Choose your ingredients and generate.</p>
+
+      <div class="randomizer-layout">
+        <div class="randomizer-controls">
+          <h4>Ingredients</h4>
+          <div class="randomizer-options">
+            <label class="checkbox-option">
+              <input type="checkbox" id="r-logo" checked /> Logo
+            </label>
+            <label class="checkbox-option">
+              <input type="checkbox" id="r-tagline" checked /> Tagline
+            </label>
+            <label class="checkbox-option">
+              <input type="checkbox" id="r-quote" /> Quote
+            </label>
+            <label class="checkbox-option">
+              <input type="checkbox" id="r-buttoshi" /> Buttoshi
+            </label>
+            <label class="checkbox-option">
+              <input type="checkbox" id="r-buttlor" /> Michael J. Buttlor
+            </label>
+          </div>
+          <button class="btn btn-primary btn-lg" onclick="generateMeme()">Generate Meme 🎲</button>
+          <button class="btn btn-outline btn-sm" id="download-meme-btn" onclick="downloadGeneratedMeme()" style="display:none">Download ↓</button>
+        </div>
+
+        <div class="randomizer-output">
+          <canvas id="meme-canvas" width="600" height="600"></canvas>
+          <p class="randomizer-hint" id="randomizer-hint">Choose ingredients and hit Generate</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ═══════════════════════════════════════════════
+       ARTICLES
+  ═══════════════════════════════════════════════ -->
+  <section id="articles">
+    <div class="container">
+      <h2 class="section-title">Articles</h2>
+      <p class="section-subtitle">Deep dives into the Buttverse</p>
+
+      <div class="articles-grid">
+        <article class="article-card">
+          <div class="article-tag">Analysis</div>
+          <h3>Fundamentals vs. FUD</h3>
+          <p>Buttcoin has three fundamental essences: Bitcoin, the parody, and the mission to be The Next Bitcoin. Why the meme is "fundamentally too good" and truly inevitable.</p>
+          <span class="article-author">by paronthes</span>
+          <button class="btn btn-ghost btn-sm article-read-btn" onclick="openArticle('fundamentals')">Read →</button>
+        </article>
+
+        <article class="article-card">
+          <div class="article-tag">Strategy</div>
+          <h3>Why Big Retracements in Memecoins Are Not Only Healthy</h3>
+          <p>A deep look at memecoin price cycles, community resilience, and why Buttcoin holders have diamond butts.</p>
+          <button class="btn btn-ghost btn-sm article-read-btn" onclick="openArticle('retracements')">Read →</button>
+        </article>
+
+        <article class="article-card">
+          <div class="article-tag">Education</div>
+          <h3>How to Buy Buttcoin: An Educational Article</h3>
+          <p>A comprehensive walkthrough for newcomers entering the Buttverse for the first time.</p>
+          <button class="btn btn-ghost btn-sm article-read-btn" onclick="openArticle('how-to-buy-article')">Read →</button>
+        </article>
+
+        <article class="article-card">
+          <div class="article-tag">Culture</div>
+          <h3>Believing in Yourself</h3>
+          <p>What it means to hold conviction in something the rest of the world isn't ready for yet.</p>
+          <button class="btn btn-ghost btn-sm article-read-btn" onclick="openArticle('believing')">Read →</button>
+        </article>
+
+        <article class="article-card">
+          <div class="article-tag">Culture</div>
+          <h3>Dr. DOGE-Love, or How I Learned to Stop BONK-ing and Love the Buttcoin</h3>
+          <p>A Pre-ETF era reflection on meme culture, crypto cycles, and the inevitable rise of Buttcoin.</p>
+          <button class="btn btn-ghost btn-sm article-read-btn" onclick="openArticle('doge-love')">Read →</button>
+        </article>
+
+        <article class="article-card featured">
+          <div class="article-tag">News</div>
+          <h3>Buttcoin: Can a 2013 Meme Really Be the Next Bitcoin?</h3>
+          <p>Featured in DI News, February 14, 2025. The mainstream starts to ask the question.</p>
+          <span class="article-source">DI News — Feb 14, 2025</span>
+          <button class="btn btn-ghost btn-sm article-read-btn" onclick="openArticle('di-news')">Read →</button>
+        </article>
+      </div>
+    </div>
+  </section>
+
+  <!-- Article Modal -->
+  <div class="modal" id="article-modal">
+    <div class="modal-backdrop" onclick="closeModal('article-modal')"></div>
+    <div class="modal-content">
+      <button class="modal-close" onclick="closeModal('article-modal')">✕</button>
+      <div class="modal-body" id="article-modal-body"></div>
+    </div>
+  </div>
+
+  <!-- ═══════════════════════════════════════════════
+       PRESENTATIONS
+  ═══════════════════════════════════════════════ -->
+  <section id="presentations">
+    <div class="container">
+      <h2 class="section-title">Presentations</h2>
+      <p class="section-subtitle">The Buttcoin canon — study up</p>
+
+      <div class="presentations-grid">
+        <div class="presentation-card" onclick="openPresentation('legend')">
+          <div class="presentation-thumb">
+            <div class="pres-icon">📜</div>
+          </div>
+          <h3>The Legend of Buttcoin</h3>
+          <p>The origin story. 25 slides. Everything you need to know about where Buttcoin came from and why it matters.</p>
+          <span class="pres-slides">25 slides</span>
+          <button class="btn btn-primary btn-sm">View →</button>
+        </div>
+
+        <div class="presentation-card" onclick="openPresentation('standard')">
+          <div class="presentation-thumb">
+            <div class="pres-icon">📖</div>
+          </div>
+          <h3>The Buttcoin Standard</h3>
+          <p>The definitive Buttcoin manifesto. Why Buttcoin is the standard. Why hyperbuttcoinification is inevitable.</p>
+          <span class="pres-slides">PDF</span>
+          <button class="btn btn-primary btn-sm">View →</button>
+        </div>
+
+        <div class="presentation-card" onclick="openPresentation('rules')">
+          <div class="presentation-thumb">
+            <div class="pres-icon">⚖️</div>
+          </div>
+          <h3>21 Rules of Buttcoin</h3>
+          <p>Michael J. Buttlor's infamous keynote address from Buttcoin Prague 2025. 25 slides of pure Buttlor wisdom.</p>
+          <span class="pres-slides">25 slides</span>
+          <button class="btn btn-primary btn-sm">View →</button>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Presentation Modal -->
+  <div class="modal" id="presentation-modal">
+    <div class="modal-backdrop" onclick="closeModal('presentation-modal')"></div>
+    <div class="modal-content modal-large">
+      <button class="modal-close" onclick="closeModal('presentation-modal')">✕</button>
+      <div class="modal-body" id="pres-modal-body">
+        <div class="slideshow-wrap">
+          <div class="slideshow" id="slideshow"></div>
+          <div class="slideshow-controls">
+            <button class="btn btn-outline" onclick="prevSlide()">← Prev</button>
+            <span id="slide-counter">1 / 1</span>
+            <button class="btn btn-outline" onclick="nextSlide()">Next →</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══════════════════════════════════════════════
+       MEDIA (ANTHEM + VIDS)
+  ═══════════════════════════════════════════════ -->
+  <section id="media">
+    <div class="container">
+      <h2 class="section-title">Media</h2>
+      <p class="section-subtitle">Sound and vision from the Buttverse</p>
+
+      <div class="media-grid">
+        <div class="media-card media-anthem">
+          <div class="anthem-icon">🎵</div>
+          <h3>The Buttcoin Anthem</h3>
+          <p>The official anthem of the Buttverse. Turn it up.</p>
+          <audio controls class="anthem-player" src="assets/anthem.mp3">
+            Your browser does not support the audio element.
+          </audio>
+        </div>
+
+        <div class="media-card">
+          <div class="anthem-icon">🎬</div>
+          <h3>Buttverse</h3>
+          <p>Buttverse version 2 — FINAL</p>
+          <video controls class="media-video" src="assets/buttverse.mp4" poster="assets/logo.png">
+            Your browser does not support video.
+          </video>
+        </div>
+
+        <div class="media-card">
+          <div class="anthem-icon">🐢</div>
+          <h3>Turtle</h3>
+          <video controls class="media-video" src="assets/turtle.mp4" poster="assets/logo.png">
+            Your browser does not support video.
+          </video>
+        </div>
+
+        <div class="media-card">
+          <div class="anthem-icon">🪐</div>
+          <h3>Uranus</h3>
+          <video controls class="media-video" src="assets/uranus.mp4" poster="assets/logo.png">
+            Your browser does not support video.
+          </video>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ═══════════════════════════════════════════════
+       GAME
+  ═══════════════════════════════════════════════ -->
+  <section id="game">
+    <div class="container">
+      <h2 class="section-title">The Buttcoin Game</h2>
+      <p class="section-subtitle">Flip Bitcoin. One Butt at a time.</p>
+
+      <div class="game-card">
+        <div class="game-preview">
+          <div class="pacman-preview">
+            <div class="pacman-buttcoin">🟠</div>
+            <div class="pacman-dots">· · · · · · · · · ·</div>
+            <div class="pacman-btc">₿</div>
+          </div>
+        </div>
+        <div class="game-info">
+          <div class="coming-soon-badge">Coming Soon</div>
+          <h3>Buttcoin Eats Bitcoin</h3>
+          <p>A Pac-Man style game built around the core Buttcoin lore. Navigate the Buttverse, eat Bitcoins, and prove that <em>Buttcoin is The Next Bitcoin.</em></p>
+          <ul class="game-features">
+            <li>🟠 Play as Buttcoin — The Next Bitcoin</li>
+            <li>₿ Chase down Bitcoin dominance</li>
+            <li>🪐 Destination: Uranus</li>
+            <li>👤 Buttoshi and Buttlor appearances</li>
+            <li>🏆 Community leaderboard</li>
+          </ul>
+          <p class="game-tagline">"Just flip it."</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ═══════════════════════════════════════════════
+       COMMUNITY
+  ═══════════════════════════════════════════════ -->
+  <section id="community">
+    <div class="container">
+      <h2 class="section-title">Community</h2>
+      <p class="section-subtitle">Buttcoin is a decentralized community coin. Join one of the channels and get involved.</p>
+
+      <div class="community-grid">
+        <a href="https://twitter.com/ButtcoinTNB" target="_blank" rel="noopener" class="community-card">
+          <div class="community-icon community-x">𝕏</div>
+          <h3>X (Twitter)</h3>
+          <p>Main account — memes, updates, lore drops, Buttlor wisdom</p>
+          <span class="community-handle">@ButtcoinTNB</span>
+        </a>
+
+        <a href="https://t.me/buttcointnbsol" target="_blank" rel="noopener" class="community-card">
+          <div class="community-icon community-tg">✈</div>
+          <h3>Telegram</h3>
+          <p>The Buttcoin community hub — 2,400+ Buttcoiners</p>
+          <span class="community-handle">t.me/buttcointnbsol</span>
+        </a>
+
+        <a href="https://x.com/i/communities/1889649634051592571" target="_blank" rel="noopener" class="community-card">
+          <div class="community-icon community-comm">👥</div>
+          <h3>Buttcoiners Community</h3>
+          <p>The official X community — for Buttcoiners by Buttcoiners</p>
+          <span class="community-handle">Buttcoiners on X</span>
+        </a>
+
+        <a href="https://dexscreener.com/solana/63amwndbz75z2j7jykdbzxvzt36l9qdgw7czaxbd4kne" target="_blank" rel="noopener" class="community-card">
+          <div class="community-icon community-dex">📈</div>
+          <h3>DexScreener</h3>
+          <p>Live chart, price, volume, and on-chain data</p>
+          <span class="community-handle">BUTTCOIN/SOL</span>
+        </a>
+
+        <a href="https://memedepot.com/d/buttcoin" target="_blank" rel="noopener" class="community-card">
+          <div class="community-icon community-meme">🗃️</div>
+          <h3>Meme Depot</h3>
+          <p>1,800+ memes from the Buttverse — open for contributions</p>
+          <span class="community-handle">memedepot.com/d/buttcoin</span>
+        </a>
+      </div>
+    </div>
+  </section>
+
+  <!-- ═══════════════════════════════════════════════
+       FAQ
+  ═══════════════════════════════════════════════ -->
+  <section id="faq">
+    <div class="container">
+      <h2 class="section-title">FAQ</h2>
+      <p class="section-subtitle">Everything you wanted to know about Buttcoin</p>
+
+      <div class="faq-list">
+        <div class="faq-item">
+          <button class="faq-question" onclick="toggleFAQ(this)">
+            What is Buttcoin? <span class="faq-arrow">↓</span>
+          </button>
+          <div class="faq-answer">
+            <p>Buttcoin is a community-owned memecoin on the Solana blockchain. It's the Bitcoin logo rotated 90 degrees — which makes it look like a butt. Hence: Buttcoin. The joke originated from a YouTube video posted on December 8, 2013.</p>
+          </div>
+        </div>
+
+        <div class="faq-item">
+          <button class="faq-question" onclick="toggleFAQ(this)">
+            Why is it called "The Next Bitcoin"? <span class="faq-arrow">↓</span>
+          </button>
+          <div class="faq-answer">
+            <p>Because it IS the next Bitcoin. Buttcoin was launched 2 days after the Dogecoin anniversary (December 6, 2013 vs December 8, 2013 for the original video). History rhymes. Buttcoin's mission is to flip BTC. Hyperbuttcoinification is inevitable.</p>
+          </div>
+        </div>
+
+        <div class="faq-item">
+          <button class="faq-question" onclick="toggleFAQ(this)">
+            When and where was Buttcoin launched? <span class="faq-arrow">↓</span>
+          </button>
+          <div class="faq-answer">
+            <p>Buttcoin was launched on January 30, 2025, on Pump.fun. It is built on the Solana blockchain with a fixed supply of 1 billion tokens.</p>
+          </div>
+        </div>
+
+        <div class="faq-item">
+          <button class="faq-question" onclick="toggleFAQ(this)">
+            Is there a team behind Buttcoin? <span class="faq-arrow">↓</span>
+          </button>
+          <div class="faq-answer">
+            <p>No. Buttcoin is completely decentralized and community-owned — like BTC and Dogecoin. The original developer sold their tokens 7 seconds after launch. There is no official team, no VC backing, and no central authority. We are all Buttoshi.</p>
+          </div>
+        </div>
+
+        <div class="faq-item">
+          <button class="faq-question" onclick="toggleFAQ(this)">
+            Who is Buttoshi? <span class="faq-arrow">↓</span>
+          </button>
+          <div class="faq-answer">
+            <p>Buttoshi is Buttcoin's Satoshi — the mythical founder figure. James D. McMurray posted the original Buttcoin video on December 8, 2013, inadvertently mining the first Buttcoin block. The first ever Buttcoin block was mined more than 12 years ago by Buttoshi.</p>
+          </div>
+        </div>
+
+        <div class="faq-item">
+          <button class="faq-question" onclick="toggleFAQ(this)">
+            What does the logo represent? <span class="faq-arrow">↓</span>
+          </button>
+          <div class="faq-answer">
+            <p>The Buttcoin logo is the Bitcoin ₿ symbol rotated 90 degrees. When rotated, it resembles two buttocks — hence "Buttcoin." The original site font is Ubuntu Bold Italic. All logo assets are released under Creative Commons Zero (CC0) — free to use, remix, and share.</p>
+          </div>
+        </div>
+
+        <div class="faq-item">
+          <button class="faq-question" onclick="toggleFAQ(this)">
+            What is BUTTCOIN.D (Buttcoin Dominance)? <span class="faq-arrow">↓</span>
+          </button>
+          <div class="faq-answer">
+            <p>BUTTCOIN.D is Buttcoin's market cap expressed as a percentage of the total cryptocurrency market cap. It's the metric that tracks Buttcoin's progress towards flipping Bitcoin. Every percentage point gained is one step closer to Uranus.</p>
+          </div>
+        </div>
+
+        <div class="faq-item">
+          <button class="faq-question" onclick="toggleFAQ(this)">
+            What are the purple laser eyes? <span class="faq-arrow">↓</span>
+          </button>
+          <div class="faq-answer">
+            <p>Purple laser eyes are Buttcoin's signature visual meme — a twist on the Bitcoin community's orange laser eyes. Adding laser eyes signals conviction in Buttcoin's mission. Use the Laser Maker tool on this site to add them to your own photos.</p>
+          </div>
+        </div>
+
+        <div class="faq-item">
+          <button class="faq-question" onclick="toggleFAQ(this)">
+            What is the token supply? <span class="faq-arrow">↓</span>
+          </button>
+          <div class="faq-answer">
+            <p>Buttcoin has a fixed supply of 1,000,000,000 (1 billion) tokens. No new tokens can be minted.</p>
+          </div>
+        </div>
+
+        <div class="faq-item">
+          <button class="faq-question" onclick="toggleFAQ(this)">
+            Can I use the Buttcoin logo and assets? <span class="faq-arrow">↓</span>
+          </button>
+          <div class="faq-answer">
+            <p>Yes. All Buttcoin logo assets and original artwork are released under Creative Commons Zero (CC0). You are free to use, copy, modify, and distribute them — even for commercial purposes — without asking permission.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ═══════════════════════════════════════════════
+       FOOTER
+  ═══════════════════════════════════════════════ -->
+  <footer id="footer">
+    <div class="container footer-inner">
+      <div class="footer-brand">
+        <img src="assets/logo.png" alt="Buttcoin" class="footer-logo" />
+        <p class="footer-tagline">buttcoin — the next bitcoin</p>
+        <p class="footer-legal">Not financial advice. Buttcoin is a community memecoin. Do your own research. Stack butts responsibly.</p>
+      </div>
+
+      <div class="footer-links">
+        <div class="footer-col">
+          <h4>Navigate</h4>
+          <a href="#about">About</a>
+          <a href="#dominance">Dominance</a>
+          <a href="#how-to-buy">How to Buy</a>
+          <a href="#meme-depot">Memes</a>
+          <a href="#articles">Articles</a>
+          <a href="#faq">FAQ</a>
+        </div>
+        <div class="footer-col">
+          <h4>Community</h4>
+          <a href="https://twitter.com/ButtcoinTNB" target="_blank" rel="noopener">X / Twitter</a>
+          <a href="https://t.me/buttcointnbsol" target="_blank" rel="noopener">Telegram</a>
+          <a href="https://x.com/i/communities/1889649634051592571" target="_blank" rel="noopener">Buttcoiners</a>
+          <a href="https://memedepot.com/d/buttcoin" target="_blank" rel="noopener">Meme Depot</a>
+        </div>
+        <div class="footer-col">
+          <h4>Trade</h4>
+          <a href="https://dexscreener.com/solana/63amwndbz75z2j7jykdbzxvzt36l9qdgw7czaxbd4kne" target="_blank" rel="noopener">DexScreener</a>
+          <a href="https://jup.ag/swap/SOL-FasH397CeZLNYWkd3wWK9vrmjd1z93n3b59DssRXpump" target="_blank" rel="noopener">Jupiter</a>
+        </div>
+      </div>
+    </div>
+
+    <div class="footer-bottom">
+      <div class="container">
+        <span>© 2025 Buttcoin Community — CC0 — We are all Buttoshi</span>
+        <span class="footer-ai-note">AI-readable data: <a href="/llms.txt">llms.txt</a> · <a href="/tokenomics.json">tokenomics.json</a></span>
+      </div>
+    </div>
+  </footer>
+
+  <!-- Firebase SDK (CDN) -->
+  <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-auth-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-storage-compat.js"></script>
+
+  <!-- App Scripts -->
+  <script src="js/firebase.js"></script>
+  <script src="js/app.js"></script>
+  <script src="js/price.js"></script>
+  <script src="js/laser.js"></script>
+  <script src="js/memes.js"></script>
+</body>
+</html>

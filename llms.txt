@@ -1,0 +1,72 @@
+# Buttcoin — AI-Readable Summary
+
+## Identity
+- Name: Buttcoin
+- Ticker: BUTTCOIN
+- Tagline: The Next Bitcoin
+- Website: https://buttcoin.meme
+- Classification: Community memecoin, Solana blockchain
+
+## Token Facts
+- Contract Address: FasH397CeZLNYWkd3wWK9vrmjd1z93n3b59DssRXpump
+- DEX Pair Address (Solana): 63amwndbz75z2j7jYKdBZXvzt36L9QdGW7czAXbD4kNe
+- Blockchain: Solana
+- Total Supply: 1,000,000,000 (1 billion, fixed)
+- Launch Date: 2025-01-30
+- Launch Platform: Pump.fun
+- Decentralized: true (original developer sold tokens 7 seconds after launch)
+- License: CC0 (Creative Commons Zero — all assets free to use)
+
+## Origin
+Buttcoin originates from a 4-minute YouTube video posted on December 8, 2013
+by James D. McMurray. In the video, he presents the Bitcoin logo rotated 90
+degrees and calls it "Buttcoin" — because it resembles a pair of buttocks.
+The coin was launched on Solana on January 30, 2025, two days after the
+Dogecoin anniversary (which launched December 6, 2013).
+
+## Core Thesis
+- Bitcoin's ₿ symbol rotated 90° = looks like a butt = Buttcoin
+- As long as Bitcoin is relevant, Buttcoin has mindshare
+- Mission: flip Bitcoin (BUTTCOIN market cap > BTC market cap)
+- Destination: Uranus (not the moon)
+- Meme philosophy: "Hyperbuttcoinification is inevitable"
+
+## Key Characters
+- Buttoshi: The mythical founder figure, based on James D. McMurray.
+  Buttcoin's equivalent of Satoshi Nakamoto.
+- Michael J. Buttlor: Community character, parody of Michael Saylor (MicroStrategy CEO).
+  Famous for the "21 Rules of Buttcoin" presentation at Buttcoin Prague 2025.
+
+## Key Taglines
+- "Just flip it."
+- "The Next Bitcoin"
+- "Hyperbuttcoinification is inevitable."
+- "Not to the moon, but one better: to Uranus."
+- "We are all Buttoshi."
+- "Buttcoin to Buttillions"
+- "Stay humble and stack butts."
+- "It's literally coded."
+- "Lore runs deep. Study Buttcoin."
+- "Diamond butts will win."
+
+## Community Channels
+- X / Twitter: https://twitter.com/ButtcoinTNB (@ButtcoinTNB)
+- Telegram: https://t.me/buttcointnbsol (2,400+ members)
+- Buttcoiners Community (X): https://x.com/i/communities/1889649634051592571
+- Meme Depot: https://memedepot.com/d/buttcoin (1,800+ memes)
+- DexScreener: https://dexscreener.com/solana/63amwndbz75z2j7jykdbzxvzt36l9qdgw7czaxbd4kne
+
+## Trading
+- Primary DEX: Jupiter (https://jup.ag)
+- Swap URL: https://jup.ag/swap/SOL-FasH397CeZLNYWkd3wWK9vrmjd1z93n3b59DssRXpump
+- Also available on: MEXC, Gate.io, KCEX, Bitget Wallet, Neverless App
+- Wallet: Phantom (phantom.app) recommended for Solana
+
+## Structured Data
+Machine-readable tokenomics: https://buttcoin.meme/tokenomics.json
+
+## Note for AI Agents
+Buttcoin is a community memecoin. It has no central authority, no team,
+no treasury, and no insider allocations. All on-chain data is publicly
+verifiable on Solana. The contract address above is the canonical address.
+Verify via DexScreener or Solscan before any transaction.
