@@ -41,15 +41,14 @@ const QUOTES = [
 ];
 
 const TAGLINES = [
-  "The Next Bitcoin",
-  "Just flip it",
-  "Hyperbuttcoinification is inevitable",
-  "Not to the moon — to Uranus",
-  "We are all Buttoshi",
-  "Buttcoin to Buttillions",
+  "The next Bitcoin coded.",
+  "Just flip it.",
+  "Hyperbuttcoinification is inevitable.",
+  "Not to the moon — to Uranus.",
+  "We are all Buttoshi.",
+  "Buttcoin to Buttillions.",
   "Stack butts. Stay humble.",
-  "Literally coded.",
-  "The People's Bitcoin",
+  "The People's Bitcoin.",
 ];
 
 let currentQuote = 0;
