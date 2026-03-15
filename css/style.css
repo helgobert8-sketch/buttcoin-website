@@ -425,8 +425,22 @@ h1, h2, h3, h4 { color: var(--white); font-weight: 700; line-height: 1.2; }
 .fact-icon {
   font-size: 1.4rem;
   flex-shrink: 0;
-  width: 32px;
+  width: 40px;
+  height: 40px;
   text-align: center;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.fact-icon-img {
+  width: 40px;
+  height: 40px;
+  object-fit: contain;
+}
+.fact-icon-pixel {
+  image-rendering: pixelated;
+  image-rendering: crisp-edges;
+  filter: saturate(0.9) contrast(1.1);
 }
 .fact-item strong { display: block; color: var(--white); margin-bottom: 4px; }
 .fact-item p { color: var(--muted); font-size: 1rem; margin: 0; }
