@@ -740,12 +740,15 @@ cite {
   background: var(--orange-glow);
 }
 .meme-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
   gap: 12px;
   min-height: 200px;
 }
 .meme-item {
+  width: 200px;
+  flex: 0 1 200px;
   aspect-ratio: 1;
   overflow: hidden;
   border-radius: var(--radius-sm);
