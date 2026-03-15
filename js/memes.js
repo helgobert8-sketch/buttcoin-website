@@ -329,6 +329,10 @@ function initUpload() {
 const memeCanvas    = document.getElementById('meme-canvas');
 const memeCtx       = memeCanvas ? memeCanvas.getContext('2d') : null;
 
+// Persisted state so drag-to-reposition works after generation
+let _memeState = null;
+const _logoDrag = { active: false, offX: 0, offY: 0 };
+
 // ─── CHARACTER & LOGO POOLS ───────────────────
 const LOGO_IMGS = [
   'assets/logos/randomizer/bitcoin-15503.png',
@@ -409,61 +413,140 @@ async function generateMeme() {
   // ── Load all images in parallel ───────────────
   const memeSrc = useMemeBg ? await randomMemeSrc() : null;
   const [bgImg, logoImg, buttoshiImg, buttlorImg] = await Promise.all([
-    memeSrc             ? loadImg(memeSrc)              : Promise.resolve(null),
-    useLogo             ? loadImg(randFrom(LOGO_IMGS))   : Promise.resolve(null),
-    useButtoshi         ? loadImg(randFrom(BUTTOSHI_IMGS)) : Promise.resolve(null),
-    useButtlor          ? loadImg(randFrom(BUTTLOR_IMGS))  : Promise.resolve(null),
+    memeSrc     ? loadImg(memeSrc)                : Promise.resolve(null),
+    useLogo     ? loadImg(randFrom(LOGO_IMGS))    : Promise.resolve(null),
+    useButtoshi ? loadImg(randFrom(BUTTOSHI_IMGS)) : Promise.resolve(null),
+    useButtlor  ? loadImg(randFrom(BUTTLOR_IMGS))  : Promise.resolve(null),
   ]);
 
-  // ── Draw background ───────────────────────────
-  memeCtx.fillStyle = scheme.bg;
+  // ── Compute initial logo position ─────────────
+  let logoX = 0, logoY = 0, logoW = 0, logoH = 0, badgeMode = false;
+  if (logoImg) {
+    if (buttoshiImg || buttlorImg) {
+      // Badge: small, top-center
+      logoW = logoH = 120;
+      logoX = (600 - logoW) / 2;
+      logoY = 16;
+      badgeMode = true;
+    } else {
+      // Standalone: large, vertically centered
+      logoW = logoH = 320;
+      logoX = (600 - logoW) / 2;
+      logoY = (600 - logoH) / 2 - (useTagline || useQuote ? 40 : 0);
+    }
+  }
+
+  // ── Build and store state ─────────────────────
+  _memeState = {
+    bgImg, logoImg, buttoshiImg, buttlorImg,
+    scheme, tagline, quote, useTagline, useQuote,
+    logoX, logoY, logoW, logoH, badgeMode,
+  };
+
+  redrawMeme();
+
+  document.getElementById('download-meme-btn').style.display = 'block';
+
+  // Show drag hint if there's a logo to drag
+  const dragHint = document.getElementById('logo-drag-hint');
+  if (dragHint) dragHint.style.display = logoImg ? 'block' : 'none';
+}
+
+// ─── REDRAW FROM STATE ────────────────────────
+function redrawMeme() {
+  if (!_memeState || !memeCtx) return;
+  const s = _memeState;
+
+  // Background
+  memeCtx.fillStyle = s.scheme.bg;
   memeCtx.fillRect(0, 0, 600, 600);
 
-  if (bgImg) {
-    const scale = Math.max(600 / bgImg.width, 600 / bgImg.height);
-    const sw = bgImg.width * scale, sh = bgImg.height * scale;
-    memeCtx.drawImage(bgImg, (600 - sw) / 2, (600 - sh) / 2, sw, sh);
+  if (s.bgImg) {
+    const scale = Math.max(600 / s.bgImg.width, 600 / s.bgImg.height);
+    const sw = s.bgImg.width * scale, sh = s.bgImg.height * scale;
+    memeCtx.drawImage(s.bgImg, (600 - sw) / 2, (600 - sh) / 2, sw, sh);
     memeCtx.fillStyle = 'rgba(0,0,0,0.58)';
     memeCtx.fillRect(0, 0, 600, 600);
   } else {
     const grad = memeCtx.createRadialGradient(300, 300, 0, 300, 300, 420);
-    grad.addColorStop(0, hexToRgbaStr(scheme.accent, 0.08));
+    grad.addColorStop(0, hexToRgbaStr(s.scheme.accent, 0.08));
     grad.addColorStop(1, 'rgba(0,0,0,0)');
     memeCtx.fillStyle = grad;
     memeCtx.fillRect(0, 0, 600, 600);
   }
 
-  // ── Draw logo (standalone, no characters) ─────
-  if (logoImg && !buttoshiImg && !buttlorImg) {
-    const size = 320;
-    const y = (600 - size) / 2 - (useTagline || useQuote ? 40 : 0);
-    memeCtx.drawImage(logoImg, (600 - size) / 2, y, size, size);
-  }
-
-  // ── Draw characters ───────────────────────────
-  const both  = !!(buttoshiImg && buttlorImg);
+  // Characters (fixed position)
+  const both  = !!(s.buttoshiImg && s.buttlorImg);
   const charH = both ? 310 : 370;
-
-  if (buttoshiImg) {
-    const w = (buttoshiImg.width / buttoshiImg.height) * charH;
+  if (s.buttoshiImg) {
+    const w = (s.buttoshiImg.width / s.buttoshiImg.height) * charH;
     const x = both ? Math.max(0, 300 - w - 10) : (600 - w) / 2;
-    memeCtx.drawImage(buttoshiImg, x, 600 - charH - 10, w, charH);
+    memeCtx.drawImage(s.buttoshiImg, x, 600 - charH - 10, w, charH);
   }
-  if (buttlorImg) {
-    const w = (buttlorImg.width / buttlorImg.height) * charH;
+  if (s.buttlorImg) {
+    const w = (s.buttlorImg.width / s.buttlorImg.height) * charH;
     const x = both ? Math.min(600 - w, 310) : (600 - w) / 2;
-    memeCtx.drawImage(buttlorImg, x, 600 - charH - 10, w, charH);
+    memeCtx.drawImage(s.buttlorImg, x, 600 - charH - 10, w, charH);
   }
 
-  // ── Logo badge (when characters are present) ──
-  if (logoImg && (buttoshiImg || buttlorImg)) {
-    const lw = 120;
-    memeCtx.drawImage(logoImg, (600 - lw) / 2, 16, lw, lw);
+  // Logo at its current (draggable) position
+  if (s.logoImg) {
+    memeCtx.drawImage(s.logoImg, s.logoX, s.logoY, s.logoW, s.logoH);
   }
 
-  // ── Text ──────────────────────────────────────
-  drawMemeText(useTagline ? tagline : null, useQuote ? quote : null, scheme.accent);
-  document.getElementById('download-meme-btn').style.display = 'block';
+  // Text
+  drawMemeText(s.useTagline ? s.tagline : null, s.useQuote ? s.quote : null, s.scheme.accent);
+}
+
+// ─── LOGO DRAG HANDLING ───────────────────────
+function _canvasPos(e) {
+  const rect   = memeCanvas.getBoundingClientRect();
+  const scaleX = memeCanvas.width  / rect.width;
+  const scaleY = memeCanvas.height / rect.height;
+  const src    = e.touches ? e.touches[0] : e;
+  return {
+    x: (src.clientX - rect.left) * scaleX,
+    y: (src.clientY - rect.top)  * scaleY,
+  };
+}
+
+function _overLogo(x, y) {
+  if (!_memeState || !_memeState.logoImg) return false;
+  const s = _memeState;
+  return x >= s.logoX && x <= s.logoX + s.logoW &&
+         y >= s.logoY && y <= s.logoY + s.logoH;
+}
+
+function _onMemePointerDown(e) {
+  if (!_memeState || !_memeState.logoImg) return;
+  const { x, y } = _canvasPos(e);
+  if (_overLogo(x, y)) {
+    _logoDrag.active = true;
+    _logoDrag.offX   = x - _memeState.logoX;
+    _logoDrag.offY   = y - _memeState.logoY;
+    memeCanvas.style.cursor = 'grabbing';
+    e.preventDefault();
+  }
+}
+
+function _onMemePointerMove(e) {
+  if (!_memeState) return;
+  const { x, y } = _canvasPos(e);
+  if (_logoDrag.active) {
+    _memeState.logoX = Math.max(0, Math.min(600 - _memeState.logoW, x - _logoDrag.offX));
+    _memeState.logoY = Math.max(0, Math.min(600 - _memeState.logoH, y - _logoDrag.offY));
+    redrawMeme();
+    e.preventDefault();
+  } else {
+    memeCanvas.style.cursor = _overLogo(x, y) ? 'grab' : 'default';
+  }
+}
+
+function _onMemePointerUp() {
+  if (_logoDrag.active) {
+    _logoDrag.active = false;
+    memeCanvas.style.cursor = 'grab';
+  }
 }
 
 function drawMemeText(tagline, quote, accentColor) {
@@ -579,6 +662,17 @@ function downloadGeneratedMeme() {
 document.addEventListener('DOMContentLoaded', () => {
   initUpload();
   window.loadMemes('all');
+
+  // Logo drag events on the randomizer canvas
+  if (memeCanvas) {
+    memeCanvas.addEventListener('mousedown',  _onMemePointerDown);
+    memeCanvas.addEventListener('mousemove',  _onMemePointerMove);
+    memeCanvas.addEventListener('mouseup',    _onMemePointerUp);
+    memeCanvas.addEventListener('mouseleave', _onMemePointerUp);
+    memeCanvas.addEventListener('touchstart', _onMemePointerDown, { passive: false });
+    memeCanvas.addEventListener('touchmove',  _onMemePointerMove, { passive: false });
+    memeCanvas.addEventListener('touchend',   _onMemePointerUp);
+  }
 
   // Trigger meme count animation only when section enters viewport
   const section = document.getElementById('meme-depot');
