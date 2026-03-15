@@ -532,7 +532,25 @@
         <div class="randomizer-output">
           <canvas id="meme-canvas" width="600" height="600"></canvas>
           <p class="randomizer-hint" id="randomizer-hint">Choose ingredients and hit Generate</p>
-          <p class="randomizer-hint" id="logo-drag-hint" style="display:none">Drag logo or text to reposition · Drag logo corners to resize</p>
+          <p class="randomizer-hint" id="logo-drag-hint" style="display:none">Drag logo or text · Drag logo corners to resize</p>
+
+          <div id="text-style-panel" class="laser-options" style="display:none; margin-top:12px;">
+            <div class="laser-control">
+              <label>Text background intensity</label>
+              <input type="range" id="text-intensity" min="0" max="1" step="0.05" value="0.6" oninput="updateTextStyle()" />
+            </div>
+            <div class="laser-control" style="margin-top:8px;">
+              <label>Background colour</label>
+              <div style="display:flex; gap:8px; margin-top:6px; flex-wrap:wrap;">
+                <button class="color-btn text-color-btn active" style="background:#000000;" onclick="setTextBgColor('#000000',this)" title="Black"></button>
+                <button class="color-btn text-color-btn" style="background:#1a0a2e;" onclick="setTextBgColor('#1a0a2e',this)" title="Dark Purple"></button>
+                <button class="color-btn text-color-btn" style="background:#0a0a2e;" onclick="setTextBgColor('#0a0a2e',this)" title="Dark Blue"></button>
+                <button class="color-btn text-color-btn" style="background:#2e1000;" onclick="setTextBgColor('#2e1000',this)" title="Dark Orange"></button>
+                <button class="color-btn text-color-btn" style="background:#1a2e0a;" onclick="setTextBgColor('#1a2e0a',this)" title="Dark Green"></button>
+                <button class="color-btn text-color-btn" style="background:#ffffff; border:1px solid #555;" onclick="setTextBgColor('#ffffff',this)" title="White"></button>
+              </div>
+            </div>
+          </div>
         </div>
       </div>
     </div>

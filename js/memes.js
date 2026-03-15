@@ -414,6 +414,9 @@ async function generateMeme() {
     bgImg, logoImg,
     scheme, tagline, quote, useTagline, useQuote,
     logoX, logoY, logoW, logoH,
+    // Text pill style
+    textBgAlpha: 0.6,
+    textBgColor: '#000000',
     // Text positions: null = auto-positioned on first draw
     textPos: null,
     tagPos:  null,
@@ -422,15 +425,23 @@ async function generateMeme() {
     tagBox:  null,
   };
 
+  // Sync sliders/buttons to defaults
+  const intEl = document.getElementById('text-intensity');
+  if (intEl) intEl.value = 0.6;
+  document.querySelectorAll('.text-color-btn').forEach((b, i) => b.classList.toggle('active', i === 0));
+
   redrawMeme();
 
   document.getElementById('download-meme-btn').style.display = 'block';
   const dragHint = document.getElementById('logo-drag-hint');
   if (dragHint) dragHint.style.display = (logoImg || useTagline || useQuote) ? 'block' : 'none';
+  const stylePanel = document.getElementById('text-style-panel');
+  if (stylePanel) stylePanel.style.display = (useTagline || useQuote) ? 'flex' : 'none';
 }
 
 // ─── REDRAW FROM STATE ────────────────────────
-function redrawMeme() {
+// _drawMemeContent — clean render (no handles); used for download
+function _drawMemeContent() {
   if (!_memeState || !memeCtx) return;
   const s = _memeState;
 
@@ -464,14 +475,41 @@ function redrawMeme() {
   if (boxes) {
     s.textBox = boxes.textBox;
     s.tagBox  = boxes.tagBox;
-    // Latch auto-positions after first draw so future redraws use them
     if (!s.textPos && boxes.defaultTextPos) s.textPos = boxes.defaultTextPos;
     if (!s.tagPos  && boxes.defaultTagPos)  s.tagPos  = boxes.defaultTagPos;
   }
 }
 
+// _drawHandles — draws resize corner squares on top (not included in download)
+function _drawHandles() {
+  if (!_memeState || !_memeState.logoImg || !memeCtx) return;
+  const s  = _memeState;
+  const hw = 7;
+  const corners = [
+    [s.logoX,           s.logoY],
+    [s.logoX + s.logoW, s.logoY],
+    [s.logoX,           s.logoY + s.logoH],
+    [s.logoX + s.logoW, s.logoY + s.logoH],
+  ];
+  memeCtx.save();
+  corners.forEach(([cx, cy]) => {
+    memeCtx.fillStyle   = 'rgba(255,255,255,0.95)';
+    memeCtx.strokeStyle = 'rgba(0,0,0,0.75)';
+    memeCtx.lineWidth   = 1.5;
+    memeCtx.fillRect  (cx - hw, cy - hw, hw * 2, hw * 2);
+    memeCtx.strokeRect(cx - hw, cy - hw, hw * 2, hw * 2);
+  });
+  memeCtx.restore();
+}
+
+// redrawMeme — full render including handles (used during interaction)
+function redrawMeme() {
+  _drawMemeContent();
+  _drawHandles();
+}
+
 // ─── INTERACTION ──────────────────────────────
-const CORNER_R = 18;  // corner resize hit radius in canvas px
+const CORNER_R = 24;  // corner resize hit radius in canvas px
 
 function _canvasPos(e) {
   const rect   = memeCanvas.getBoundingClientRect();
@@ -657,7 +695,9 @@ function drawMemeText(tagline, quote, accentColor, textPos, tagPos) {
   const pillX = cx - pillW / 2;
   const pillY = cy - pillH / 2;
 
-  memeCtx.fillStyle = 'rgba(0,0,0,0.6)';
+  const bgAlpha = _memeState?.textBgAlpha ?? 0.6;
+  const bgColor = _memeState?.textBgColor ?? '#000000';
+  memeCtx.fillStyle = hexToRgbaStr(bgColor, bgAlpha);
   roundRect(memeCtx, pillX, pillY, pillW, pillH, 12);
   memeCtx.fill();
 
@@ -688,7 +728,7 @@ function drawMemeText(tagline, quote, accentColor, textPos, tagPos) {
     const tagPillX = tcx - tagPillW / 2;
     const tagPillY = tcy - tagPillH / 2;
 
-    memeCtx.fillStyle = 'rgba(0,0,0,0.5)';
+    memeCtx.fillStyle = hexToRgbaStr(bgColor, bgAlpha * 0.85);
     roundRect(memeCtx, tagPillX, tagPillY, tagPillW, tagPillH, 10);
     memeCtx.fill();
 
@@ -758,10 +798,28 @@ function hexToRgbaStr(hex, alpha) {
 
 function downloadGeneratedMeme() {
   if (!memeCanvas) return;
+  _drawMemeContent();   // clean render — no handles
   const link = document.createElement('a');
   link.download = 'buttcoin-meme.png';
   link.href = memeCanvas.toDataURL('image/png');
   link.click();
+  redrawMeme();         // restore handles on canvas
+}
+
+// ─── TEXT STYLE CONTROLS ──────────────────────
+function updateTextStyle() {
+  if (!_memeState) return;
+  const el = document.getElementById('text-intensity');
+  if (el) _memeState.textBgAlpha = parseFloat(el.value);
+  redrawMeme();
+}
+
+function setTextBgColor(color, btn) {
+  if (!_memeState) return;
+  _memeState.textBgColor = color;
+  document.querySelectorAll('.text-color-btn').forEach(b => b.classList.remove('active'));
+  if (btn) btn.classList.add('active');
+  redrawMeme();
 }
 
 // ─── INIT ─────────────────────────────────────
