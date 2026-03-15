@@ -49,6 +49,7 @@ const TAGLINES = [
   "Buttcoin to Buttillions",
   "Stack butts. Stay humble.",
   "Literally coded.",
+  "The People's Bitcoin",
 ];
 
 let currentQuote = 0;

@@ -17,6 +17,7 @@ const MEME_TAGLINES = [
   "Spread Buttcoin with love.",
   "Buttcoin is freedom.",
   "Diamond butts will win.",
+  "The People's Bitcoin",
   "Lore runs deep. Study Buttcoin.",
   "Relentless accumulation.",
   "Buttcoin is either up or upgrading.",
