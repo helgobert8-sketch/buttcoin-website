@@ -200,37 +200,91 @@ function renderMemes() {
     return;
   }
 
-  batch.forEach(meme => {
+  batch.forEach((meme, i) => {
     const el = document.createElement('div');
     el.className = 'meme-item';
     el.innerHTML = `<img src="${meme.url}" alt="${meme.alt || 'Buttcoin meme'}" loading="lazy" onerror="this.closest('.meme-item').style.display='none'" />`;
-    el.addEventListener('click', () => openMemeModal(meme));
+    const globalIndex = page * PAGE_SIZE + i;
+    el.addEventListener('click', () => openLightbox(displayedMemes, globalIndex));
     grid.appendChild(el);
   });
   renderPagination();
 }
 
-function openMemeModal(meme) {
-  // Simple lightbox
+// ─── LIGHTBOX ─────────────────────────────────
+let lbMemes = [];
+let lbIndex = 0;
+
+function openLightbox(memeList, index) {
+  lbMemes = memeList;
+  lbIndex = index;
+  renderLightbox();
+}
+
+function renderLightbox() {
   const existing = document.getElementById('meme-lightbox');
   if (existing) existing.remove();
 
+  const meme = lbMemes[lbIndex];
+  if (!meme) return;
+
   const lb = document.createElement('div');
   lb.id = 'meme-lightbox';
-  lb.style.cssText = `
-    position:fixed; inset:0; z-index:3000;
-    background:rgba(0,0,0,0.92); display:flex;
-    align-items:center; justify-content:center;
-    cursor:pointer;
-  `;
+  lb.style.cssText = `position:fixed;inset:0;z-index:3000;background:rgba(0,0,0,0.93);display:flex;align-items:center;justify-content:center;`;
+
   lb.innerHTML = `
-    <img src="${meme.url}" alt="${meme.alt || ''}"
-      style="max-width:90vw; max-height:90vh; border-radius:8px; object-fit:contain;" />
-    <button style="position:absolute;top:20px;right:24px;background:rgba(255,255,255,0.1);border:1px solid rgba(255,255,255,0.2);color:white;width:36px;height:36px;border-radius:50%;font-size:1.1rem;cursor:pointer;display:flex;align-items:center;justify-content:center;">✕</button>
+    <button class="lb-btn lb-close" onclick="document.getElementById('meme-lightbox').remove();document.removeEventListener('keydown',lbKeyHandler)">✕</button>
+    <button class="lb-btn lb-prev" onclick="lbNav(-1)" ${lbIndex === 0 ? 'disabled' : ''}>‹</button>
+    <img src="${meme.url}" alt="${meme.filename || ''}"
+      style="max-width:88vw;max-height:88vh;border-radius:8px;object-fit:contain;display:block;" />
+    <button class="lb-btn lb-next" onclick="lbNav(1)" ${lbIndex >= lbMemes.length - 1 ? 'disabled' : ''}>›</button>
+    <span class="lb-counter">${lbIndex + 1} / ${lbMemes.length}</span>
   `;
-  lb.addEventListener('click', () => lb.remove());
+
+  // Click backdrop to close
+  lb.addEventListener('click', e => {
+    if (e.target === lb) {
+      lb.remove();
+      document.removeEventListener('keydown', lbKeyHandler);
+    }
+  });
+
   document.body.appendChild(lb);
+  document.addEventListener('keydown', lbKeyHandler);
 }
+
+function lbNav(dir) {
+  const next = lbIndex + dir;
+  if (next >= 0 && next < lbMemes.length) {
+    lbIndex = next;
+    renderLightbox();
+  }
+}
+
+function lbKeyHandler(e) {
+  if (e.key === 'ArrowRight') lbNav(1);
+  if (e.key === 'ArrowLeft')  lbNav(-1);
+  if (e.key === 'Escape') {
+    document.getElementById('meme-lightbox')?.remove();
+    document.removeEventListener('keydown', lbKeyHandler);
+  }
+}
+
+// ─── RANDOM MODE ──────────────────────────────
+window.loadRandomMemes = async function() {
+  // Fetch all memes if not already loaded
+  let all = displayedMemes;
+  if (!all || all.length === 0) {
+    try {
+      const res = await fetch('memes.json');
+      all = await res.json();
+    } catch(e) { return; }
+  }
+  // Shuffle all memes
+  const shuffled = [...all].sort(() => Math.random() - 0.5);
+  // Open lightbox with full shuffled set
+  openLightbox(shuffled, 0);
+};
 
 // ─── UPLOAD ───────────────────────────────────
 function initUpload() {
