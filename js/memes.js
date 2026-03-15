@@ -330,6 +330,20 @@ const memeCanvas    = document.getElementById('meme-canvas');
 const memeCtx       = memeCanvas ? memeCanvas.getContext('2d') : null;
 
 // ─── CHARACTER & LOGO POOLS ───────────────────
+const LOGO_IMGS = [
+  'assets/logos/randomizer/bitcoin-15503.png',
+  'assets/logos/randomizer/bitcoin-15518 no background.png',
+  'assets/logos/randomizer/bitcoin-icon-512x512-6lwse9jk.png',
+  'assets/logos/randomizer/King 1.png',
+  'assets/logos/randomizer/logo head on.png',
+  'assets/logos/randomizer/logo rund.png',
+  'assets/logos/randomizer/vecteezy_3d-render-of-a-blue-bitcoin-cryptocurrency-coin_55079150.png',
+  'assets/logos/randomizer/vecteezy_bitcoin-logo-png-bitcoin-icon-transparent-png_19767953 (1).png',
+  'assets/logos/randomizer/vecteezy_intense-enchanting-bitcoin-physical-coin-gold-finish-no_60052110.png',
+  'assets/logos/randomizer/vecteezy_neon-bitcoin-coin-digital-art_56472368 (1).png',
+  'assets/logos/randomizer/vecteezy_serene-abstract-bitcoin-symbol-with-golden-glow-cutout-original_57893451.png',
+];
+
 const BUTTOSHI_IMGS = [
   'assets/characters/buttoshi/Buttoshi cut upscaled.png',
   'assets/characters/buttoshi/James Sticker no background.png',
@@ -409,7 +423,7 @@ function generateMeme() {
         onImageLoad();
       };
       img.onerror = onImageLoad;
-      img.src = 'assets/logo.png';
+      img.src = randFrom(LOGO_IMGS);
     }
 
     // Buttoshi
@@ -424,7 +438,7 @@ function generateMeme() {
           const logo = new Image();
           logo.onload = () => { memeCtx.drawImage(logo, 220, 20, 160, 160); onImageLoad(); };
           logo.onerror = onImageLoad;
-          logo.src = 'assets/logo.png';
+          logo.src = randFrom(LOGO_IMGS);
         } else { onImageLoad(); }
       };
       img.onerror = onImageLoad;
