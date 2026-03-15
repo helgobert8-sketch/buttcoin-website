@@ -81,12 +81,23 @@ function nextQuote() {
 function rotateTagline() {
   const el = document.getElementById('tagline-rotator');
   if (!el) return;
+  // Fade out + drift up
   el.style.opacity = 0;
+  el.style.transform = 'translateY(-8px)';
   setTimeout(() => {
     taglineIndex = (taglineIndex + 1) % TAGLINES.length;
     el.textContent = TAGLINES[taglineIndex];
-    el.style.opacity = 1;
-  }, 400);
+    // Reset position below, then fade in + drift up to centre
+    el.style.transition = 'none';
+    el.style.transform = 'translateY(8px)';
+    requestAnimationFrame(() => {
+      requestAnimationFrame(() => {
+        el.style.transition = '';
+        el.style.opacity = 1;
+        el.style.transform = 'translateY(0)';
+      });
+    });
+  }, 500);
 }
 
 // ─── CONTRACT ADDRESS COPY ─────────────────────
