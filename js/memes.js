@@ -55,7 +55,7 @@ const PLACEHOLDER_MEMES = [
 let currentCategory = 'all';
 let displayedMemes  = [];
 let page            = 0;
-const PAGE_SIZE     = 20;
+const PAGE_SIZE     = 32;
 
 // ─── GALLERY ──────────────────────────────────
 window.loadMemes = function(category = 'all') {
@@ -73,6 +73,15 @@ window.loadMemes = function(category = 'all') {
 window.loadNextPage = function() {
   page++;
   renderMemes();
+  document.getElementById('meme-depot')?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+};
+
+window.loadPrevPage = function() {
+  if (page > 0) {
+    page--;
+    renderMemes();
+    document.getElementById('meme-depot')?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+  }
 };
 
 async function loadFromFirebase(category) {
@@ -164,6 +173,18 @@ function loadPlaceholder(category) {
   renderMemes();
 }
 
+function renderPagination() {
+  const el = document.getElementById('meme-pagination');
+  if (!el) return;
+  const totalPages = Math.ceil(displayedMemes.length / PAGE_SIZE);
+  if (totalPages <= 1) { el.innerHTML = ''; return; }
+  el.innerHTML = `
+    <button class="page-btn" onclick="loadPrevPage()" ${page === 0 ? 'disabled' : ''}>← Previous</button>
+    <span class="page-info">Page ${page + 1} of ${totalPages}</span>
+    <button class="page-btn" onclick="loadNextPage()" ${page >= totalPages - 1 ? 'disabled' : ''}>Next →</button>
+  `;
+}
+
 function renderMemes() {
   const grid = document.getElementById('meme-grid');
   if (!grid) return;
@@ -171,18 +192,19 @@ function renderMemes() {
   const start = page * PAGE_SIZE;
   const batch = displayedMemes.slice(start, start + PAGE_SIZE);
 
-  if (page === 0) grid.innerHTML = '';
+  grid.innerHTML = '';
 
-  if (batch.length === 0 && page === 0) {
+  if (batch.length === 0) {
     grid.innerHTML = `
       <div class="meme-loading">
         <p>Memes loading from the Buttverse…</p>
         <p style="margin-top:12px">
           <a href="https://memedepot.com/d/buttcoin" target="_blank" rel="noopener" class="btn btn-outline btn-sm">
-            Browse all 1,800+ memes on Meme Depot ↗
+            Browse all memes on Meme Depot ↗
           </a>
         </p>
       </div>`;
+    renderPagination();
     return;
   }
 
@@ -193,6 +215,7 @@ function renderMemes() {
     el.addEventListener('click', () => openMemeModal(meme));
     grid.appendChild(el);
   });
+  renderPagination();
 }
 
 function openMemeModal(meme) {

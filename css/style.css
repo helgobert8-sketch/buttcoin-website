@@ -770,9 +770,43 @@ cite {
   color: var(--muted);
   padding: 64px;
 }
-.meme-load-more {
+.meme-pagination {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 16px;
+  margin-top: 40px;
+  flex-wrap: wrap;
+}
+.page-btn {
+  min-width: 120px;
+  min-height: 48px;
+  padding: 12px 24px;
+  background: transparent;
+  color: var(--orange);
+  border: 2px solid var(--orange);
+  border-radius: var(--radius);
+  font-family: var(--font);
+  font-size: 1rem;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all var(--transition);
+}
+.page-btn:hover:not(:disabled) {
+  background: var(--orange);
+  color: #000;
+}
+.page-btn:disabled {
+  opacity: 0.3;
+  cursor: not-allowed;
+  border-color: var(--muted);
+  color: var(--muted);
+}
+.page-info {
+  color: var(--muted);
+  font-size: 0.95rem;
+  min-width: 120px;
   text-align: center;
-  margin-top: 32px;
 }
 .upload-box {
   max-width: 480px;
