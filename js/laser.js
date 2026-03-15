@@ -123,9 +123,9 @@ function drawEye(x, y) {
 
     const grad = ctx.createLinearGradient(0, 0, len, 0);
     grad.addColorStop(0,    `rgba(255,255,255,${alpha})`);
-    grad.addColorStop(0.04, `rgba(${R},${alpha * 0.95})`);
-    grad.addColorStop(0.25, `rgba(${R},${alpha * 0.5})`);
-    grad.addColorStop(0.7,  `rgba(${R},${alpha * 0.15})`);
+    grad.addColorStop(0.04, `rgba(${R},${alpha})`);
+    grad.addColorStop(0.35, `rgba(${R},${alpha * 0.75})`);
+    grad.addColorStop(0.7,  `rgba(${R},${alpha * 0.35})`);
     grad.addColorStop(1,    `rgba(${R},0)`);
 
     ctx.fillStyle = grad;
