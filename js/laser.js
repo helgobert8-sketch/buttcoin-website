@@ -102,26 +102,27 @@ function drawEye(x, y) {
   ctx.fill();
 
   // ── Star burst rays ───────────────────────────
-  // 4 main long rays + 4 secondary shorter rays
-  const rays = [
-    { angle: 0,         len: size * 5,   width: size * 0.12 },   // right
-    { angle: Math.PI,   len: size * 5,   width: size * 0.12 },   // left
-    { angle: -Math.PI/2, len: size * 4.5, width: size * 0.1  },  // up
-    { angle:  Math.PI/2, len: size * 4.5, width: size * 0.1  },  // down
-    { angle:  Math.PI/4,       len: size * 3, width: size * 0.07 },
-    { angle: -Math.PI/4,       len: size * 3, width: size * 0.07 },
-    { angle:  3*Math.PI/4,     len: size * 3, width: size * 0.07 },
-    { angle: -3*Math.PI/4,     len: size * 3, width: size * 0.07 },
-  ];
+  // 4 main + 4 mid + 8 fine + 16 hair = 32 rays total
+  const rayDefs = [];
+  const totalRays = 32;
+  for (let i = 0; i < totalRays; i++) {
+    const angle = (i / totalRays) * Math.PI * 2;
+    // Every 8th ray is a main ray, every 4th is mid, rest are fine
+    const isMajor = i % 8 === 0;
+    const isMid   = i % 4 === 0 && !isMajor;
+    const len   = isMajor ? size * 6   : isMid ? size * 4   : size * 2.5;
+    const width = isMajor ? size * 0.14 : isMid ? size * 0.09 : size * 0.05;
+    rayDefs.push({ angle, len, width });
+  }
 
-  rays.forEach(({ angle, len, width }) => {
+  rayDefs.forEach(({ angle, len, width }) => {
     ctx.save();
     ctx.translate(x, y);
     ctx.rotate(angle);
 
     const grad = ctx.createLinearGradient(0, 0, len, 0);
-    grad.addColorStop(0,    `rgba(255,255,255,${alpha * 0.95})`);
-    grad.addColorStop(0.05, `rgba(${R},${alpha * 0.85})`);
+    grad.addColorStop(0,    `rgba(${R},${alpha})`);
+    grad.addColorStop(0.08, `rgba(${R},${alpha * 0.85})`);
     grad.addColorStop(0.4,  `rgba(${R},${alpha * 0.3})`);
     grad.addColorStop(1,    `rgba(${R},0)`);
 
@@ -135,11 +136,11 @@ function drawEye(x, y) {
     ctx.restore();
   });
 
-  // ── Bright core ───────────────────────────────
+  // ── Bright core — neon purple, no white ──────
   const core = ctx.createRadialGradient(x, y, 0, x, y, size * 0.9);
-  core.addColorStop(0,   `rgba(255,255,255,${alpha})`);
-  core.addColorStop(0.2, `rgba(255,255,255,${alpha * 0.95})`);
-  core.addColorStop(0.5, `rgba(${R},${alpha * 0.8})`);
+  core.addColorStop(0,   `rgba(${R},${alpha})`);
+  core.addColorStop(0.3, `rgba(${R},${alpha * 0.9})`);
+  core.addColorStop(0.7, `rgba(${R},${alpha * 0.4})`);
   core.addColorStop(1,   `rgba(${R},0)`);
   ctx.fillStyle = core;
   ctx.beginPath();
