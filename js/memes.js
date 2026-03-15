@@ -120,7 +120,12 @@ function countUp(el, target, duration = 1800) {
     const eased = 1 - Math.pow(1 - progress, 3);
     const current = Math.floor(eased * target);
     el.textContent = current.toLocaleString('en-US');
-    if (progress < 1) requestAnimationFrame(step);
+    if (progress < 1) {
+      requestAnimationFrame(step);
+    } else {
+      el.style.transition = 'color 0.6s ease';
+      el.style.color = 'var(--orange)';
+    }
   }
   requestAnimationFrame(step);
 }
