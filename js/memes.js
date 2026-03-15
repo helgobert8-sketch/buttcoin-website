@@ -136,11 +136,10 @@ async function loadFromManifest(category) {
     const res = await fetch('memes.json');
     const all = await res.json();
 
-    // Update total meme counter once (only on first load)
+    // Store total for counter — triggered by Intersection Observer when section enters view
     const countEl = document.getElementById('meme-count');
-    if (countEl && !countEl.dataset.counted) {
-      countEl.dataset.counted = '1';
-      countUp(countEl, all.length);
+    if (countEl && !countEl.dataset.total) {
+      countEl.dataset.total = all.length;
     }
 
     const filtered = category === 'all' ? all : all.filter(m => m.category === category);
@@ -494,4 +493,20 @@ function downloadGeneratedMeme() {
 document.addEventListener('DOMContentLoaded', () => {
   initUpload();
   window.loadMemes('all');
+
+  // Trigger meme count animation only when section enters viewport
+  const section = document.getElementById('meme-depot');
+  const countEl = document.getElementById('meme-count');
+  if (section && countEl && 'IntersectionObserver' in window) {
+    const observer = new IntersectionObserver((entries) => {
+      entries.forEach(entry => {
+        if (entry.isIntersecting && countEl.dataset.total && !countEl.dataset.counted) {
+          countEl.dataset.counted = '1';
+          countUp(countEl, parseInt(countEl.dataset.total));
+          observer.disconnect();
+        }
+      });
+    }, { threshold: 0.2 });
+    observer.observe(section);
+  }
 });
