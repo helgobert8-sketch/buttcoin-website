@@ -42,7 +42,7 @@
     "memedepot": "https://memedepot.com/d/buttcoin",
     "solscan": "https://solscan.io/token/FasH397CeZLNYWkd3wWK9vrmjd1z93n3b59DssRXpump"
   },
-  "exchanges": ["MEXC", "Gate.io", "KCEX", "Bitget Wallet", "Neverless App"],
+  "exchanges": ["Gate.io", "KCEX", "Bitget Wallet", "Neverless App"],
   "aiReadable": "https://buttcoin.meme/llms.txt",
   "timeline": "https://buttcoin.meme/timeline.json"
 }

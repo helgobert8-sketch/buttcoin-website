@@ -59,7 +59,7 @@ Dogecoin anniversary (which launched December 6, 2013).
 ## Trading
 - Primary DEX: Jupiter (https://jup.ag)
 - Swap URL: https://jup.ag/swap/SOL-FasH397CeZLNYWkd3wWK9vrmjd1z93n3b59DssRXpump
-- Also available on: MEXC, Gate.io, KCEX, Bitget Wallet, Neverless App
+- Also available on: Gate.io, KCEX, Bitget Wallet, Neverless App
 - Wallet: Phantom (phantom.app) recommended for Solana
 
 ## Live Market Data

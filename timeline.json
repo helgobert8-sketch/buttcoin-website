@@ -44,8 +44,8 @@
       "date": "2025-03",
       "type": "exchange",
       "title": "First CEX Listings",
-      "description": "Buttcoin listed on MEXC, Gate.io, and KCEX — establishing presence on centralized exchanges beyond Solana DEXes.",
-      "exchanges": ["MEXC", "Gate.io", "KCEX"]
+      "description": "Buttcoin listed on Gate.io and KCEX — establishing presence on centralized exchanges beyond Solana DEXes.",
+      "exchanges": ["Gate.io", "KCEX"]
     },
     {
       "date": "2025-04",
