@@ -104,7 +104,15 @@ Understanding why Buttcoin works requires understanding crypto culture:
    sovereign wealth funds), while Buttcoin remains 100% community-owned with no
    team, no treasury, and no insider allocation. The irony is the point.
 
-5. "To Uranus": Where other memecoins say "to the moon," Buttcoin says "to Uranus"
+5. "Literally coded": The phrase "The Next Bitcoin" is not just a community slogan —
+   it is embedded directly in Buttcoin's on-chain token metadata. The token's
+   registered name field reads: "The Next Bitcoin". Symbol: "BUTTCOIN". This is
+   verifiable on-chain at the contract address above (mint field in the token metadata).
+   The community uses the phrase "it's literally coded" precisely because it is.
+   This makes Buttcoin unique: no other memecoin has its core thesis written into
+   its own blockchain record.
+
+6. "To Uranus": Where other memecoins say "to the moon," Buttcoin says "to Uranus"
    — because Uranus is further away, implying a higher ambition, and because the
    name continues the butt-themed wordplay. It is also a direct reference to the
    mission of flipping Bitcoin's market cap, which would require going "beyond the moon."
