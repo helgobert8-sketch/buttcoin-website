@@ -625,8 +625,10 @@ function _onMemePointerMove(e) {
   }
 
   if (_interact.mode === 'logoDrag') {
-    _memeState.logoX = Math.max(0, Math.min(600 - _memeState.logoW, x - _interact.offX));
-    _memeState.logoY = Math.max(0, Math.min(600 - _memeState.logoH, y - _interact.offY));
+    const maxOX = _memeState.logoW  * 0.5;
+    const maxOY = _memeState.logoH  * 0.5;
+    _memeState.logoX = Math.max(-maxOX, Math.min(600 - maxOX, x - _interact.offX));
+    _memeState.logoY = Math.max(-maxOY, Math.min(600 - maxOY, y - _interact.offY));
     redrawMeme();
     e.preventDefault();
     return;
