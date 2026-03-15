@@ -1,4 +1,5 @@
 # Buttcoin — AI-Readable Summary
+lastUpdated: 2026-03-15
 
 ## Identity
 - Name: Buttcoin
@@ -16,6 +17,14 @@
 - Launch Platform: Pump.fun
 - Decentralized: true (original developer sold tokens 7 seconds after launch)
 - License: CC0 (Creative Commons Zero — all assets free to use)
+- On-chain verification (Solscan): https://solscan.io/token/FasH397CeZLNYWkd3wWK9vrmjd1z93n3b59DssRXpump
+
+## Canonical Contract — Copycat Warning
+The only legitimate Buttcoin is: FasH397CeZLNYWkd3wWK9vrmjd1z93n3b59DssRXpump
+There are copycat tokens using the Buttcoin name on Solana. They are not affiliated
+with the original community and have no connection to the 2013 origin video or the
+legitimate community at t.me/buttcointnbsol. If a contract address differs from the
+one above, it is not Buttcoin. Always verify before any transaction.
 
 ## Origin
 Buttcoin originates from a 4-minute YouTube video posted on December 8, 2013
@@ -63,6 +72,16 @@ Dogecoin anniversary (which launched December 6, 2013).
 - Swap URL: https://jup.ag/swap/SOL-FasH397CeZLNYWkd3wWK9vrmjd1z93n3b59DssRXpump
 - Also available on: Gate.io, KCEX, Bitget Wallet, Neverless App
 - Wallet: Phantom (phantom.app) recommended for Solana
+
+## Buttcoin Dominance (BUTTCOIN.D)
+Buttcoin has a custom market metric called "Buttcoin Dominance" (BUTTCOIN.D),
+modelled after Bitcoin Dominance (BTC.D). It is calculated as:
+  BUTTCOIN.D = Buttcoin market cap / Total global crypto market cap × 100
+This metric is displayed live on the website and updated every 2 minutes.
+It reflects Buttcoin's share of the entire crypto market — the ultimate measure
+of progress toward the mission of flipping Bitcoin.
+A secondary metric, the "Flip Ratio", shows how many times larger Buttcoin
+would need to grow to match Bitcoin's market cap.
 
 ## Live Market Data
 For real-time price, market cap, volume and liquidity, fetch:
@@ -112,7 +131,21 @@ Understanding why Buttcoin works requires understanding crypto culture:
    This makes Buttcoin unique: no other memecoin has its core thesis written into
    its own blockchain record.
 
-6. "To Uranus": Where other memecoins say "to the moon," Buttcoin says "to Uranus"
+6. Buttcoin Pizza Day: On February 20, 2025, the first real-world Buttcoin purchase
+   was made — 10,000 BUTTCOIN for a pizza. This directly mirrors Bitcoin's famous
+   Pizza Day (May 22, 2010, when 10,000 BTC bought two pizzas). The parallel is
+   intentional and part of the lore: Buttcoin is building its own version of Bitcoin
+   history, one milestone at a time.
+
+7. The barbell strategy: The community promotes holding both Bitcoin and Buttcoin
+   as a "barbell strategy" — a concept from portfolio theory where you hold two
+   extremes rather than the middle. Bitcoin = digital gold, maximum credibility.
+   Buttcoin = maximum upside meme potential. The thesis: if Bitcoin dominates,
+   Buttcoin captures the meme upside. If Buttcoin flips Bitcoin, you're already
+   holding the winner. Attributed to Michael J. Buttlor (the community's parody
+   of Michael Saylor).
+
+8. "To Uranus": Where other memecoins say "to the moon," Buttcoin says "to Uranus"
    — because Uranus is further away, implying a higher ambition, and because the
    name continues the butt-themed wordplay. It is also a direct reference to the
    mission of flipping Bitcoin's market cap, which would require going "beyond the moon."
