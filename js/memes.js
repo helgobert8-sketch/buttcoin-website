@@ -65,12 +65,11 @@ window.loadMemes = function(category = 'all') {
   if (!grid) return;
   grid.innerHTML = '<div class="meme-loading">Loading memes…</div>';
 
-  // If Firebase is connected, load from there
+  // Load from Firebase if available, else from static manifest, else placeholder
   if (window.firebaseStorage && window.loadMemesFromFirebase) {
     loadFromFirebase(category);
   } else {
-    // Fallback: show placeholder memes + link to memedepot
-    loadPlaceholder(category);
+    loadFromManifest(category);
   }
 };
 
@@ -106,6 +105,28 @@ async function loadFromFirebase(category) {
     });
   } catch (err) {
     console.warn('Firebase load failed, falling back to placeholder:', err);
+    loadPlaceholder(category);
+  }
+}
+
+async function loadFromManifest(category) {
+  const grid = document.getElementById('meme-grid');
+  try {
+    const res = await fetch('memes.json');
+    const all = await res.json();
+    const filtered = category === 'all' ? all : all.filter(m => m.category === category);
+    displayedMemes = filtered;
+    if (grid) grid.innerHTML = '';
+    if (filtered.length === 0) { loadPlaceholder(category); return; }
+    const batch = filtered.slice(0, PAGE_SIZE);
+    batch.forEach(meme => {
+      const el = document.createElement('div');
+      el.className = 'meme-item';
+      el.innerHTML = `<img src="${meme.url}" alt="${meme.filename || 'Buttcoin meme'}" loading="lazy" onerror="this.closest('.meme-item').style.display='none'" />`;
+      el.addEventListener('click', () => openMemeModal(meme));
+      if (grid) grid.appendChild(el);
+    });
+  } catch (err) {
     loadPlaceholder(category);
   }
 }
