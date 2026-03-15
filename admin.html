@@ -1,0 +1,563 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Buttcoin Admin — Meme Review</title>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --orange: #f7931a;
+      --purple: #7c3aed;
+      --bg:     #0d0d0d;
+      --card:   #1a1a1a;
+      --border: #2a2a2a;
+      --text:   #e5e5e5;
+      --muted:  #888;
+      --green:  #22c55e;
+      --red:    #ef4444;
+    }
+
+    body {
+      background: var(--bg);
+      color: var(--text);
+      font-family: system-ui, -apple-system, sans-serif;
+      font-size: 15px;
+      min-height: 100vh;
+    }
+
+    /* ── HEADER ─────────────────────────────── */
+    header {
+      background: var(--card);
+      border-bottom: 1px solid var(--border);
+      padding: 16px 24px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 16px;
+    }
+    .header-logo {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      font-weight: 700;
+      font-size: 1.1rem;
+      color: var(--orange);
+    }
+    .header-logo img { width: 32px; height: 32px; border-radius: 50%; }
+    .header-right {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      font-size: 0.85rem;
+      color: var(--muted);
+    }
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 8px 16px;
+      border-radius: 8px;
+      border: none;
+      cursor: pointer;
+      font-size: 0.85rem;
+      font-weight: 600;
+      transition: opacity .15s;
+    }
+    .btn:hover { opacity: .85; }
+    .btn-primary  { background: var(--orange); color: #000; }
+    .btn-danger   { background: var(--red);    color: #fff; }
+    .btn-success  { background: var(--green);  color: #000; }
+    .btn-ghost    { background: var(--border); color: var(--text); }
+    .btn:disabled { opacity: .4; cursor: not-allowed; }
+
+    /* ── GATE (login / access denied) ───────── */
+    #gate {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      min-height: 80vh;
+      gap: 16px;
+      text-align: center;
+      padding: 24px;
+    }
+    #gate h2 { font-size: 1.4rem; }
+    #gate p  { color: var(--muted); max-width: 360px; }
+
+    /* ── MAIN ───────────────────────────────── */
+    main { display: none; padding: 24px; max-width: 1400px; margin: 0 auto; }
+
+    /* ── BANNER ─────────────────────────────── */
+    .banner {
+      background: #1c1400;
+      border: 1px solid var(--orange);
+      border-radius: 10px;
+      padding: 12px 16px;
+      margin-bottom: 24px;
+      font-size: 0.88rem;
+      color: var(--orange);
+      display: none;
+    }
+    .banner.visible { display: block; }
+
+    /* ── SECTION HEADER ─────────────────────── */
+    .section-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 16px;
+      gap: 12px;
+      flex-wrap: wrap;
+    }
+    .section-header h2 {
+      font-size: 1.1rem;
+      font-weight: 700;
+    }
+    .badge {
+      background: var(--orange);
+      color: #000;
+      font-size: 0.75rem;
+      font-weight: 700;
+      padding: 2px 8px;
+      border-radius: 99px;
+    }
+    .badge.empty { background: var(--border); color: var(--muted); }
+
+    /* ── MEME GRID ──────────────────────────── */
+    .meme-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+      gap: 16px;
+      margin-bottom: 40px;
+    }
+
+    .meme-card {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+    }
+    .meme-card img, .meme-card video {
+      width: 100%;
+      aspect-ratio: 1 / 1;
+      object-fit: cover;
+      display: block;
+      background: #111;
+    }
+    .meme-card-info {
+      padding: 10px 12px;
+      font-size: 0.78rem;
+      color: var(--muted);
+      border-top: 1px solid var(--border);
+      word-break: break-all;
+    }
+    .meme-card-info .filename {
+      color: var(--text);
+      font-weight: 500;
+      margin-bottom: 4px;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+    .meme-card-actions {
+      display: flex;
+      gap: 8px;
+      padding: 10px 12px;
+      border-top: 1px solid var(--border);
+    }
+    .meme-card-actions .btn { flex: 1; justify-content: center; font-size: 0.8rem; padding: 7px 10px; }
+
+    /* ── EMPTY STATE ────────────────────────── */
+    .empty-state {
+      grid-column: 1 / -1;
+      text-align: center;
+      padding: 48px 24px;
+      color: var(--muted);
+      font-size: 0.95rem;
+    }
+
+    /* ── TOAST ──────────────────────────────── */
+    #toast {
+      position: fixed;
+      bottom: 24px;
+      left: 50%;
+      transform: translateX(-50%) translateY(80px);
+      background: var(--card);
+      border: 1px solid var(--border);
+      color: var(--text);
+      padding: 10px 20px;
+      border-radius: 8px;
+      font-size: 0.88rem;
+      transition: transform .25s ease;
+      z-index: 9999;
+      white-space: nowrap;
+    }
+    #toast.show { transform: translateX(-50%) translateY(0); }
+
+    /* ── SPINNER ────────────────────────────── */
+    .spinner {
+      display: inline-block;
+      width: 18px; height: 18px;
+      border: 2px solid var(--border);
+      border-top-color: var(--orange);
+      border-radius: 50%;
+      animation: spin .6s linear infinite;
+      vertical-align: middle;
+    }
+    @keyframes spin { to { transform: rotate(360deg); } }
+
+    /* ── DIVIDER ────────────────────────────── */
+    hr { border: none; border-top: 1px solid var(--border); margin: 32px 0; }
+  </style>
+</head>
+<body>
+
+<header>
+  <div class="header-logo">
+    <img src="assets/logo.png" alt="Buttcoin" />
+    Admin Panel
+  </div>
+  <div class="header-right">
+    <span id="user-email"></span>
+    <button class="btn btn-ghost" id="btn-logout" style="display:none" onclick="doSignOut()">Sign out</button>
+  </div>
+</header>
+
+<!-- ── GATE ─────────────────────────────────── -->
+<div id="gate">
+  <img src="assets/logo.png" alt="Buttcoin" style="width:64px;border-radius:50%;margin-bottom:8px;" />
+  <h2>Buttcoin Admin</h2>
+  <p id="gate-msg">Sign in with your admin Google account to access the meme review queue.</p>
+  <button class="btn btn-primary" id="btn-login" onclick="doSignIn()">Sign in with Google</button>
+  <p id="gate-error" style="color:var(--red);font-size:0.85rem;display:none;"></p>
+</div>
+
+<!-- ── MAIN ──────────────────────────────────── -->
+<main id="main-panel">
+
+  <div class="banner" id="regen-banner">
+    ✦ You approved one or more memes. Remember to run <code>python scripts/generate_meme_manifest.py</code> to update the gallery.
+  </div>
+
+  <!-- Pending queue -->
+  <div class="section-header">
+    <h2>Pending review <span class="badge empty" id="pending-count">…</span></h2>
+    <button class="btn btn-ghost" onclick="loadPending()">↺ Refresh</button>
+  </div>
+  <div class="meme-grid" id="pending-grid">
+    <div class="empty-state"><span class="spinner"></span></div>
+  </div>
+
+  <hr />
+
+  <!-- Approved community memes -->
+  <div class="section-header">
+    <h2>Approved community memes <span class="badge empty" id="community-count">…</span></h2>
+    <button class="btn btn-ghost" onclick="loadCommunity()">↺ Refresh</button>
+  </div>
+  <div class="meme-grid" id="community-grid">
+    <div class="empty-state"><span class="spinner"></span></div>
+  </div>
+
+</main>
+
+<div id="toast"></div>
+
+<!-- Firebase SDK -->
+<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-auth-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-storage-compat.js"></script>
+
+<script>
+// ── CONFIG ───────────────────────────────────
+const FIREBASE_CONFIG = {
+  apiKey:            "AIzaSyDcdgb_x9IXBqTIgHOc0GEgTcak-PErt9k",
+  authDomain:        "butttcoin-fbe0f.firebaseapp.com",
+  projectId:         "butttcoin-fbe0f",
+  storageBucket:     "butttcoin-fbe0f.firebasestorage.app",
+  messagingSenderId: "482524167127",
+  appId:             "1:482524167127:web:761862f55e3312fb97a992"
+};
+
+firebase.initializeApp(FIREBASE_CONFIG);
+const auth    = firebase.auth();
+const storage = firebase.storage();
+
+let approvedAny = false;
+
+// ── AUTH ─────────────────────────────────────
+async function doSignIn() {
+  const provider = new firebase.auth.GoogleAuthProvider();
+  try {
+    await auth.signInWithPopup(provider);
+  } catch (err) {
+    showGateError(err.message);
+  }
+}
+
+async function doSignOut() {
+  await auth.signOut();
+}
+
+auth.onAuthStateChanged(async user => {
+  if (!user) {
+    showGate('Sign in with your admin Google account to access the meme review queue.');
+    return;
+  }
+
+  // Check admin role via custom claim or allowed email list
+  const token = await user.getIdTokenResult();
+  const isAdmin = token.claims.admin === true || ADMIN_EMAILS.includes(user.email);
+
+  if (!isAdmin) {
+    showGate('Access denied. This panel is for admins only.', true);
+    document.getElementById('btn-login').style.display = 'none';
+    return;
+  }
+
+  // Authenticated admin — show panel
+  document.getElementById('gate').style.display = 'none';
+  document.getElementById('main-panel').style.display = 'block';
+  document.getElementById('user-email').textContent = user.email;
+  document.getElementById('btn-logout').style.display = 'inline-flex';
+
+  loadPending();
+  loadCommunity();
+});
+
+// ── ADMIN EMAIL LIST ─────────────────────────
+// Add your admin Google email(s) here
+const ADMIN_EMAILS = [
+  // 'you@gmail.com',
+];
+
+// ── GATE HELPERS ─────────────────────────────
+function showGate(msg, error = false) {
+  document.getElementById('gate').style.display        = 'flex';
+  document.getElementById('main-panel').style.display  = 'none';
+  document.getElementById('gate-msg').textContent      = msg;
+  document.getElementById('btn-login').style.display   = error ? 'none' : 'inline-flex';
+  if (error) showGateError(msg);
+}
+function showGateError(msg) {
+  const el = document.getElementById('gate-error');
+  el.textContent = msg;
+  el.style.display = 'block';
+}
+
+// ── LOAD PENDING ─────────────────────────────
+async function loadPending() {
+  const grid = document.getElementById('pending-grid');
+  const badge = document.getElementById('pending-count');
+  grid.innerHTML = `<div class="empty-state"><span class="spinner"></span></div>`;
+
+  try {
+    const ref = storage.ref('memes/pending');
+    const result = await ref.listAll();
+    const items = result.items;
+
+    badge.textContent = items.length;
+    badge.className = items.length > 0 ? 'badge' : 'badge empty';
+
+    if (items.length === 0) {
+      grid.innerHTML = `<div class="empty-state">No pending submissions — all clear!</div>`;
+      return;
+    }
+
+    grid.innerHTML = '';
+    for (const item of items) {
+      const url = await item.getDownloadURL();
+      grid.appendChild(makePendingCard(item, url));
+    }
+  } catch (err) {
+    grid.innerHTML = `<div class="empty-state" style="color:var(--red)">Failed to load: ${err.message}</div>`;
+  }
+}
+
+function makePendingCard(item, url) {
+  const card = document.createElement('div');
+  card.className = 'meme-card';
+  card.id = `card-${btoa(item.fullPath).replace(/[^a-z0-9]/gi, '')}`;
+
+  const isVideo = item.name.match(/\.(mp4|webm)$/i);
+  const media = isVideo
+    ? `<video src="${url}" controls muted playsinline style="width:100%;aspect-ratio:1/1;object-fit:cover;background:#111;"></video>`
+    : `<img src="${url}" alt="${item.name}" loading="lazy" />`;
+
+  card.innerHTML = `
+    ${media}
+    <div class="meme-card-info">
+      <div class="filename">${item.name}</div>
+    </div>
+    <div class="meme-card-actions">
+      <button class="btn btn-success" onclick="approveMeme(this, '${item.fullPath}', '${item.name}')">✓ Approve</button>
+      <button class="btn btn-danger"  onclick="rejectMeme(this, '${item.fullPath}')">✕ Reject</button>
+    </div>
+  `;
+  return card;
+}
+
+// ── APPROVE ──────────────────────────────────
+async function approveMeme(btn, fullPath, filename) {
+  btn.disabled = true;
+  btn.closest('.meme-card-actions').querySelectorAll('.btn').forEach(b => b.disabled = true);
+
+  try {
+    // Download from pending
+    const pendingRef = storage.ref(fullPath);
+    const url = await pendingRef.getDownloadURL();
+    const response = await fetch(url);
+    const blob = await response.blob();
+
+    // Upload to approved/community
+    const destRef = storage.ref(`memes/approved/community/${filename}`);
+    await destRef.put(blob, { contentType: blob.type });
+
+    // Delete from pending
+    await pendingRef.delete();
+
+    // Remove card from grid
+    const cardId = `card-${btoa(fullPath).replace(/[^a-z0-9]/gi, '')}`;
+    const card = document.getElementById(cardId);
+    if (card) card.remove();
+
+    // Update badge count
+    const badge = document.getElementById('pending-count');
+    const count = parseInt(badge.textContent) - 1;
+    badge.textContent = count;
+    badge.className = count > 0 ? 'badge' : 'badge empty';
+
+    // Show regen banner
+    approvedAny = true;
+    document.getElementById('regen-banner').classList.add('visible');
+
+    // Reload community grid
+    loadCommunity();
+
+    showToast('✓ Approved and moved to Community');
+  } catch (err) {
+    showToast('Error: ' + err.message, true);
+    btn.closest('.meme-card-actions').querySelectorAll('.btn').forEach(b => b.disabled = false);
+  }
+}
+
+// ── REJECT ───────────────────────────────────
+async function rejectMeme(btn, fullPath) {
+  if (!confirm('Delete this submission? This cannot be undone.')) return;
+
+  btn.disabled = true;
+  btn.closest('.meme-card-actions').querySelectorAll('.btn').forEach(b => b.disabled = true);
+
+  try {
+    await storage.ref(fullPath).delete();
+
+    const cardId = `card-${btoa(fullPath).replace(/[^a-z0-9]/gi, '')}`;
+    const card = document.getElementById(cardId);
+    if (card) card.remove();
+
+    const badge = document.getElementById('pending-count');
+    const count = parseInt(badge.textContent) - 1;
+    badge.textContent = count;
+    badge.className = count > 0 ? 'badge' : 'badge empty';
+
+    showToast('Submission rejected and deleted');
+  } catch (err) {
+    showToast('Error: ' + err.message, true);
+    btn.closest('.meme-card-actions').querySelectorAll('.btn').forEach(b => b.disabled = false);
+  }
+}
+
+// ── LOAD COMMUNITY ────────────────────────────
+async function loadCommunity() {
+  const grid = document.getElementById('community-grid');
+  const badge = document.getElementById('community-count');
+  grid.innerHTML = `<div class="empty-state"><span class="spinner"></span></div>`;
+
+  try {
+    const ref = storage.ref('memes/approved/community');
+    const result = await ref.listAll();
+    const items = result.items;
+
+    badge.textContent = items.length;
+    badge.className = items.length > 0 ? 'badge' : 'badge empty';
+
+    if (items.length === 0) {
+      grid.innerHTML = `<div class="empty-state">No approved community memes yet.</div>`;
+      return;
+    }
+
+    grid.innerHTML = '';
+    for (const item of items) {
+      const url = await item.getDownloadURL();
+      grid.appendChild(makeCommunityCard(item, url));
+    }
+  } catch (err) {
+    grid.innerHTML = `<div class="empty-state" style="color:var(--red)">Failed to load: ${err.message}</div>`;
+  }
+}
+
+function makeCommunityCard(item, url) {
+  const card = document.createElement('div');
+  card.className = 'meme-card';
+  card.id = `card-${btoa(item.fullPath).replace(/[^a-z0-9]/gi, '')}`;
+
+  const isVideo = item.name.match(/\.(mp4|webm)$/i);
+  const media = isVideo
+    ? `<video src="${url}" controls muted playsinline style="width:100%;aspect-ratio:1/1;object-fit:cover;background:#111;"></video>`
+    : `<img src="${url}" alt="${item.name}" loading="lazy" />`;
+
+  card.innerHTML = `
+    ${media}
+    <div class="meme-card-info">
+      <div class="filename">${item.name}</div>
+    </div>
+    <div class="meme-card-actions">
+      <button class="btn btn-danger" onclick="deleteCommunity(this, '${item.fullPath}')">✕ Delete</button>
+    </div>
+  `;
+  return card;
+}
+
+async function deleteCommunity(btn, fullPath) {
+  if (!confirm('Delete this approved meme? This cannot be undone.')) return;
+  btn.disabled = true;
+
+  try {
+    await storage.ref(fullPath).delete();
+
+    const cardId = `card-${btoa(fullPath).replace(/[^a-z0-9]/gi, '')}`;
+    const card = document.getElementById(cardId);
+    if (card) card.remove();
+
+    const badge = document.getElementById('community-count');
+    const count = parseInt(badge.textContent) - 1;
+    badge.textContent = count;
+    badge.className = count > 0 ? 'badge' : 'badge empty';
+
+    approvedAny = true;
+    document.getElementById('regen-banner').classList.add('visible');
+
+    showToast('Meme deleted from Community');
+  } catch (err) {
+    showToast('Error: ' + err.message, true);
+    btn.disabled = false;
+  }
+}
+
+// ── TOAST ────────────────────────────────────
+let toastTimer;
+function showToast(msg, error = false) {
+  const el = document.getElementById('toast');
+  el.textContent = msg;
+  el.style.borderColor = error ? 'var(--red)' : 'var(--green)';
+  el.classList.add('show');
+  clearTimeout(toastTimer);
+  toastTimer = setTimeout(() => el.classList.remove('show'), 3000);
+}
+</script>
+</body>
+</html>
