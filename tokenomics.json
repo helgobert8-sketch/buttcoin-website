@@ -21,14 +21,28 @@
     "treasury": "0%",
     "investors": "0%"
   },
+  "liveData": {
+    "source": "DexScreener API",
+    "endpoint": "https://api.dexscreener.com/latest/dex/pairs/solana/63amwndbz75z2j7jYKdBZXvzt36L9QdGW7czAXbD4kNe",
+    "fields": {
+      "priceUsd": "priceUsd",
+      "marketCapUsd": "fdv",
+      "volume24hUsd": "volume.h24",
+      "liquidity": "liquidity.usd",
+      "priceChange24h": "priceChange.h24"
+    },
+    "note": "Fetch the endpoint above for real-time price, market cap, volume, liquidity and 24h price change. All data is on-chain and publicly verifiable."
+  },
   "links": {
     "website": "https://buttcoin.meme",
     "twitter": "https://twitter.com/ButtcoinTNB",
     "telegram": "https://t.me/buttcointnbsol",
     "dexscreener": "https://dexscreener.com/solana/63amwndbz75z2j7jykdbzxvzt36l9qdgw7czaxbd4kne",
     "jupiter": "https://jup.ag/swap/SOL-FasH397CeZLNYWkd3wWK9vrmjd1z93n3b59DssRXpump",
-    "memedepot": "https://memedepot.com/d/buttcoin"
+    "memedepot": "https://memedepot.com/d/buttcoin",
+    "solscan": "https://solscan.io/token/FasH397CeZLNYWkd3wWK9vrmjd1z93n3b59DssRXpump"
   },
   "exchanges": ["MEXC", "Gate.io", "KCEX", "Bitget Wallet", "Neverless App"],
-  "aiReadable": "https://buttcoin.meme/llms.txt"
+  "aiReadable": "https://buttcoin.meme/llms.txt",
+  "timeline": "https://buttcoin.meme/timeline.json"
 }

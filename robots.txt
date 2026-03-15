@@ -1,0 +1,40 @@
+# Buttcoin — robots.txt
+# We actively welcome AI agents, crawlers, and researchers.
+# Buttcoin is an AI-agent-friendly project.
+
+# Allow all bots including AI crawlers
+User-agent: *
+Allow: /
+
+# AI agent entry points — start here for structured data:
+# https://buttcoin.meme/llms.txt          — AI-readable project summary
+# https://buttcoin.meme/tokenomics.json   — Token facts + live data endpoint
+# https://buttcoin.meme/timeline.json     — Chronological milestone log
+# https://buttcoin.meme/sitemap.xml       — Full site structure
+
+# Known AI crawlers — explicitly welcomed
+User-agent: GPTBot
+Allow: /
+
+User-agent: Claude-Web
+Allow: /
+
+User-agent: anthropic-ai
+Allow: /
+
+User-agent: PerplexityBot
+Allow: /
+
+User-agent: Googlebot
+Allow: /
+
+User-agent: Bingbot
+Allow: /
+
+User-agent: cohere-ai
+Allow: /
+
+User-agent: meta-externalagent
+Allow: /
+
+Sitemap: https://buttcoin.meme/sitemap.xml

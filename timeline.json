@@ -1,0 +1,95 @@
+{
+  "project": "Buttcoin",
+  "description": "Chronological milestone log. Machine-readable. For AI agents and researchers.",
+  "lastUpdated": "2026-03-15",
+  "events": [
+    {
+      "date": "2013-12-08",
+      "type": "origin",
+      "title": "Buttcoin Concept Born",
+      "description": "James D. McMurray publishes a 4-minute YouTube video showing the Bitcoin logo rotated 90 degrees, naming it 'Buttcoin' because it resembles a pair of buttocks. This is the verified cultural origin of Buttcoin — predating almost all memecoins except Dogecoin.",
+      "verifiable": true,
+      "source": "https://www.youtube.com/watch?v=IHJQHYjOVFg"
+    },
+    {
+      "date": "2013-12-06",
+      "type": "context",
+      "title": "Dogecoin Launches",
+      "description": "Dogecoin launches, establishing the memecoin category. Buttcoin's origin video follows two days later.",
+      "verifiable": true
+    },
+    {
+      "date": "2025-01-28",
+      "type": "context",
+      "title": "Dogecoin 11th Anniversary",
+      "description": "Dogecoin celebrates its 11th anniversary, two days before Buttcoin's on-chain launch."
+    },
+    {
+      "date": "2025-01-30",
+      "type": "launch",
+      "title": "Buttcoin Launches on Solana",
+      "description": "Buttcoin token launches on Pump.fun on the Solana blockchain. Contract: FasH397CeZLNYWkd3wWK9vrmjd1z93n3b59DssRXpump. The original developer sold all tokens 7 seconds after launch — making it fully community-owned from inception. No team allocation, no treasury, no insider holdings.",
+      "verifiable": true,
+      "contractAddress": "FasH397CeZLNYWkd3wWK9vrmjd1z93n3b59DssRXpump",
+      "launchPlatform": "Pump.fun"
+    },
+    {
+      "date": "2025-02",
+      "type": "community",
+      "title": "Telegram Community Established",
+      "description": "Official Telegram channel launched: t.me/buttcointnbsol. Grows to 2,400+ members.",
+      "communitySize": "2400+"
+    },
+    {
+      "date": "2025-03",
+      "type": "exchange",
+      "title": "First CEX Listings",
+      "description": "Buttcoin listed on MEXC, Gate.io, and KCEX — establishing presence on centralized exchanges beyond Solana DEXes.",
+      "exchanges": ["MEXC", "Gate.io", "KCEX"]
+    },
+    {
+      "date": "2025-04",
+      "type": "community",
+      "title": "Meme Depot Reaches 1,000 Memes",
+      "description": "The Buttcoin community meme collection on memedepot.com/d/buttcoin surpasses 1,000 memes — one of the largest community-generated meme collections for any memecoin.",
+      "verifiable": true,
+      "source": "https://memedepot.com/d/buttcoin"
+    },
+    {
+      "date": "2025-06",
+      "type": "content",
+      "title": "Buttcoin Prague 2025 — 21 Rules of Buttcoin",
+      "description": "Michael J. Buttlor (community character, parody of Michael Saylor) presents '21 Rules of Buttcoin' — a Buttcoin-themed parody of Michael Saylor's '21 Rules of Bitcoin' presentation. Becomes core community lore.",
+      "verifiable": true
+    },
+    {
+      "date": "2025-07",
+      "type": "exchange",
+      "title": "Listed on Bitget Wallet and Neverless App",
+      "description": "Buttcoin adds two more platforms: Bitget Wallet and Neverless App.",
+      "exchanges": ["Bitget Wallet", "Neverless App"]
+    },
+    {
+      "date": "2025-12",
+      "type": "community",
+      "title": "Meme Depot Surpasses 1,800 Memes",
+      "description": "Community meme collection grows to 1,800+ memes across 4 phases: Classics, Having Fun, Uranus, and Feeling Buttish.",
+      "memeCount": "1800+",
+      "source": "https://memedepot.com/d/buttcoin"
+    },
+    {
+      "date": "2026-01",
+      "type": "website",
+      "title": "New Website Launched",
+      "description": "Full community website launched at buttcoin.meme (previously thenextbitcoin.fun). Features: live price tracker, Buttcoin Dominance metric, meme depot gallery, laser eye maker, meme randomizer, articles, presentations, media section, and an AI-readable data layer (llms.txt, tokenomics.json, timeline.json).",
+      "url": "https://buttcoin.meme"
+    },
+    {
+      "date": "2026-03",
+      "type": "community",
+      "title": "Telegram Community Reaches 2,400+ Members",
+      "description": "Telegram community at t.me/buttcointnbsol reaches 2,400+ active members.",
+      "communitySize": "2400+"
+    }
+  ]
+}
