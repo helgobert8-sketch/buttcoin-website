@@ -66,7 +66,7 @@ window.loadMemes = function(category = 'all') {
   grid.innerHTML = '<div class="meme-loading">Loading memes…</div>';
 
   // If Firebase is connected, load from there
-  if (window.firebaseStorage) {
+  if (window.firebaseStorage && window.loadMemesFromFirebase) {
     loadFromFirebase(category);
   } else {
     // Fallback: show placeholder memes + link to memedepot
@@ -78,6 +78,37 @@ window.loadNextPage = function() {
   page++;
   renderMemes();
 };
+
+async function loadFromFirebase(category) {
+  const grid = document.getElementById('meme-grid');
+  try {
+    const memes = await window.loadMemesFromFirebase(category, PAGE_SIZE);
+    displayedMemes = memes;
+    if (grid) grid.innerHTML = '';
+    if (memes.length === 0) {
+      if (grid) grid.innerHTML = `
+        <div class="meme-loading">
+          <p>Memes loading from the Buttverse…</p>
+          <p style="margin-top:12px">
+            <a href="https://memedepot.com/d/buttcoin" target="_blank" rel="noopener" class="btn btn-outline btn-sm">
+              Browse all 1,800+ memes on Meme Depot ↗
+            </a>
+          </p>
+        </div>`;
+      return;
+    }
+    memes.forEach(meme => {
+      const el = document.createElement('div');
+      el.className = 'meme-item';
+      el.innerHTML = `<img src="${meme.url}" alt="${meme.alt || 'Buttcoin meme'}" loading="lazy" onerror="this.closest('.meme-item').style.display='none'" />`;
+      el.addEventListener('click', () => openMemeModal(meme));
+      if (grid) grid.appendChild(el);
+    });
+  } catch (err) {
+    console.warn('Firebase load failed, falling back to placeholder:', err);
+    loadPlaceholder(category);
+  }
+}
 
 function loadPlaceholder(category) {
   const filtered = category === 'all'
