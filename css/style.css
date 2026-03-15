@@ -407,7 +407,8 @@ h1, h2, h3, h4 { color: var(--white); font-weight: 700; line-height: 1.2; }
 .about-text p {
   margin-bottom: 16px;
   color: var(--text);
-  line-height: 1.8;
+  font-size: 1.1rem;
+  line-height: 1.9;
 }
 .about-text strong { color: var(--white); }
 .about-facts {
@@ -428,7 +429,7 @@ h1, h2, h3, h4 { color: var(--white); font-weight: 700; line-height: 1.2; }
   text-align: center;
 }
 .fact-item strong { display: block; color: var(--white); margin-bottom: 4px; }
-.fact-item p { color: var(--muted); font-size: 0.9rem; margin: 0; }
+.fact-item p { color: var(--muted); font-size: 1rem; margin: 0; }
 .about-video {}
 .video-label {
   font-size: 0.8rem;
