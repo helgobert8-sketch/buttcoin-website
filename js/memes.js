@@ -326,14 +326,15 @@ function initUpload() {
 }
 
 // ─── MEME RANDOMIZER ─────────────────────────
-const memeCanvas    = document.getElementById('meme-canvas');
-const memeCtx       = memeCanvas ? memeCanvas.getContext('2d') : null;
+const memeCanvas = document.getElementById('meme-canvas');
+const memeCtx    = memeCanvas ? memeCanvas.getContext('2d') : null;
 
-// Persisted state so drag-to-reposition works after generation
+// Persisted state — enables drag/resize after generation
 let _memeState = null;
-const _logoDrag = { active: false, offX: 0, offY: 0 };
+// Single interaction slot (mode: null | 'logoDrag' | 'logoResize' | 'textDrag' | 'tagDrag')
+const _interact = { mode: null, offX: 0, offY: 0, corner: null, anchorX: 0, anchorY: 0 };
 
-// ─── CHARACTER & LOGO POOLS ───────────────────
+// ─── LOGO POOL ────────────────────────────────
 const LOGO_IMGS = [
   'assets/logos/randomizer/1671515337319.png',
   'assets/logos/randomizer/bitcoin-15518 no background.png',
@@ -347,21 +348,9 @@ const LOGO_IMGS = [
   'assets/logos/randomizer/vecteezy_bitcoin-symbol-in-cyber-style_56472366.png',
   'assets/logos/randomizer/vecteezy_neon-bitcoin-coin-digital-art_56472368 (1).png',
 ];
-const BUTTOSHI_IMGS = [
-  'assets/characters/buttoshi/Buttoshi cut upscaled.png',
-  'assets/characters/buttoshi/James Sticker no background.png',
-  'assets/characters/buttoshi/James upscaled no background.png',
-  'assets/characters/buttoshi/James Sticker 03 no background.png',
-];
-const BUTTLOR_IMGS = [
-  'assets/characters/buttlor/cut version.jpg',
-  'assets/characters/buttlor/Running Buttcoin II cut.png',
-  'assets/characters/buttlor/superman (1).png',
-];
 
 function randFrom(arr) { return arr[Math.floor(Math.random() * arr.length)]; }
 
-// Load an image, resolving to null on error (never rejects)
 function loadImg(src) {
   return new Promise(resolve => {
     const img = new Image();
@@ -372,7 +361,6 @@ function loadImg(src) {
   });
 }
 
-// Fetch a random meme URL from the manifest (cached after first load)
 async function randomMemeSrc() {
   try {
     if (!window._memeManifestCache) {
@@ -387,12 +375,10 @@ async function randomMemeSrc() {
 async function generateMeme() {
   if (!memeCanvas || !memeCtx) return;
 
-  const useLogo     = document.getElementById('r-logo')?.checked;
-  const useTagline  = document.getElementById('r-tagline')?.checked;
-  const useQuote    = document.getElementById('r-quote')?.checked;
-  const useButtoshi = document.getElementById('r-buttoshi')?.checked;
-  const useButtlor  = document.getElementById('r-buttlor')?.checked;
-  const useMemeBg   = document.getElementById('r-memebg')?.checked;
+  const useLogo    = document.getElementById('r-logo')?.checked;
+  const useTagline = document.getElementById('r-tagline')?.checked;
+  const useQuote   = document.getElementById('r-quote')?.checked;
+  const useMemeBg  = document.getElementById('r-memebg')?.checked;
 
   const tagline = randFrom(MEME_TAGLINES);
   const quote   = randFrom(MEME_QUOTES);
@@ -410,46 +396,37 @@ async function generateMeme() {
   const hint = document.getElementById('randomizer-hint');
   if (hint) hint.style.display = 'none';
 
-  // ── Load all images in parallel ───────────────
   const memeSrc = useMemeBg ? await randomMemeSrc() : null;
-  const [bgImg, logoImg, buttoshiImg, buttlorImg] = await Promise.all([
-    memeSrc     ? loadImg(memeSrc)                : Promise.resolve(null),
-    useLogo     ? loadImg(randFrom(LOGO_IMGS))    : Promise.resolve(null),
-    useButtoshi ? loadImg(randFrom(BUTTOSHI_IMGS)) : Promise.resolve(null),
-    useButtlor  ? loadImg(randFrom(BUTTLOR_IMGS))  : Promise.resolve(null),
+  const [bgImg, logoImg] = await Promise.all([
+    memeSrc ? loadImg(memeSrc)             : Promise.resolve(null),
+    useLogo ? loadImg(randFrom(LOGO_IMGS)) : Promise.resolve(null),
   ]);
 
-  // ── Compute initial logo position ─────────────
-  let logoX = 0, logoY = 0, logoW = 0, logoH = 0, badgeMode = false;
+  // Default logo position — centered, shifted up slightly when text is present
+  let logoX = 0, logoY = 0, logoW = 0, logoH = 0;
   if (logoImg) {
-    if (buttoshiImg || buttlorImg) {
-      // Badge: small, top-center
-      logoW = logoH = 120;
-      logoX = (600 - logoW) / 2;
-      logoY = 16;
-      badgeMode = true;
-    } else {
-      // Standalone: large, vertically centered
-      logoW = logoH = 320;
-      logoX = (600 - logoW) / 2;
-      logoY = (600 - logoH) / 2 - (useTagline || useQuote ? 40 : 0);
-    }
+    logoW = logoH = 320;
+    logoX = (600 - logoW) / 2;
+    logoY = (600 - logoH) / 2 - (useTagline || useQuote ? 40 : 0);
   }
 
-  // ── Build and store state ─────────────────────
   _memeState = {
-    bgImg, logoImg, buttoshiImg, buttlorImg,
+    bgImg, logoImg,
     scheme, tagline, quote, useTagline, useQuote,
-    logoX, logoY, logoW, logoH, badgeMode,
+    logoX, logoY, logoW, logoH,
+    // Text positions: null = auto-positioned on first draw
+    textPos: null,
+    tagPos:  null,
+    // Hit-boxes filled in by drawMemeText each frame
+    textBox: null,
+    tagBox:  null,
   };
 
   redrawMeme();
 
   document.getElementById('download-meme-btn').style.display = 'block';
-
-  // Show drag hint if there's a logo to drag
   const dragHint = document.getElementById('logo-drag-hint');
-  if (dragHint) dragHint.style.display = logoImg ? 'block' : 'none';
+  if (dragHint) dragHint.style.display = (logoImg || useTagline || useQuote) ? 'block' : 'none';
 }
 
 // ─── REDRAW FROM STATE ────────────────────────
@@ -457,7 +434,6 @@ function redrawMeme() {
   if (!_memeState || !memeCtx) return;
   const s = _memeState;
 
-  // Background
   memeCtx.fillStyle = s.scheme.bg;
   memeCtx.fillRect(0, 0, 600, 600);
 
@@ -475,30 +451,28 @@ function redrawMeme() {
     memeCtx.fillRect(0, 0, 600, 600);
   }
 
-  // Characters (fixed position)
-  const both  = !!(s.buttoshiImg && s.buttlorImg);
-  const charH = both ? 310 : 370;
-  if (s.buttoshiImg) {
-    const w = (s.buttoshiImg.width / s.buttoshiImg.height) * charH;
-    const x = both ? Math.max(0, 300 - w - 10) : (600 - w) / 2;
-    memeCtx.drawImage(s.buttoshiImg, x, 600 - charH - 10, w, charH);
-  }
-  if (s.buttlorImg) {
-    const w = (s.buttlorImg.width / s.buttlorImg.height) * charH;
-    const x = both ? Math.min(600 - w, 310) : (600 - w) / 2;
-    memeCtx.drawImage(s.buttlorImg, x, 600 - charH - 10, w, charH);
-  }
-
-  // Logo at its current (draggable) position
   if (s.logoImg) {
     memeCtx.drawImage(s.logoImg, s.logoX, s.logoY, s.logoW, s.logoH);
   }
 
-  // Text
-  drawMemeText(s.useTagline ? s.tagline : null, s.useQuote ? s.quote : null, s.scheme.accent);
+  const boxes = drawMemeText(
+    s.useTagline ? s.tagline : null,
+    s.useQuote   ? s.quote   : null,
+    s.scheme.accent,
+    s.textPos, s.tagPos
+  );
+  if (boxes) {
+    s.textBox = boxes.textBox;
+    s.tagBox  = boxes.tagBox;
+    // Latch auto-positions after first draw so future redraws use them
+    if (!s.textPos && boxes.defaultTextPos) s.textPos = boxes.defaultTextPos;
+    if (!s.tagPos  && boxes.defaultTagPos)  s.tagPos  = boxes.defaultTagPos;
+  }
 }
 
-// ─── LOGO DRAG HANDLING ───────────────────────
+// ─── INTERACTION ──────────────────────────────
+const CORNER_R = 18;  // corner resize hit radius in canvas px
+
 function _canvasPos(e) {
   const rect   = memeCanvas.getBoundingClientRect();
   const scaleX = memeCanvas.width  / rect.width;
@@ -510,106 +484,238 @@ function _canvasPos(e) {
   };
 }
 
+// Returns corner name ('nw','ne','sw','se') if (x,y) is near a logo corner
+function _logoCorner(x, y) {
+  if (!_memeState || !_memeState.logoImg) return null;
+  const s = _memeState;
+  const corners = {
+    nw: [s.logoX,           s.logoY],
+    ne: [s.logoX + s.logoW, s.logoY],
+    sw: [s.logoX,           s.logoY + s.logoH],
+    se: [s.logoX + s.logoW, s.logoY + s.logoH],
+  };
+  for (const [name, [cx, cy]] of Object.entries(corners)) {
+    if (Math.hypot(x - cx, y - cy) < CORNER_R) return name;
+  }
+  return null;
+}
+
+// True if (x,y) is inside the logo body (excluding corner zones)
 function _overLogo(x, y) {
   if (!_memeState || !_memeState.logoImg) return false;
   const s = _memeState;
-  return x >= s.logoX && x <= s.logoX + s.logoW &&
-         y >= s.logoY && y <= s.logoY + s.logoH;
+  return x > s.logoX + CORNER_R && x < s.logoX + s.logoW - CORNER_R &&
+         y > s.logoY + CORNER_R && y < s.logoY + s.logoH - CORNER_R;
+}
+
+function _overBox(x, y, box) {
+  if (!box) return false;
+  return x >= box.x && x <= box.x + box.w && y >= box.y && y <= box.y + box.h;
+}
+
+function _cursorFor(x, y) {
+  const c = _logoCorner(x, y);
+  if (c) return (c === 'nw' || c === 'se') ? 'nwse-resize' : 'nesw-resize';
+  if (_overLogo(x, y)) return 'grab';
+  if (_memeState && (_overBox(x, y, _memeState.textBox) || _overBox(x, y, _memeState.tagBox))) return 'move';
+  return 'default';
 }
 
 function _onMemePointerDown(e) {
-  if (!_memeState || !_memeState.logoImg) return;
+  if (!_memeState) return;
   const { x, y } = _canvasPos(e);
+
+  // 1. Logo corner → resize
+  const corner = _logoCorner(x, y);
+  if (corner) {
+    const s = _memeState;
+    // Anchor = opposite corner (stays fixed during resize)
+    _interact.anchorX = corner.includes('e') ? s.logoX           : s.logoX + s.logoW;
+    _interact.anchorY = corner.includes('s') ? s.logoY           : s.logoY + s.logoH;
+    _interact.mode   = 'logoResize';
+    _interact.corner = corner;
+    memeCanvas.style.cursor = (corner === 'nw' || corner === 'se') ? 'nwse-resize' : 'nesw-resize';
+    e.preventDefault();
+    return;
+  }
+
+  // 2. Logo body → drag
   if (_overLogo(x, y)) {
-    _logoDrag.active = true;
-    _logoDrag.offX   = x - _memeState.logoX;
-    _logoDrag.offY   = y - _memeState.logoY;
+    _interact.mode = 'logoDrag';
+    _interact.offX = x - _memeState.logoX;
+    _interact.offY = y - _memeState.logoY;
     memeCanvas.style.cursor = 'grabbing';
     e.preventDefault();
+    return;
+  }
+
+  // 3. Main text block → drag
+  if (_overBox(x, y, _memeState.textBox)) {
+    _interact.mode = 'textDrag';
+    _interact.offX = x - (_memeState.textPos?.cx ?? 300);
+    _interact.offY = y - (_memeState.textPos?.cy ?? 560);
+    memeCanvas.style.cursor = 'grabbing';
+    e.preventDefault();
+    return;
+  }
+
+  // 4. Tagline block → drag
+  if (_overBox(x, y, _memeState.tagBox)) {
+    _interact.mode = 'tagDrag';
+    _interact.offX = x - (_memeState.tagPos?.cx ?? 300);
+    _interact.offY = y - (_memeState.tagPos?.cy ?? 38);
+    memeCanvas.style.cursor = 'grabbing';
+    e.preventDefault();
+    return;
   }
 }
 
 function _onMemePointerMove(e) {
   if (!_memeState) return;
   const { x, y } = _canvasPos(e);
-  if (_logoDrag.active) {
-    _memeState.logoX = Math.max(0, Math.min(600 - _memeState.logoW, x - _logoDrag.offX));
-    _memeState.logoY = Math.max(0, Math.min(600 - _memeState.logoH, y - _logoDrag.offY));
+
+  if (_interact.mode === 'logoResize') {
+    const dx = Math.abs(x - _interact.anchorX);
+    const dy = Math.abs(y - _interact.anchorY);
+    const newSize = Math.max(40, Math.min(580, Math.max(dx, dy)));
+    _memeState.logoW = _memeState.logoH = newSize;
+    const c = _interact.corner;
+    _memeState.logoX = c.includes('e') ? _interact.anchorX           : _interact.anchorX - newSize;
+    _memeState.logoY = c.includes('s') ? _interact.anchorY           : _interact.anchorY - newSize;
     redrawMeme();
     e.preventDefault();
-  } else {
-    memeCanvas.style.cursor = _overLogo(x, y) ? 'grab' : 'default';
+    return;
   }
+
+  if (_interact.mode === 'logoDrag') {
+    _memeState.logoX = Math.max(0, Math.min(600 - _memeState.logoW, x - _interact.offX));
+    _memeState.logoY = Math.max(0, Math.min(600 - _memeState.logoH, y - _interact.offY));
+    redrawMeme();
+    e.preventDefault();
+    return;
+  }
+
+  if (_interact.mode === 'textDrag') {
+    _memeState.textPos = {
+      cx: Math.max(60, Math.min(540, x - _interact.offX)),
+      cy: Math.max(20, Math.min(590, y - _interact.offY)),
+    };
+    redrawMeme();
+    e.preventDefault();
+    return;
+  }
+
+  if (_interact.mode === 'tagDrag') {
+    _memeState.tagPos = {
+      cx: Math.max(60, Math.min(540, x - _interact.offX)),
+      cy: Math.max(20, Math.min(590, y - _interact.offY)),
+    };
+    redrawMeme();
+    e.preventDefault();
+    return;
+  }
+
+  // Hover: update cursor
+  memeCanvas.style.cursor = _cursorFor(x, y);
 }
 
 function _onMemePointerUp() {
-  if (_logoDrag.active) {
-    _logoDrag.active = false;
-    memeCanvas.style.cursor = 'grab';
+  if (_interact.mode) {
+    _interact.mode = null;
+    memeCanvas.style.cursor = 'default';
   }
 }
 
-function drawMemeText(tagline, quote, accentColor) {
-  if (!memeCtx) return;
+// drawMemeText — position-aware, returns hit-boxes for drag interaction
+// textPos / tagPos are {cx, cy} center points; null = use default positions
+function drawMemeText(tagline, quote, accentColor, textPos, tagPos) {
+  if (!memeCtx) return null;
   const text = quote || tagline;
-  if (!text) return;
+  if (!text) return null;
 
   memeCtx.save();
 
-  // Text area
-  const padding = 40;
+  const padding  = 40;
   const maxWidth = 600 - padding * 2;
   const isQuote  = !!quote;
+  const fontSize = isQuote ? 22 : 30;
 
-  const fontSize  = isQuote ? 22 : 30;
-  const fontStyle = 'bold italic';
-  memeCtx.font = `${fontStyle} ${fontSize}px Ubuntu, Arial, sans-serif`;
-  memeCtx.fillStyle = '#ffffff';
+  memeCtx.font      = `bold italic ${fontSize}px Ubuntu, Arial, sans-serif`;
   memeCtx.textAlign = 'center';
-  memeCtx.shadowColor = 'rgba(0,0,0,0.8)';
-  memeCtx.shadowBlur = 6;
 
-  // Wrap text
-  const lines = wrapText(memeCtx, text, maxWidth);
-  const lineH = fontSize * 1.4;
+  // ── Main text block ────────────────────────────
+  const lines  = wrapText(memeCtx, text, maxWidth);
+  const lineH  = fontSize * 1.4;
   const totalH = lines.length * lineH;
 
-  // Position at bottom
-  const startY = 600 - padding - totalH + fontSize;
+  const pillW = maxWidth + 32;
+  const pillH = totalH + 24;
+  // Default: bottom-center
+  const defaultTextCy = 600 - padding - pillH / 2;
+  const cx = textPos?.cx ?? 300;
+  const cy = textPos?.cy ?? defaultTextCy;
+  const pillX = cx - pillW / 2;
+  const pillY = cy - pillH / 2;
 
-  // Background pill
-  const bgH = totalH + 24;
-  const bgY = startY - fontSize - 12;
   memeCtx.fillStyle = 'rgba(0,0,0,0.6)';
-  roundRect(memeCtx, padding - 16, bgY, maxWidth + 32, bgH, 12);
+  roundRect(memeCtx, pillX, pillY, pillW, pillH, 12);
   memeCtx.fill();
 
-  // Draw text
-  memeCtx.fillStyle = '#ffffff';
+  memeCtx.fillStyle   = isQuote ? '#ffffff' : accentColor;
   memeCtx.shadowColor = 'rgba(0,0,0,0.9)';
-  lines.forEach((line, i) => {
-    memeCtx.fillText(line, 300, startY + i * lineH);
-  });
+  memeCtx.shadowBlur  = 6;
+  const baselineY = pillY + 12 + fontSize;
+  lines.forEach((line, i) => memeCtx.fillText(line, cx, baselineY + i * lineH));
 
-  // Accent line at bottom
+  const textBox = { x: pillX, y: pillY, w: pillW, h: pillH };
+
+  // ── Tagline pill (shown at top when both tagline + quote are active) ──
+  let tagBox = null;
+  let defaultTagPos = null;
   if (tagline && quote) {
-    // Also draw tagline at top
-    memeCtx.font = `bold italic 26px Ubuntu, Arial, sans-serif`;
-    memeCtx.fillStyle = accentColor;
+    const tagFontSize = 26;
+    memeCtx.font = `bold italic ${tagFontSize}px Ubuntu, Arial, sans-serif`;
+
+    const tagLines  = wrapText(memeCtx, tagline, maxWidth);
+    const tagLineH  = tagFontSize * 1.4;
+    const tagTotalH = tagLines.length * tagLineH;
+    const tagPillW  = Math.min(maxWidth + 32, memeCtx.measureText(tagline).width + 48);
+    const tagPillH  = tagTotalH + 20;
+
+    const defaultTagCy = 38;
+    const tcx = tagPos?.cx ?? 300;
+    const tcy = tagPos?.cy ?? defaultTagCy;
+    const tagPillX = tcx - tagPillW / 2;
+    const tagPillY = tcy - tagPillH / 2;
+
+    memeCtx.fillStyle = 'rgba(0,0,0,0.5)';
+    roundRect(memeCtx, tagPillX, tagPillY, tagPillW, tagPillH, 10);
+    memeCtx.fill();
+
+    memeCtx.fillStyle   = accentColor;
     memeCtx.shadowColor = 'rgba(0,0,0,0.9)';
-    memeCtx.fillText(tagline, 300, 52);
-  } else if (tagline && !quote) {
-    memeCtx.fillStyle = accentColor;
+    const tagBaselineY = tagPillY + 10 + tagFontSize;
+    tagLines.forEach((line, i) => memeCtx.fillText(line, tcx, tagBaselineY + i * tagLineH));
+
+    tagBox = { x: tagPillX, y: tagPillY, w: tagPillW, h: tagPillH };
+    defaultTagPos = { cx: 300, cy: defaultTagCy };
   }
 
-  // Buttcoin watermark
-  memeCtx.font = '13px Ubuntu, Arial, sans-serif';
+  // Watermark
+  memeCtx.font      = '13px Ubuntu, Arial, sans-serif';
   memeCtx.fillStyle = 'rgba(255,255,255,0.35)';
   memeCtx.shadowBlur = 0;
   memeCtx.textAlign = 'right';
   memeCtx.fillText('buttcoin.meme', 590, 592);
 
   memeCtx.restore();
+
+  return {
+    textBox,
+    tagBox,
+    defaultTextPos: { cx: 300, cy: defaultTextCy },
+    defaultTagPos,
+  };
 }
 
 function wrapText(ctx, text, maxWidth) {
