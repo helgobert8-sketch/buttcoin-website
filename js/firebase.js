@@ -11,7 +11,7 @@ const firebaseConfig = {
   apiKey:            "AIzaSyDcdgb_x9IXBqTIgHOc0GEgTcak-PErt9k",
   authDomain:        "butttcoin-fbe0f.firebaseapp.com",
   projectId:         "butttcoin-fbe0f",
-  storageBucket:     "butttcoin-fbe0f.firebasestorage.app",
+  storageBucket:     "buttcoin-fbe0f.firebasestorage.app",
   messagingSenderId: "482524167127",
   appId:             "1:482524167127:web:761862f55e3312fb97a992"
 };
