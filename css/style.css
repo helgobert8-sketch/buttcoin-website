@@ -570,6 +570,7 @@ h1, h2, h3, h4 { color: var(--white); font-weight: 700; line-height: 1.2; }
 .buy-step h3 { margin-bottom: 12px; font-size: 1.1rem; }
 .buy-step p { color: var(--muted); font-size: 0.9rem; margin-bottom: 16px; line-height: 1.7; }
 .buy-step a { color: var(--orange); }
+.buy-step a.btn-primary { color: #000; }
 .buy-step-arrow {
   font-size: 1.5rem;
   color: var(--muted);
