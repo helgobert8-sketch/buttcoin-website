@@ -88,6 +88,7 @@
         <li><a href="#about">About</a></li>
         <li><a href="#dominance">Dominance</a></li>
         <li><a href="#how-to-buy">Buy</a></li>
+        <li><a href="#quote-section">Quotes</a></li>
         <li class="dropdown">
           <a href="#meme-depot">Memes ▾</a>
           <ul class="dropdown-menu">
@@ -105,7 +106,6 @@
           </ul>
         </li>
         <li><a href="#game">Game</a></li>
-        <li><a href="#quote-section">Quotes</a></li>
         <li><a href="#community">Community</a></li>
       </ul>
 
@@ -366,7 +366,6 @@
       <div class="depot-tabs">
         <button class="depot-tab active" onclick="switchDepotTab('gallery', this)">Gallery</button>
         <button class="depot-tab" onclick="switchDepotTab('upload', this)">Submit a Meme</button>
-        <button class="depot-tab" onclick="switchDepotTab('external', this)">Phase 3 Depot</button>
       </div>
 
       <!-- Gallery Tab -->
@@ -376,6 +375,7 @@
           <button class="filter-btn" onclick="filterMemes('iconic', this)">Iconic</button>
           <button class="filter-btn" onclick="filterMemes('phase1', this)">Phase 1 — Classics</button>
           <button class="filter-btn" onclick="filterMemes('phase2', this)">Phase 2 — Having Fun</button>
+          <button class="filter-btn" onclick="filterMemes('phase3', this)">Phase 3 — Uranus</button>
           <button class="filter-btn" onclick="filterMemes('phase4', this)">Phase 4 — Feeling Buttish</button>
         </div>
         <div class="meme-grid" id="meme-grid">
@@ -399,20 +399,6 @@
         </div>
       </div>
 
-      <!-- External Depot Tab -->
-      <div class="depot-panel hidden" id="depot-external">
-        <div class="external-depot-card">
-          <h3>Phase 3 — Uranus Meme Depot</h3>
-          <p>The full Phase 3 meme collection lives on memedepot.com — 1,811 memes including 69 videos and 9 GIFs.</p>
-          <div class="depot-stats">
-            <div class="depot-stat"><span>1,811</span>Total memes</div>
-            <div class="depot-stat"><span>358</span>Images</div>
-            <div class="depot-stat"><span>69</span>Videos</div>
-            <div class="depot-stat"><span>9</span>GIFs</div>
-          </div>
-          <a href="https://memedepot.com/d/buttcoin" target="_blank" rel="noopener" class="btn btn-primary">Open Meme Depot ↗</a>
-        </div>
-      </div>
     </div>
   </section>
 
