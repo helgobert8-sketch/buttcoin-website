@@ -123,10 +123,9 @@ function showAuthError(msg) {
 
 // ─── MEME UPLOAD ──────────────────────────────
 async function uploadMeme(file) {
-  if (!storage || !db) throw new Error('Firebase not initialized');
-  if (!currentUser) throw new Error('Please sign in to upload');
+  if (!storage) throw new Error('Firebase not initialized');
 
-  const role = window.userRole || 'user';
+  const role = window.userRole || 'anonymous';
   const isApproved = (role === 'admin' || role === 'moderator');
 
   // Upload file to Storage
@@ -138,18 +137,24 @@ async function uploadMeme(file) {
   const snapshot  = await ref.put(file);
   const url       = await snapshot.ref.getDownloadURL();
 
-  // Save metadata to Firestore
-  await db.collection('memes').add({
-    url,
-    filename,
-    uploadedBy:  currentUser.uid,
-    uploaderEmail: currentUser.email,
-    uploadedAt:  firebase.firestore.FieldValue.serverTimestamp(),
-    approved:    isApproved,
-    category:    'community',
-    fileSize:    file.size,
-    fileType:    file.type,
-  });
+  // Save metadata to Firestore (only if authenticated — optional)
+  if (db && currentUser) {
+    try {
+      await db.collection('memes').add({
+        url,
+        filename,
+        uploadedBy:    currentUser.uid,
+        uploaderEmail: currentUser.email,
+        uploadedAt:    firebase.firestore.FieldValue.serverTimestamp(),
+        approved:      isApproved,
+        category:      'community',
+        fileSize:      file.size,
+        fileType:      file.type,
+      });
+    } catch (e) {
+      console.warn('Firestore write skipped:', e);
+    }
+  }
 
   return url;
 }
