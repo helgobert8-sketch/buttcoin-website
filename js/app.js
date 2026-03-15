@@ -68,7 +68,7 @@ function showQuote(i) {
   if (!el || !auth) return;
   el.style.opacity = 0;
   setTimeout(() => {
-    el.textContent = q.text;
+    el.textContent = `"${q.text}"`;
     auth.textContent = `— ${q.author}`;
     el.style.opacity = 1;
   }, 300);
