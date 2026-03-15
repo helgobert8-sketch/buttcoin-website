@@ -66,12 +66,8 @@ window.loadMemes = function(category = 'all') {
   if (!grid) return;
   grid.innerHTML = '<div class="meme-loading">Loading memes…</div>';
 
-  // Load from Firebase if available, else from static manifest, else placeholder
-  if (window.firebaseStorage && window.loadMemesFromFirebase) {
-    loadFromFirebase(category);
-  } else {
-    loadFromManifest(category);
-  }
+  // Always load from static manifest (memes.json) — complete source of truth
+  loadFromManifest(category);
 };
 
 window.loadNextPage = function() {
