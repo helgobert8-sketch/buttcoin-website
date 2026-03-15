@@ -84,47 +84,69 @@ function drawEye(x, y) {
   const size  = laserSize;
   const alpha = laserIntensity;
 
-  // Parse color to RGB
   const rgb = hexToRgb(laserColor);
   if (!rgb) return;
 
-  // Outer glow
-  const outerGlow = ctx.createRadialGradient(x, y, 0, x, y, size * 2.5);
-  outerGlow.addColorStop(0,   `rgba(${rgb.r},${rgb.g},${rgb.b},${alpha * 0.7})`);
-  outerGlow.addColorStop(0.4, `rgba(${rgb.r},${rgb.g},${rgb.b},${alpha * 0.3})`);
-  outerGlow.addColorStop(1,   `rgba(${rgb.r},${rgb.g},${rgb.b},0)`);
+  const R = `${rgb.r},${rgb.g},${rgb.b}`;
+
+  ctx.save();
+
+  // ── Outer ambient glow ────────────────────────
+  const outerGlow = ctx.createRadialGradient(x, y, 0, x, y, size * 3.5);
+  outerGlow.addColorStop(0,   `rgba(${R},${alpha * 0.5})`);
+  outerGlow.addColorStop(0.4, `rgba(${R},${alpha * 0.15})`);
+  outerGlow.addColorStop(1,   `rgba(${R},0)`);
   ctx.fillStyle = outerGlow;
   ctx.beginPath();
-  ctx.arc(x, y, size * 2.5, 0, Math.PI * 2);
+  ctx.arc(x, y, size * 3.5, 0, Math.PI * 2);
   ctx.fill();
 
-  // Core bright spot
-  const core = ctx.createRadialGradient(x, y, 0, x, y, size * 0.8);
+  // ── Star burst rays ───────────────────────────
+  // 4 main long rays + 4 secondary shorter rays
+  const rays = [
+    { angle: 0,         len: size * 5,   width: size * 0.12 },   // right
+    { angle: Math.PI,   len: size * 5,   width: size * 0.12 },   // left
+    { angle: -Math.PI/2, len: size * 4.5, width: size * 0.1  },  // up
+    { angle:  Math.PI/2, len: size * 4.5, width: size * 0.1  },  // down
+    { angle:  Math.PI/4,       len: size * 3, width: size * 0.07 },
+    { angle: -Math.PI/4,       len: size * 3, width: size * 0.07 },
+    { angle:  3*Math.PI/4,     len: size * 3, width: size * 0.07 },
+    { angle: -3*Math.PI/4,     len: size * 3, width: size * 0.07 },
+  ];
+
+  rays.forEach(({ angle, len, width }) => {
+    ctx.save();
+    ctx.translate(x, y);
+    ctx.rotate(angle);
+
+    const grad = ctx.createLinearGradient(0, 0, len, 0);
+    grad.addColorStop(0,    `rgba(255,255,255,${alpha * 0.95})`);
+    grad.addColorStop(0.05, `rgba(${R},${alpha * 0.85})`);
+    grad.addColorStop(0.4,  `rgba(${R},${alpha * 0.3})`);
+    grad.addColorStop(1,    `rgba(${R},0)`);
+
+    ctx.fillStyle = grad;
+    ctx.beginPath();
+    ctx.moveTo(0, -width / 2);
+    ctx.lineTo(len, 0);
+    ctx.lineTo(0,  width / 2);
+    ctx.closePath();
+    ctx.fill();
+    ctx.restore();
+  });
+
+  // ── Bright core ───────────────────────────────
+  const core = ctx.createRadialGradient(x, y, 0, x, y, size * 0.9);
   core.addColorStop(0,   `rgba(255,255,255,${alpha})`);
-  core.addColorStop(0.3, `rgba(${rgb.r},${rgb.g},${rgb.b},${alpha})`);
-  core.addColorStop(1,   `rgba(${rgb.r},${rgb.g},${rgb.b},0)`);
+  core.addColorStop(0.2, `rgba(255,255,255,${alpha * 0.95})`);
+  core.addColorStop(0.5, `rgba(${R},${alpha * 0.8})`);
+  core.addColorStop(1,   `rgba(${R},0)`);
   ctx.fillStyle = core;
   ctx.beginPath();
-  ctx.arc(x, y, size * 0.8, 0, Math.PI * 2);
+  ctx.arc(x, y, size * 0.9, 0, Math.PI * 2);
   ctx.fill();
 
-  // Laser beam shooting right
-  const beamLen = canvas.width - x;
-  const beamH   = Math.max(2, size * 0.15);
-  const beam = ctx.createLinearGradient(x, y, canvas.width, y);
-  beam.addColorStop(0,    `rgba(${rgb.r},${rgb.g},${rgb.b},${alpha * 0.9})`);
-  beam.addColorStop(0.05, `rgba(${rgb.r},${rgb.g},${rgb.b},${alpha * 0.7})`);
-  beam.addColorStop(0.3,  `rgba(${rgb.r},${rgb.g},${rgb.b},${alpha * 0.3})`);
-  beam.addColorStop(1,    `rgba(${rgb.r},${rgb.g},${rgb.b},0)`);
-  ctx.fillStyle = beam;
-  ctx.fillRect(x, y - beamH / 2, beamLen, beamH);
-
-  // Beam glow (wider, more transparent)
-  const beamGlow = ctx.createLinearGradient(x, y, x + beamLen * 0.5, y);
-  beamGlow.addColorStop(0,   `rgba(${rgb.r},${rgb.g},${rgb.b},${alpha * 0.3})`);
-  beamGlow.addColorStop(1,   `rgba(${rgb.r},${rgb.g},${rgb.b},0)`);
-  ctx.fillStyle = beamGlow;
-  ctx.fillRect(x, y - beamH * 3, beamLen * 0.5, beamH * 6);
+  ctx.restore();
 }
 
 // ─── CONTROLS ─────────────────────────────────
