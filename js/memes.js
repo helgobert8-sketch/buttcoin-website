@@ -343,7 +343,6 @@ const LOGO_IMGS = [
   'assets/logos/randomizer/vecteezy_neon-bitcoin-coin-digital-art_56472368 (1).png',
   'assets/logos/randomizer/vecteezy_serene-abstract-bitcoin-symbol-with-golden-glow-cutout-original_57893451.png',
 ];
-
 const BUTTOSHI_IMGS = [
   'assets/characters/buttoshi/Buttoshi cut upscaled.png',
   'assets/characters/buttoshi/James Sticker no background.png',
@@ -358,7 +357,30 @@ const BUTTLOR_IMGS = [
 
 function randFrom(arr) { return arr[Math.floor(Math.random() * arr.length)]; }
 
-function generateMeme() {
+// Load an image, resolving to null on error (never rejects)
+function loadImg(src) {
+  return new Promise(resolve => {
+    const img = new Image();
+    img.crossOrigin = 'anonymous';
+    img.onload  = () => resolve(img);
+    img.onerror = () => resolve(null);
+    img.src = src;
+  });
+}
+
+// Fetch a random meme URL from the manifest (cached after first load)
+async function randomMemeSrc() {
+  try {
+    if (!window._memeManifestCache) {
+      const res = await fetch('memes.json');
+      window._memeManifestCache = await res.json();
+    }
+    const pool = window._memeManifestCache;
+    return pool.length ? randFrom(pool).url : null;
+  } catch { return null; }
+}
+
+async function generateMeme() {
   if (!memeCanvas || !memeCtx) return;
 
   const useLogo     = document.getElementById('r-logo')?.checked;
@@ -368,16 +390,15 @@ function generateMeme() {
   const useButtlor  = document.getElementById('r-buttlor')?.checked;
   const useMemeBg   = document.getElementById('r-memebg')?.checked;
 
-  const tagline = MEME_TAGLINES[Math.floor(Math.random() * MEME_TAGLINES.length)];
-  const quote   = MEME_QUOTES[Math.floor(Math.random() * MEME_QUOTES.length)];
-
+  const tagline = randFrom(MEME_TAGLINES);
+  const quote   = randFrom(MEME_QUOTES);
   const schemes = [
     { bg: '#0d0d0d', accent: '#f7931a' },
     { bg: '#0a0a1a', accent: '#a855f7' },
     { bg: '#1a0a00', accent: '#f7931a' },
     { bg: '#000000', accent: '#f7931a' },
   ];
-  const scheme = schemes[Math.floor(Math.random() * schemes.length)];
+  const scheme = randFrom(schemes);
 
   memeCanvas.width  = 600;
   memeCanvas.height = 600;
@@ -385,102 +406,64 @@ function generateMeme() {
   const hint = document.getElementById('randomizer-hint');
   if (hint) hint.style.display = 'none';
 
-  // ── Draw solid background first ───────────────
+  // ── Load all images in parallel ───────────────
+  const memeSrc = useMemeBg ? await randomMemeSrc() : null;
+  const [bgImg, logoImg, buttoshiImg, buttlorImg] = await Promise.all([
+    memeSrc             ? loadImg(memeSrc)              : Promise.resolve(null),
+    useLogo             ? loadImg(randFrom(LOGO_IMGS))   : Promise.resolve(null),
+    useButtoshi         ? loadImg(randFrom(BUTTOSHI_IMGS)) : Promise.resolve(null),
+    useButtlor          ? loadImg(randFrom(BUTTLOR_IMGS))  : Promise.resolve(null),
+  ]);
+
+  // ── Draw background ───────────────────────────
   memeCtx.fillStyle = scheme.bg;
   memeCtx.fillRect(0, 0, 600, 600);
 
-  let loadCount = 0;
-  let totalLoads = (useMemeBg ? 1 : 0) + (useLogo ? 1 : 0) + (useButtoshi ? 1 : 0) + (useButtlor ? 1 : 0);
-
-  function onImageLoad() {
-    loadCount++;
-    if (loadCount >= totalLoads) {
-      drawMemeText(useTagline ? tagline : null, useQuote ? quote : null, scheme.accent);
-      document.getElementById('download-meme-btn').style.display = 'block';
-    }
-  }
-
-  function drawForeground() {
-    // Radial accent glow
+  if (bgImg) {
+    const scale = Math.max(600 / bgImg.width, 600 / bgImg.height);
+    const sw = bgImg.width * scale, sh = bgImg.height * scale;
+    memeCtx.drawImage(bgImg, (600 - sw) / 2, (600 - sh) / 2, sw, sh);
+    memeCtx.fillStyle = 'rgba(0,0,0,0.58)';
+    memeCtx.fillRect(0, 0, 600, 600);
+  } else {
     const grad = memeCtx.createRadialGradient(300, 300, 0, 300, 300, 420);
-    grad.addColorStop(0,   hexToRgbaStr(scheme.accent, 0.08));
-    grad.addColorStop(1,   'rgba(0,0,0,0)');
+    grad.addColorStop(0, hexToRgbaStr(scheme.accent, 0.08));
+    grad.addColorStop(1, 'rgba(0,0,0,0)');
     memeCtx.fillStyle = grad;
     memeCtx.fillRect(0, 0, 600, 600);
-
-    if (totalLoads === (useMemeBg ? 1 : 0)) {
-      drawMemeText(useTagline ? tagline : null, useQuote ? quote : null, scheme.accent);
-      document.getElementById('download-meme-btn').style.display = 'block';
-      return;
-    }
-
-    // Logo (standalone — no characters)
-    if (useLogo && !useButtoshi && !useButtlor) {
-      const img = new Image();
-      img.onload = () => {
-        const size = 320;
-        memeCtx.drawImage(img, (600 - size) / 2, (600 - size) / 2 - (useTagline || useQuote ? 40 : 0), size, size);
-        onImageLoad();
-      };
-      img.onerror = onImageLoad;
-      img.src = randFrom(LOGO_IMGS);
-    }
-
-    // Buttoshi
-    if (useButtoshi) {
-      const img = new Image();
-      img.onload = () => {
-        const h = 370;
-        const w = (img.width / img.height) * h;
-        const x = useButtlor ? 30 : (600 - w) / 2;
-        memeCtx.drawImage(img, x, 600 - h - 10, w, h);
-        if (useLogo) {
-          const logo = new Image();
-          logo.onload = () => { memeCtx.drawImage(logo, 220, 20, 160, 160); onImageLoad(); };
-          logo.onerror = onImageLoad;
-          logo.src = randFrom(LOGO_IMGS);
-        } else { onImageLoad(); }
-      };
-      img.onerror = onImageLoad;
-      img.src = randFrom(BUTTOSHI_IMGS);
-    }
-
-    // Buttlor
-    if (useButtlor) {
-      const img = new Image();
-      img.onload = () => {
-        const h = 370;
-        const w = (img.width / img.height) * h;
-        const x = useButtoshi ? 600 - w - 30 : (600 - w) / 2;
-        memeCtx.drawImage(img, x, 600 - h - 10, w, h);
-        onImageLoad();
-      };
-      img.onerror = onImageLoad;
-      img.src = randFrom(BUTTLOR_IMGS);
-    }
   }
 
-  // ── Meme background ───────────────────────────
-  if (useMemeBg && allMemes.length > 0) {
-    const meme = randFrom(allMemes);
-    const bg = new Image();
-    bg.crossOrigin = 'anonymous';
-    bg.onload = () => {
-      // Cover-fit the meme onto the canvas
-      const scale = Math.max(600 / bg.width, 600 / bg.height);
-      const sw = bg.width * scale, sh = bg.height * scale;
-      memeCtx.drawImage(bg, (600 - sw) / 2, (600 - sh) / 2, sw, sh);
-      // Dark overlay so text/characters stay readable
-      memeCtx.fillStyle = 'rgba(0,0,0,0.55)';
-      memeCtx.fillRect(0, 0, 600, 600);
-      onImageLoad();
-      drawForeground();
-    };
-    bg.onerror = () => { onImageLoad(); drawForeground(); };
-    bg.src = meme.url;
-  } else {
-    drawForeground();
+  // ── Draw logo (standalone, no characters) ─────
+  if (logoImg && !buttoshiImg && !buttlorImg) {
+    const size = 320;
+    const y = (600 - size) / 2 - (useTagline || useQuote ? 40 : 0);
+    memeCtx.drawImage(logoImg, (600 - size) / 2, y, size, size);
   }
+
+  // ── Draw characters ───────────────────────────
+  const both  = !!(buttoshiImg && buttlorImg);
+  const charH = both ? 310 : 370;
+
+  if (buttoshiImg) {
+    const w = (buttoshiImg.width / buttoshiImg.height) * charH;
+    const x = both ? Math.max(0, 300 - w - 10) : (600 - w) / 2;
+    memeCtx.drawImage(buttoshiImg, x, 600 - charH - 10, w, charH);
+  }
+  if (buttlorImg) {
+    const w = (buttlorImg.width / buttlorImg.height) * charH;
+    const x = both ? Math.min(600 - w, 310) : (600 - w) / 2;
+    memeCtx.drawImage(buttlorImg, x, 600 - charH - 10, w, charH);
+  }
+
+  // ── Logo badge (when characters are present) ──
+  if (logoImg && (buttoshiImg || buttlorImg)) {
+    const lw = 120;
+    memeCtx.drawImage(logoImg, (600 - lw) / 2, 16, lw, lw);
+  }
+
+  // ── Text ──────────────────────────────────────
+  drawMemeText(useTagline ? tagline : null, useQuote ? quote : null, scheme.accent);
+  document.getElementById('download-meme-btn').style.display = 'block';
 }
 
 function drawMemeText(tagline, quote, accentColor) {
