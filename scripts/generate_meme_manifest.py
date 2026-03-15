@@ -38,11 +38,16 @@ for blob in blobs:
     if blob.name.endswith("/"):
         continue
     parts = blob.name.split("/")
-    category = parts[2] if len(parts) >= 3 else "all"
-    blob.make_public()
+    if len(parts) < 4 or not parts[-1]:
+        continue
+    category = parts[2]
+    filename = parts[-1]
+    # Construct public URL directly — no make_public() call needed
+    encoded = blob.name.replace("/", "%2F")
+    url = f"https://storage.googleapis.com/{STORAGE_BUCKET}/{blob.name}"
     memes.append({
-        "url":      blob.public_url,
-        "filename": parts[-1],
+        "url":      url,
+        "filename": filename,
         "category": category,
         "approved": True,
     })
