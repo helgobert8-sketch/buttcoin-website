@@ -74,7 +74,7 @@ function updatePriceUI(pair) {
   }
 
   // Hero stats
-  setText('stat-price', fmtPrice(price) + (change24 ? ` (${parseFloat(change24) >= 0 ? '+' : ''}${fmt(change24, 2)}%)` : ''));
+  setText('stat-price', fmtPrice(price) + (change24 ? ` (${parseFloat(change24) >= 0 ? '+' : ''}${fmt(change24, 2)}% 24h)` : ''));
   setText('stat-mcap',  fmtMcap(mcap));
   setText('stat-vol',   fmtMcap(vol24h));
 }
