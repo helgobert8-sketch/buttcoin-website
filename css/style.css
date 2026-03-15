@@ -664,7 +664,7 @@ h1, h2, h3, h4 { color: var(--white); font-weight: 700; line-height: 1.2; }
 blockquote {
   font-size: clamp(1rem, 2vw, 1.25rem);
   font-style: italic;
-  color: var(--white);
+  color: var(--purple);
   line-height: 1.7;
   margin-bottom: 20px;
   position: relative;
