@@ -149,16 +149,8 @@ async function loadFromManifest(category) {
 
     const filtered = category === 'all' ? all : all.filter(m => m.category === category);
     displayedMemes = filtered;
-    if (grid) grid.innerHTML = '';
     if (filtered.length === 0) { loadPlaceholder(category); return; }
-    const batch = filtered.slice(0, PAGE_SIZE);
-    batch.forEach(meme => {
-      const el = document.createElement('div');
-      el.className = 'meme-item';
-      el.innerHTML = `<img src="${meme.url}" alt="${meme.filename || 'Buttcoin meme'}" loading="lazy" onerror="this.closest('.meme-item').style.display='none'" />`;
-      el.addEventListener('click', () => openMemeModal(meme));
-      if (grid) grid.appendChild(el);
-    });
+    renderMemes();
   } catch (err) {
     loadPlaceholder(category);
   }
