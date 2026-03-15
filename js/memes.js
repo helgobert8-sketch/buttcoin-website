@@ -110,11 +110,34 @@ async function loadFromFirebase(category) {
   }
 }
 
+function countUp(el, target, duration = 1800) {
+  const start = 0;
+  const startTime = performance.now();
+  function step(now) {
+    const elapsed = now - startTime;
+    const progress = Math.min(elapsed / duration, 1);
+    // Ease out cubic
+    const eased = 1 - Math.pow(1 - progress, 3);
+    const current = Math.floor(eased * target);
+    el.textContent = current.toLocaleString('en-US');
+    if (progress < 1) requestAnimationFrame(step);
+  }
+  requestAnimationFrame(step);
+}
+
 async function loadFromManifest(category) {
   const grid = document.getElementById('meme-grid');
   try {
     const res = await fetch('memes.json');
     const all = await res.json();
+
+    // Update total meme counter once (only on first load)
+    const countEl = document.getElementById('meme-count');
+    if (countEl && !countEl.dataset.counted) {
+      countEl.dataset.counted = '1';
+      countUp(countEl, all.length);
+    }
+
     const filtered = category === 'all' ? all : all.filter(m => m.category === category);
     displayedMemes = filtered;
     if (grid) grid.innerHTML = '';
