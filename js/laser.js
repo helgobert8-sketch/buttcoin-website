@@ -91,27 +91,28 @@ function drawEye(x, y) {
 
   ctx.save();
 
+  // Additive blending — makes overlapping glows burn bright like real lasers
+  ctx.globalCompositeOperation = 'lighter';
+
   // ── Outer ambient glow ────────────────────────
-  const outerGlow = ctx.createRadialGradient(x, y, 0, x, y, size * 3.5);
-  outerGlow.addColorStop(0,   `rgba(${R},${alpha * 0.5})`);
-  outerGlow.addColorStop(0.4, `rgba(${R},${alpha * 0.15})`);
+  const outerGlow = ctx.createRadialGradient(x, y, 0, x, y, size * 4);
+  outerGlow.addColorStop(0,   `rgba(${R},${alpha * 0.4})`);
+  outerGlow.addColorStop(0.3, `rgba(${R},${alpha * 0.12})`);
   outerGlow.addColorStop(1,   `rgba(${R},0)`);
   ctx.fillStyle = outerGlow;
   ctx.beginPath();
-  ctx.arc(x, y, size * 3.5, 0, Math.PI * 2);
+  ctx.arc(x, y, size * 4, 0, Math.PI * 2);
   ctx.fill();
 
-  // ── Star burst rays ───────────────────────────
-  // 4 main + 4 mid + 8 fine + 16 hair = 32 rays total
+  // ── Sharp star burst rays ─────────────────────
+  // 4 long main spikes + 4 medium + 8 short secondary + 16 hair = 32
   const rayDefs = [];
-  const totalRays = 32;
-  for (let i = 0; i < totalRays; i++) {
-    const angle = (i / totalRays) * Math.PI * 2;
-    // Every 8th ray is a main ray, every 4th is mid, rest are fine
+  for (let i = 0; i < 32; i++) {
+    const angle   = (i / 32) * Math.PI * 2;
     const isMajor = i % 8 === 0;
     const isMid   = i % 4 === 0 && !isMajor;
-    const len   = isMajor ? size * 6   : isMid ? size * 4   : size * 2.5;
-    const width = isMajor ? size * 0.14 : isMid ? size * 0.09 : size * 0.05;
+    const len   = isMajor ? size * 7    : isMid ? size * 4.5  : size * 2.5;
+    const width = isMajor ? size * 0.10 : isMid ? size * 0.06 : size * 0.03;
     rayDefs.push({ angle, len, width });
   }
 
@@ -121,9 +122,10 @@ function drawEye(x, y) {
     ctx.rotate(angle);
 
     const grad = ctx.createLinearGradient(0, 0, len, 0);
-    grad.addColorStop(0,    `rgba(${R},${alpha})`);
-    grad.addColorStop(0.08, `rgba(${R},${alpha * 0.85})`);
-    grad.addColorStop(0.4,  `rgba(${R},${alpha * 0.3})`);
+    grad.addColorStop(0,    `rgba(255,255,255,${alpha})`);
+    grad.addColorStop(0.04, `rgba(${R},${alpha * 0.95})`);
+    grad.addColorStop(0.25, `rgba(${R},${alpha * 0.5})`);
+    grad.addColorStop(0.7,  `rgba(${R},${alpha * 0.15})`);
     grad.addColorStop(1,    `rgba(${R},0)`);
 
     ctx.fillStyle = grad;
@@ -136,15 +138,25 @@ function drawEye(x, y) {
     ctx.restore();
   });
 
-  // ── Bright core — neon purple, no white ──────
-  const core = ctx.createRadialGradient(x, y, 0, x, y, size * 0.9);
-  core.addColorStop(0,   `rgba(${R},${alpha})`);
-  core.addColorStop(0.3, `rgba(${R},${alpha * 0.9})`);
-  core.addColorStop(0.7, `rgba(${R},${alpha * 0.4})`);
+  // ── Purple mid glow ───────────────────────────
+  const midGlow = ctx.createRadialGradient(x, y, 0, x, y, size * 1.4);
+  midGlow.addColorStop(0,   `rgba(${R},${alpha * 0.9})`);
+  midGlow.addColorStop(0.5, `rgba(${R},${alpha * 0.4})`);
+  midGlow.addColorStop(1,   `rgba(${R},0)`);
+  ctx.fillStyle = midGlow;
+  ctx.beginPath();
+  ctx.arc(x, y, size * 1.4, 0, Math.PI * 2);
+  ctx.fill();
+
+  // ── Blazing white core ────────────────────────
+  const core = ctx.createRadialGradient(x, y, 0, x, y, size * 0.7);
+  core.addColorStop(0,   `rgba(255,255,255,${alpha})`);
+  core.addColorStop(0.4, `rgba(255,255,255,${alpha * 0.8})`);
+  core.addColorStop(0.8, `rgba(${R},${alpha * 0.5})`);
   core.addColorStop(1,   `rgba(${R},0)`);
   ctx.fillStyle = core;
   ctx.beginPath();
-  ctx.arc(x, y, size * 0.9, 0, Math.PI * 2);
+  ctx.arc(x, y, size * 0.7, 0, Math.PI * 2);
   ctx.fill();
 
   ctx.restore();
