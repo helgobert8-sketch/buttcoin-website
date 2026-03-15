@@ -178,8 +178,9 @@ h1, h2, h3, h4 { color: var(--white); font-weight: 700; line-height: 1.2; }
 }
 .dropdown-menu {
   position: absolute;
-  top: calc(100% + 8px);
+  top: 100%;
   left: 0;
+  padding-top: 8px;
   background: var(--bg-card);
   border: 1px solid var(--border);
   border-radius: var(--radius-sm);
