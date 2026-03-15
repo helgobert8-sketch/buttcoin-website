@@ -534,20 +534,17 @@
           <p class="randomizer-hint" id="randomizer-hint">Choose ingredients and hit Generate</p>
           <p class="randomizer-hint" id="logo-drag-hint" style="display:none">Drag logo or text · Drag logo corners to resize</p>
 
-          <div id="text-style-panel" class="laser-options" style="display:none; margin-top:12px;">
-            <div class="laser-control">
-              <label>Text background intensity</label>
-              <input type="range" id="text-intensity" min="0" max="1" step="0.05" value="0.6" oninput="updateTextStyle()" />
-            </div>
-            <div class="laser-control" style="margin-top:8px;">
-              <label>Background colour</label>
-              <div style="display:flex; gap:8px; margin-top:6px; flex-wrap:wrap;">
-                <button class="color-btn text-color-btn active" style="background:#000000;" onclick="setTextBgColor('#000000',this)" title="Black"></button>
-                <button class="color-btn text-color-btn" style="background:#1a0a2e;" onclick="setTextBgColor('#1a0a2e',this)" title="Dark Purple"></button>
-                <button class="color-btn text-color-btn" style="background:#0a0a2e;" onclick="setTextBgColor('#0a0a2e',this)" title="Dark Blue"></button>
-                <button class="color-btn text-color-btn" style="background:#2e1000;" onclick="setTextBgColor('#2e1000',this)" title="Dark Orange"></button>
-                <button class="color-btn text-color-btn" style="background:#1a2e0a;" onclick="setTextBgColor('#1a2e0a',this)" title="Dark Green"></button>
-                <button class="color-btn text-color-btn" style="background:#ffffff; border:1px solid #555;" onclick="setTextBgColor('#ffffff',this)" title="White"></button>
+          <div id="text-style-panel" style="display:none; margin-top:14px; padding:14px 16px; background:rgba(255,255,255,0.04); border-radius:10px; border:1px solid rgba(255,255,255,0.08);">
+            <p style="margin:0 0 10px; font-size:13px; color:rgba(255,255,255,0.55);">Choose a background colour for the text and drag the opacity slider to make it more or less visible.</p>
+            <div style="display:flex; align-items:center; gap:12px; flex-wrap:wrap;">
+              <input type="range" id="text-intensity" min="0" max="1" step="0.05" value="0.6" oninput="updateTextStyle()" style="flex:1; min-width:120px;" />
+              <div style="display:flex; gap:8px; flex-wrap:wrap;">
+                <button class="color-btn text-color-btn active" style="background:#000000;"                    onclick="setTextBgColor('#000000',this)" title="Black"></button>
+                <button class="color-btn text-color-btn"        style="background:#7c3aed;"                    onclick="setTextBgColor('#7c3aed',this)"  title="Purple"></button>
+                <button class="color-btn text-color-btn"        style="background:#1d4ed8;"                    onclick="setTextBgColor('#1d4ed8',this)"  title="Blue"></button>
+                <button class="color-btn text-color-btn"        style="background:#f7931a;"                    onclick="setTextBgColor('#f7931a',this)"  title="Buttcoin Orange"></button>
+                <button class="color-btn text-color-btn"        style="background:#dc2626;"                    onclick="setTextBgColor('#dc2626',this)"  title="Red"></button>
+                <button class="color-btn text-color-btn"        style="background:#ffffff; border:1px solid #555;" onclick="setTextBgColor('#ffffff',this)"  title="White"></button>
               </div>
             </div>
           </div>

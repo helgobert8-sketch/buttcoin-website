@@ -336,15 +336,14 @@ const _interact = { mode: null, offX: 0, offY: 0, corner: null, anchorX: 0, anch
 
 // ─── LOGO POOL ────────────────────────────────
 const LOGO_IMGS = [
-  'assets/logos/randomizer/1671515337319.png',
   'assets/logos/randomizer/bitcoin-15518 no background.png',
   'assets/logos/randomizer/bitcoin-icon-512x512-6lwse9jk.png',
-  'assets/logos/randomizer/BTC-81.png',
   'assets/logos/randomizer/logo head on.png',
   'assets/logos/randomizer/logo rund.png',
   'assets/logos/randomizer/vecteezy_3d-render-of-a-blue-bitcoin-cryptocurrency-coin_55079150.png',
-  'assets/logos/randomizer/vecteezy_ai-generated-png-of-bitcoin-against-transparent-background_38777234.png',
-  'assets/logos/randomizer/vecteezy_bitcoin-logo-png-bitcoin-icon-transparent-png_19767938.png',
+  'assets/logos/randomizer/vecteezy_bitcoin-gold-btg-glass-crypto-coin-3d-illustration_24092708.png',
+  'assets/logos/randomizer/vecteezy_bitcoin-photo-isolated-on-transparent-background_48411608.png',
+  'assets/logos/randomizer/vecteezy_bitcoin-photo-isolated-on-transparent-background_48411623.png',
   'assets/logos/randomizer/vecteezy_bitcoin-symbol-in-cyber-style_56472366.png',
   'assets/logos/randomizer/vecteezy_neon-bitcoin-coin-digital-art_56472368 (1).png',
 ];
