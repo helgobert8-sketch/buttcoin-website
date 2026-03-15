@@ -335,17 +335,17 @@ const _logoDrag = { active: false, offX: 0, offY: 0 };
 
 // ─── CHARACTER & LOGO POOLS ───────────────────
 const LOGO_IMGS = [
-  'assets/logos/randomizer/bitcoin-15503.png',
+  'assets/logos/randomizer/1671515337319.png',
   'assets/logos/randomizer/bitcoin-15518 no background.png',
   'assets/logos/randomizer/bitcoin-icon-512x512-6lwse9jk.png',
-  'assets/logos/randomizer/King 1.png',
+  'assets/logos/randomizer/BTC-81.png',
   'assets/logos/randomizer/logo head on.png',
   'assets/logos/randomizer/logo rund.png',
   'assets/logos/randomizer/vecteezy_3d-render-of-a-blue-bitcoin-cryptocurrency-coin_55079150.png',
-  'assets/logos/randomizer/vecteezy_bitcoin-logo-png-bitcoin-icon-transparent-png_19767953 (1).png',
-  'assets/logos/randomizer/vecteezy_intense-enchanting-bitcoin-physical-coin-gold-finish-no_60052110.png',
+  'assets/logos/randomizer/vecteezy_ai-generated-png-of-bitcoin-against-transparent-background_38777234.png',
+  'assets/logos/randomizer/vecteezy_bitcoin-logo-png-bitcoin-icon-transparent-png_19767938.png',
+  'assets/logos/randomizer/vecteezy_bitcoin-symbol-in-cyber-style_56472366.png',
   'assets/logos/randomizer/vecteezy_neon-bitcoin-coin-digital-art_56472368 (1).png',
-  'assets/logos/randomizer/vecteezy_serene-abstract-bitcoin-symbol-with-golden-glow-cutout-original_57893451.png',
 ];
 const BUTTOSHI_IMGS = [
   'assets/characters/buttoshi/Buttoshi cut upscaled.png',
