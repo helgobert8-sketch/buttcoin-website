@@ -20,11 +20,12 @@ STORAGE_BUCKET = "buttcoin-fbe0f.firebasestorage.app"
 OUTPUT_FILE    = PROJECT_ROOT / "memes.json"
 
 CATEGORY_MAP = {
-    "iconic":  "iconic",
-    "phase1":  "Phase 1 — Classics",
-    "phase2":  "Phase 2 — Having Fun",
-    "phase3":  "Phase 3 — Uranus",
-    "phase4":  "Phase 4 — Feeling Buttish",
+    "iconic":     "iconic",
+    "phase1":     "Phase 1 — Classics",
+    "phase2":     "Phase 2 — Having Fun",
+    "phase3":     "Phase 3 — Uranus",
+    "phase4":     "Phase 4 — Feeling Buttish",
+    "community":  "Community",
 }
 
 cred = credentials.Certificate(str(SERVICE_ACCOUNT))

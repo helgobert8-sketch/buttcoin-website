@@ -131,7 +131,7 @@ async function uploadMeme(file) {
   // Upload file to Storage
   const timestamp = Date.now();
   const filename  = `${timestamp}_${file.name.replace(/[^a-zA-Z0-9._-]/g, '_')}`;
-  const folder    = isApproved ? 'memes/approved' : 'memes/pending';
+  const folder    = isApproved ? 'memes/approved/community' : 'memes/pending';
   const ref       = storage.ref(`${folder}/${filename}`);
 
   const snapshot  = await ref.put(file);
