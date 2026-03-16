@@ -849,6 +849,47 @@ cite {
   min-width: 120px;
   text-align: center;
 }
+
+/* ─── PAGE NAV (presentations + meme depot) ─── */
+.page-nav {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 5px;
+  justify-content: center;
+  margin-top: 12px;
+  width: 100%;
+}
+.page-num {
+  min-width: 32px;
+  height: 32px;
+  padding: 0 8px;
+  border-radius: 6px;
+  border: 1px solid rgba(255,255,255,0.15);
+  background: rgba(255,255,255,0.05);
+  color: rgba(255,255,255,0.7);
+  font-size: 13px;
+  cursor: pointer;
+  transition: background 0.15s, color 0.15s, border-color 0.15s;
+}
+.page-num:hover {
+  background: rgba(247,147,26,0.2);
+  color: var(--orange);
+  border-color: var(--orange);
+}
+.page-num.active {
+  background: var(--orange);
+  color: #000;
+  border-color: var(--orange);
+  font-weight: 700;
+  cursor: default;
+}
+.page-ellipsis {
+  display: flex;
+  align-items: center;
+  color: rgba(255,255,255,0.3);
+  font-size: 13px;
+  padding: 0 2px;
+}
 .upload-box {
   max-width: 480px;
   margin: 0 auto;
@@ -1442,6 +1483,7 @@ footer {
   padding: 16px;
 }
 #slide-counter { color: var(--muted); font-size: 0.9rem; }
+#slide-page-nav { padding: 0 16px 16px; }
 
 /* ─── SCROLLBAR ─── */
 ::-webkit-scrollbar { width: 8px; }

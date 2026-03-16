@@ -473,10 +473,12 @@ function openPresentation(id) {
       currentSlides.push(`assets/presentations/The Legend of Buttcoin/Legend of Buttcoin (${i}).png`);
     }
   } else if (id === 'rules') {
-    // slide 00 = webp, slide 01 = png, slides 02–25 = jpg
+    // Custom order: 00, 02, 03, 01 (golden "21" moved to slot 4), then 04–25
     currentSlides.push(`assets/presentations/Saylor 21 rules of BTC/00 25.webp`);
+    currentSlides.push(`assets/presentations/Saylor 21 rules of BTC/02 25.jpg`);
+    currentSlides.push(`assets/presentations/Saylor 21 rules of BTC/03 25.jpg`);
     currentSlides.push(`assets/presentations/Saylor 21 rules of BTC/01 25.png`);
-    for (let i = 2; i <= 25; i++) {
+    for (let i = 4; i <= 25; i++) {
       const num = String(i).padStart(2, '0');
       currentSlides.push(`assets/presentations/Saylor 21 rules of BTC/${num} 25.jpg`);
     }
@@ -492,6 +494,39 @@ function renderSlide() {
   if (!slideshow || !currentSlides.length) return;
   slideshow.innerHTML = `<img src="${currentSlides[currentSlide]}" alt="Slide ${currentSlide + 1}" />`;
   counter.textContent = `${currentSlide + 1} / ${currentSlides.length}`;
+  renderSlideNav();
+}
+
+// ─── PAGE NAV SHARED BUILDER ───────────────────
+window.buildPageNav = function(current1, total, jumpFn) {
+  if (total <= 1) return '';
+  const pages = new Set([1, total]);
+  for (let i = Math.max(1, current1 - 4); i <= Math.min(total, current1 + 4); i++) pages.add(i);
+  const sorted = [...pages].sort((a, b) => a - b);
+  let html = '<div class="page-nav">';
+  let prev = 0;
+  for (const p of sorted) {
+    if (p - prev > 1) html += '<span class="page-ellipsis">…</span>';
+    if (p === current1) {
+      html += `<span class="page-num active">${p}</span>`;
+    } else {
+      html += `<button class="page-num" onclick="${jumpFn}(${p - 1})">${p}</button>`;
+    }
+    prev = p;
+  }
+  html += '</div>';
+  return html;
+};
+
+function jumpToSlide(index) {
+  currentSlide = index;
+  renderSlide();
+}
+
+function renderSlideNav() {
+  const nav = document.getElementById('slide-page-nav');
+  if (!nav) return;
+  nav.innerHTML = window.buildPageNav(currentSlide + 1, currentSlides.length, 'jumpToSlide');
 }
 
 function nextSlide() {

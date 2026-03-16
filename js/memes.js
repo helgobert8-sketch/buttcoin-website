@@ -165,15 +165,23 @@ function loadPlaceholder(category) {
   renderMemes();
 }
 
+window.jumpToMemePage = function(index) {
+  page = index;
+  renderMemes();
+  document.getElementById('meme-depot')?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+};
+
 function renderPagination() {
   const el = document.getElementById('meme-pagination');
   if (!el) return;
   const totalPages = Math.ceil(displayedMemes.length / PAGE_SIZE);
   if (totalPages <= 1) { el.innerHTML = ''; return; }
+  const nav = window.buildPageNav ? window.buildPageNav(page + 1, totalPages, 'jumpToMemePage') : '';
   el.innerHTML = `
     <button class="page-btn" onclick="loadPrevPage()" ${page === 0 ? 'disabled' : ''}>← Previous</button>
     <span class="page-info">Page ${page + 1} of ${totalPages}</span>
     <button class="page-btn" onclick="loadNextPage()" ${page >= totalPages - 1 ? 'disabled' : ''}>Next →</button>
+    ${nav}
   `;
 }
 
