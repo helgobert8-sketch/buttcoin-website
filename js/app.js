@@ -216,7 +216,8 @@ const ARTICLE_CONTENT = {
     <p>So, my friends, never ever forget this: investing in memecoins can be an emotional rollercoaster, and anyone feels the pain and the FUD from time to time. But this meme is just too powerful. It is fundamentally too good. It is truly inevitable.</p>
     <p>Thus, it simply does not matter if Buttcoin goes up or down for some time. Because when the masses pile into crypto, they will go on CoinMarketCap just like you, and they will see and understand what we have just discussed.</p>
     <p>And then they will rush into this extraordinary gem that is Buttcoin. And then we will have glorious pumps. And we will go multicycle. And beyond that we will keep building until we actually flip BTC.</p>
-    <p>This is the mission. This is what it is all about. Crypto legend in the making, my friends.</p>
+    <p>This is the mission. This is what it is all about.</p>
+    <p>Crypto legend in the making, my friends.</p>
     <p><em>Paronthes out.</em></p>`
   },
   retracements: {
