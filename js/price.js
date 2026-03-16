@@ -104,16 +104,23 @@ async function fetchDominance() {
     const global     = globalJson.data;
 
     const btcDominance   = global.market_cap_percentage?.btc ?? 0;
+    const solDominance   = global.market_cap_percentage?.sol ?? 0;
     const totalMcapUSD   = global.total_market_cap?.usd ?? 0;
     const btcMcapUSD     = totalMcapUSD * (btcDominance / 100);
+    const solMcapUSD     = totalMcapUSD * (solDominance / 100);
 
     // Buttcoin market cap from DexScreener data
     const currentPriceData = priceData || await fetchPriceData();
     const buttcoinMcap = parseFloat(currentPriceData?.fdv ?? currentPriceData?.marketCap ?? 0);
 
-    // BUTTCOIN.D = buttcoin market cap / total market cap * 100
+    // BUTTCOIN.D*TOTAL = buttcoin mcap / total crypto mcap * 100
     const buttcoinDominance = totalMcapUSD > 0
       ? (buttcoinMcap / totalMcapUSD) * 100
+      : 0;
+
+    // BUTTCOIN.D*SOL = buttcoin mcap / solana mcap * 100
+    const buttcoinDSol = solMcapUSD > 0
+      ? (buttcoinMcap / solMcapUSD) * 100
       : 0;
 
     // How many times bigger does Buttcoin need to get to flip BTC
@@ -122,18 +129,21 @@ async function fetchDominance() {
       : '—';
 
     // Update UI
-    setText('buttcoin-d', fmtPct(buttcoinDominance, 6));
-    setText('btc-d',      fmt(btcDominance, 2) + '%');
+    setText('buttcoin-d',     fmtPct(buttcoinDominance, 6));
+    setText('buttcoin-d-sol', fmtPct(buttcoinDSol, 4));
+    setText('btc-d',          fmt(btcDominance, 2) + '%');
     setText('buttcoin-mcap-d', fmtMcap(buttcoinMcap));
     setText('btc-mcap-d',      fmtMcap(btcMcapUSD));
     setText('flip-ratio',      flipRatio);
     setText('dominance-update', `Last updated: ${new Date().toLocaleTimeString()}`);
 
     // Animate bars
-    const btcBar  = document.getElementById('btc-bar');
-    const buttBar = document.getElementById('buttcoin-bar');
+    const btcBar    = document.getElementById('btc-bar');
+    const buttBar   = document.getElementById('buttcoin-bar');
+    const solBar    = document.getElementById('buttcoin-sol-bar');
     if (btcBar)  btcBar.style.width  = Math.min(btcDominance, 100) + '%';
-    if (buttBar) buttBar.style.width = Math.min(buttcoinDominance * 1000, 100) + '%'; // Scale up for visibility
+    if (buttBar) buttBar.style.width = Math.min(buttcoinDominance * 1000, 100) + '%';
+    if (solBar)  solBar.style.width  = Math.min(buttcoinDSol * 10, 100) + '%';
 
   } catch (err) {
     console.warn('Dominance fetch error:', err);
