@@ -433,7 +433,7 @@ const MEDIA_ITEMS = [
   { type: 'video', title: 'Back into the Buttverse',      src: 'assets/videos/buttverse version 2 FINAL.mp4', poster: 'assets/videos/thumbs/buttverse version 2 FINAL.jpg' },
   { type: 'video', title: 'DCA Buttcoin ftw',             src: 'assets/videos/IMG_1606.MP4',                  poster: 'assets/videos/thumbs/IMG_1606.jpg' },
   { type: 'video', title: 'Only Rotation That Makes Sense', src: 'assets/Only rotation that makes sense.mp4', poster: 'assets/videos/thumbs/Only rotation that makes sense.jpg' },
-  { type: 'audio', title: 'Buttcoin Song', desc: 'Let\'s get this party started. First the moon, then Uranus! Real Buttcoiners are on a mission to flip and party at Uranus ;)', src: 'assets/BUTTCOIN ANTHEM.mp3' },
+  { type: 'audio', title: 'Buttcoin Song', desc: 'Let\'s get this party started. First the moon, then Uranus!', src: 'assets/BUTTCOIN ANTHEM.mp3' },
   { type: 'video', title: 'Turtle',                       src: 'assets/videos/Turtle final.mp4',              poster: 'assets/videos/thumbs/Turtle final.jpg' },
   { type: 'video', title: 'Uranus',                       src: 'assets/videos/uranus.mp4',                    poster: 'assets/videos/thumbs/uranus.jpg' },
   { type: 'video', title: 'Butt Girl 1 Very Nice',        src: 'assets/videos/butt girl 1 very nice.mp4',     poster: 'assets/videos/thumbs/butt girl 1 very nice.jpg' },
