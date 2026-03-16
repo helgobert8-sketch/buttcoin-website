@@ -193,43 +193,159 @@ document.addEventListener('keydown', e => {
 // ─── ARTICLES ─────────────────────────────────
 const ARTICLE_CONTENT = {
   fundamentals: {
-    title: "Fundamentals vs. FUD",
+    title: "Just what Buttoshi ordered: Memetic Fundamentals vs. FUD",
     tag: "Analysis",
     author: "paronthes",
-    body: `<p>Buttcoin has three fundamental essences that make it unlike any other memecoin in the market:</p>
-    <h4>1. Bitcoin</h4>
-    <p>Buttcoin is inseparably tied to Bitcoin — it IS the Bitcoin logo, rotated 90 degrees. As long as Bitcoin is relevant, Buttcoin has mindshare. Bitcoin's dominance is Buttcoin's mirror. Every time someone talks about BTC, Buttcoin echoes.</p>
-    <h4>2. The Parody</h4>
-    <p>Buttcoin is Bitcoin's loyal critic and companion. It laughs at Bitcoin's broken promises while respecting its foundation. The meme isn't mean-spirited — it's a love letter to crypto written sideways.</p>
-    <h4>3. The Next Bitcoin</h4>
-    <p>This is the mission. The community is on a mission to flip BTC. This isn't delusional — it's the only position that's internally consistent with holding Buttcoin. If you believe the meme, you believe the mission.</p>
-    <p>The conclusion: the meme is "fundamentally too good" and truly inevitable. FUD is noise. Fundamentals are forever. Hyperbuttcoinification is inevitable.</p>`
+    body: `<p>Whenever you are in doubt, just zoom out.</p>
+    <p>Ask yourself: What is this thing I'm holding?</p>
+    <p>Ask: What is Buttcoin on its most fundamental level? What are its essences?</p>
+    <p>They are threefold:</p>
+    <ol>
+      <li><strong>BITCOIN</strong> — it is inextricably tied to the OG of crypto</li>
+      <li><strong>BUTTCOIN</strong> — it is a parody of Bitcoin and a reminder of promises made but not kept</li>
+      <li><strong>THE NEXT BITCOIN</strong> — it is the mission to build a community delusional enough to eventually flip Bitcoin</li>
+    </ol>
+    <p>And you can see all of this for yourself if you simply open CoinMarketCap and search for the OG Buttcoin:</p>
+    <ol>
+      <li>Immediately you recognize the Bitcoin logo and you read the actual word "BITCOIN" itself as well [= mindshare premium: as long as BTC has mindshare, Buttcoin is relevant]</li>
+      <li>You also see the added BUTTCOIN at the end [= parody, criticism]</li>
+      <li>And finally, you start to wonder why the logo has been flipped [= mission]</li>
+    </ol>
+    <p>So, my friends, never ever forget this: investing in memecoins can be an emotional rollercoaster, and anyone feels the pain and the FUD from time to time. But this meme is just too powerful. It is fundamentally too good. It is truly inevitable.</p>
+    <p>Thus, it simply does not matter if Buttcoin goes up or down for some time. Because when the masses pile into crypto, they will go on CoinMarketCap just like you, and they will see and understand what we have just discussed.</p>
+    <p>And then they will rush into this extraordinary gem that is Buttcoin. And then we will have glorious pumps. And we will go multicycle. And beyond that we will keep building until we actually flip BTC.</p>
+    <p>This is the mission. This is what it is all about. Crypto legend in the making, my friends.</p>
+    <p><em>Paronthes out.</em></p>`
   },
   retracements: {
-    title: "Why Big Retracements in Memecoins Are Not Only Healthy",
+    title: "Why Big Retracements in Memecoins Are Not Only Healthy — They're Necessary for $1B+ Outcomes",
     tag: "Strategy",
-    body: `<p>Memecoins are volatile by nature. But for a community-owned coin like Buttcoin, big retracements serve an important function: they separate the diamond butts from the paper hands.</p>
-    <p>Every major retracement in Buttcoin's history has been followed by a stronger community. The weak sell. The believers accumulate. The lore deepens.</p>
-    <p>Remember: Buttcoin is either up or upgrading. There is no down — only a different angle of ascent toward Uranus.</p>
-    <p>The barbell strategy (Bitcoin + Buttcoin) means you're covered in both scenarios: if Bitcoin continues to dominate, Buttcoin captures the meme upside. If Buttcoin flips Bitcoin, you're already holding the winner.</p>
-    <p>Stack butts. Stay humble. Relentless accumulation.</p>`
+    author: "Locke",
+    body: `<p>In markets — especially in emergent, speculative corners like memecoins — it's easy to mistake volatility for failure and retracements for death. But the truth, drawn from a deeper understanding of how speculative booms behave and how human psychology drives capital flows, is this: sharp retracements are not just inevitable — they're integral to achieving long-term exponential growth and multi-billion-dollar valuations.</p>
+    <p>Let's break this down systemically.</p>
+    <h4>1. Every market moves in cycles. Memecoins are no exception.</h4>
+    <p>In every bubble — whether it's tulips in the 1600s, internet stocks in the late 1990s, or Bitcoin in 2017 — there's a common pattern: a euphoric rise, a painful correction, and — if there's staying power — another, more measured leg up.</p>
+    <p>This isn't random. It's the result of capital flowing too quickly into an immature system, oversaturating it, and then retreating. That retreat clears the inefficiencies, weeds out the speculators who didn't understand the game, and leaves only the committed — those who can build the next leg of growth.</p>
+    <p>In the case of memecoins, a 50–90% drawdown isn't a sign of failure. It's the natural clearing mechanism of a parabolic asset class.</p>
+    <h4>2. Big retracements test conviction — and that's what creates strong communities.</h4>
+    <p>At their core, memecoins are narrative assets. They're belief-driven. They rise because people believe they'll rise, and because that belief becomes contagious.</p>
+    <p>But shallow conviction can't take a coin to a $1B+ market cap. It takes a cult. A mission. A group of holders who will not sell because they see the $1B outcome as a foregone conclusion, not a moonshot.</p>
+    <p>Sharp retracements shake out weak hands. They force the community to ask: What are we building? What do we stand for? Are we a joke, or are we the next cultural revolution on-chain? When the token recovers, it's not just because of market cycles — it's because belief hardened.</p>
+    <h4>3. Retracements allow for structural rebalancing and better ownership distribution.</h4>
+    <p>When memecoins move too fast, early insiders or whales end up holding too large a portion of supply. That's dangerous. It creates fragility, not strength. Retracements give late entrants a second chance to enter at fairer prices, and whales a chance to exit — redistributing tokens more equitably.</p>
+    <p>You can't get to a $1B valuation on a few hundred concentrated holders. You need tens of thousands of distributed believers, all with skin in the game. A pullback is what enables that.</p>
+    <h4>4. You don't get exponential upside without real pain first.</h4>
+    <p>The history of all great asymmetric trades is littered with moments of despair. Bitcoin went from $32 to $2 before reaching $20,000. Amazon fell 90% before becoming a trillion-dollar company. Memecoins, for all their absurdity, follow the same law of emotional extremes.</p>
+    <p>In order to see a memecoin go 100x, 1000x, or beyond, you must go through a phase where it seems like it will go to zero. It's part of the design. It's the initiation. The few who understand this — and can stomach the volatility — are the ones who earn the outlier returns.</p>
+    <h4>Final Thought</h4>
+    <p>If you're aiming for a $1B+ memecoin, pray for the crash. Because only by surviving it can your token prove it has the resilience, community, and belief system necessary to become the next Doge, the next Fartcoin, or — if you're truly delusional like we are — the next Bitcoin.</p>
+    <p><em>— Locke</em></p>`
+  },
+  'how-to-buy-article': {
+    title: "How to Buy Buttcoin: An Educational Article",
+    tag: "Education",
+    body: `<p>Buying Buttcoin isn't just a trade — it's a religion. Whether you're here for the memes, the mission, the tech, or the community, there's one thing we can all agree on: Buttcoin is the next Bitcoin. That means you don't just buy like a normie — you buy like someone who respects the art of accumulation.</p>
+    <p>Here's how to do it right.</p>
+    <h4>1. DCA Like a Legend</h4>
+    <p>Dollar Cost Averaging (DCA) is your best friend. Markets are unpredictable — anyone telling you they know exactly when to buy is either lucky or lying. DCA is the strategy that keeps you safe from yourself. Instead of going all-in at once, you buy small, consistent amounts over time.</p>
+    <p>It smooths out volatility and reduces the risk of buying the top. Buy a set amount daily, weekly, or every time Buttcoin hits a key level. DCA keeps you in the game long enough to win it.</p>
+    <h4>2. Buy at Support (Not at the Top)</h4>
+    <p>Look at the chart. Find the horizontal levels where price keeps bouncing — that's support. That's where smart money steps in. If you're buying when the candle is green, chances are you're late.</p>
+    <p>Be patient. Wait for pullbacks. The market gives you gifts if you're calm enough to accept them.</p>
+    <h4>3. Help Break Resistance (Strategically)</h4>
+    <p>Sometimes Buttcoin is coiling up under a key level, and you can feel the breakout coming. Volume's rising. Sentiment's shifting. This is when you can help break resistance — by buying with conviction when you see the setup.</p>
+    <p>But don't just ape every green candle. Most "breakouts" are fakeouts. Wait for confirmation, then enter with your pre-saved bullets. Don't chase. Lead.</p>
+    <h4>4. Buy Lower if You Top-Blasted</h4>
+    <p>Let's be real — everyone buys a top eventually. What separates the pros from the bagholders is how you respond.</p>
+    <p>If you aped in and price dropped, don't panic. Zoom out. If you still believe in the project (and if it's Buttcoin, you should), average down. But don't double down mindlessly — you're not catching falling knives, you're scooping undervalued gold.</p>
+    <h4>5. Save Bullets</h4>
+    <p>Never go full send. You want to have dry powder — your bullets — ready for when it really matters. The lower it goes, the better the entries, but only if you've got something left to deploy. Scale in. If price nukes unexpectedly, you're not sweating — you're buying.</p>
+    <h4>6. Have a Strategy. Stick to It.</h4>
+    <p>The market doesn't care about your feelings. That's why you need a plan before you click buy. Set your entry levels. Decide your position size. Choose your exit targets. The less emotion involved, the better your execution. Changing your mind mid-trade is how you lose.</p>
+    <h4>7. HODL: Buttcoin is the Next Bitcoin</h4>
+    <p>Let's not forget why you're here. This isn't just a memecoin — it's a movement. Launched with zero VC backing, zero team allocation, and 100% community energy. So when things get shaky, when charts bleed and sentiment dips, remember: Bitcoin had its doubters too. And look where it went. Buttcoin is on its own path — and you're early. Hold the line.</p>
+    <h4>Final Thought</h4>
+    <p>Buying Buttcoin isn't about gambling — it's about participating in something bigger. Use strategy. Be patient. Save your bullets. Stick to your plan. And above all, HODL like you believe Buttcoin really is the next Bitcoin — because it just might be.</p>
+    <p>Now go buy some BUTTCOIN. See you on the charts.</p>
+    <h4>Bonus: No Shame, Only Gains</h4>
+    <p>Everyone starts somewhere. Maybe you bought the top. Maybe you aped and then googled "what is a liquidity pool." It's all good. Here in the Buttcoin community, nobody judges you.</p>
+    <p>We're not about elitism or gatekeeping — we're here to learn, help, and laugh along the way. Ask questions. Share your chart. Tell us your wins and your losses. You'll find support, not sarcasm.</p>
+    <p>Because at the end of the day, Buttcoin is community-first. It's about building something fun, transparent, and wildly different from the soulless grind of most of crypto.</p>
+    <p>This isn't just a trading guide — it's an invite. To the friendliest corner of the internet. To the most explosive meme economy in the universe. To the next Bitcoin.</p>
+    <p>You're early. Welcome to Buttcoin.</p>`
   },
   believing: {
     title: "Believing in Yourself",
     tag: "Culture",
-    body: `<p>Holding Buttcoin requires a specific kind of mental fortitude. The rest of the world isn't ready for it yet. That's the point.</p>
-    <p>Every great idea looked ridiculous before it didn't. Email. The internet. Bitcoin itself. The joke that became a movement. The butt that became a barbell.</p>
-    <p>Delusional people are the ones that change the world. If enough people decide that flipping Bitcoin is funny, righteous, or spiritually necessary, math will obediently rearrange itself.</p>
-    <p>Buttcoin — greatness from small beginnings.</p>`
+    author: "Sully",
+    body: `<p>It's simple enough to say out loud or to write down on a piece of paper — but the raw power of one's will put into motion is determined by the depth of their belief in themselves.</p>
+    <p>Affirmations and daily motivational quotes pacify the most ADHD of OCD self-diagnosed market participants who remain glued to their phones or tied to their desks — while the world continues turning and a beautiful day turns into a picturesque night.</p>
+    <p>While the true believers (who believe in themselves) bend the world to their will by remaining steadfast, disciplined, and following a measurable list of actions to further their own pursuits — be it their faith, their fitness, their careers, their relationships or their trading. Or all of the aforementioned, combined.</p>
+    <p>Only those who believe in themselves and choose to walk the unforgiving, sometimes painful but necessary path towards discipline deserve to reap the success that comes along its way.</p>
+    <p>Buttcoiners understand this in the simplest terms: eat, meme, shill, sleep, repeat. A vast network of Buttcoiners collaborating together, buzzing along the network, each one validating the proof of its memetics to the next, making true believers out of atheist 2x-3x FnF cookers, and so-called swing traders, calling to the fold all those that can see the vision.</p>
+    <p>And the vision is as simple as those very three words: believe in yourself.</p>
+    <p>So the question is, will you choose to believe in yourself? Or will you continue on your wayward journey?</p>
+    <p>Only you can set you free...</p>`
   },
   'doge-love': {
     title: "Dr. DOGE-Love, or How I Learned to Stop BONK-ing and Love the Buttcoin",
     tag: "Culture",
-    body: `<p>There was a time before Buttcoin. A dark time of BONKing and DOGE speculation, of chasing pumps and following influencers into oblivion.</p>
-    <p>Then someone rotated the Bitcoin logo 90 degrees and everything changed.</p>
-    <p>The pre-ETF era of crypto was characterized by noise — a thousand memecoins competing for attention with no underlying thesis. Buttcoin was different. Buttcoin had lore. Buttcoin had a mission. Buttcoin had Buttoshi.</p>
-    <p>The transition from trader to Buttcoiner is a one-way door. You either see it or you don't. And once you see it, you can't unsee it.</p>
-    <p>Welcome to the Buttverse. The next Bitcoin awaits.</p>`
+    author: "sully",
+    body: `<p>Many are bullish on the prospects of the DOGE/DOJE ETF going live; the same can be said for the BONK ETF as well — with many heralding these two iconic events to be the ultimate green signal for memecoin season v3.0… or whichever version we are on now.</p>
+    <p>However, as is the case with most people who hop into this space daily with goldfish memory and TikTok attention span — they fail to understand the very fundamentals of cause and effect.</p>
+    <p>DOGECOIN, which was created on 6th December 2013 (only 2 days earlier than our beloved Buttoshi's theorization of Buttcoin) took a long time to reach the promised land of ETFs, sunshines and rainbows.</p>
+    <p>Likewise, BONK arrived like it was heaven sent, in time to breathe new life into meme culture and to Solana in general.</p>
+    <p>Both of the above memes had, fundamentally, a strong character or meme tied to the very foundation of their "coins" which evolved over time and brought fresh, new eyes to the meme at every developing stage of the cycle.</p>
+    <p><em>(Sidebar: I would rather call them tokenized movements — but saying 'meme-inspired tokenized movements' is quite troublesome.)</em></p>
+    <p>This notion that ETF for memes is somehow magically bullish for all memes is one based on mania-induced liquidity coming in and bidding every single coin on the roster.</p>
+    <p>Butt there are some that stand head and shoulder above the others.</p>
+    <p>To be considered exceptional, to be among the God tier memetics, one must hold fast to a community — some have societies, others have religion; what they all have in common is that they offer structure, repeatable consistent actions that progress their respective values, ethos, and produce reliable, measurable and improvable output at every stage.</p>
+    <p>Buttcoin's rise to fame, fall to obscurity and rise to infamy once again — only to… well… fall again — is documented through the hallowed pages of CT. But within all these happenings, under all the vitriol, hate, "scam" and "rug" proclamations — the beating heart of the Buttcoin community and its diehards keep plugging away, memeing Saylor into infinite historical and present-day situations, providing fresh memes, commentary, ANALysis of different charts, some Cheeky Analytics and of course my personal favorite, commenting under thirst traps.</p>
+    <p>Look at that. What do you think happens when this form of bullposting catches on? You might see it and say "sTrAiGhT tO zErO". Do you know what we say?</p>
+    <p>It's literally a Buttcoin, don't take it so seriously.</p>
+    <p>The truth is no one is coming to save my meme or for that matter, yours — you and your community are going to have to work hard and work for it like your life depends on it.</p>
+    <p>Getting rich quick and losing it all, crashing out won't add value to your lives or enrich the generations to come.</p>
+    <p>We have a once in a lifetime opportunity to actually learn how to work together for a common end goal, which in our case might take more time than perhaps your own individual goals.</p>
+    <p>We, like the delusional buggers we are, have become hell bent on flipping Bitcoin.</p>
+    <p>Will we succeed? Yes.</p>
+    <p>Because we stopped worrying about DOGE/DOJE, BONK/BNKK. We love Buttcoin — we love the narrative it has, the lore it has built on CT, the history of liquidations it has accrued and the potential it has yet to fulfill.</p>
+    <p>As the immortal Mike Mentzer once said: <em>"Potential is merely the expression of a possibility. Something that can be assessed accurately only in retrospect. In other words, you'll never know how good you might've become, unless you try."</em></p>
+    <p>So today, I will try. And tomorrow, I will try again.</p>
+    <p>You wanna know why? Simple.</p>
+    <p>There is no second best memecoin.</p>`
+  },
+  'blue-chip': {
+    title: "Buttcoin = Blue Chip Meme",
+    tag: "Analysis",
+    author: "paronthes",
+    body: `<p>An OG Buttcoiner posted this question in our Buttcoiner Community: "Tell me about the feeling when you first discovered Buttcoin." And I responded as follows:</p>
+    <p>So a friend called me at late night. Literally woke me up. And he yelled: "Buy this new coin!"</p>
+    <p>I was for all intents and purposes still asleep, butt said "Alright, alright!" So I got on my phone and bought the damn thing, so I could get back to sleep.</p>
+    <p>But instead of actually falling asleep again, I just dozed, kept tossing and turning, etc.</p>
+    <p>Finally I gave up, got back up and had a closer look at what the hell I just bought.</p>
+    <p>And my brain exploded... The memetics, the memetics were sick.</p>
+    <p>Was this what pure BLUE CHIP memetic potential looks like?</p>
+    <p>I started to go down the rabbit hole fast. And all I was trying to think of was something I could NOT meme with this… and I could not come up with much!</p>
+    <p>That was my basis for building up my position and starting to bullpost about this new project: I just needed to know whether this meme was actually as close to memetically limitless as it gets, or if I was still dreaming.</p>
+    <p>So I started memeing, and thinking about the project, and memeing, and writing about it, and memeing, and getting to know other crazy people just like me, and kept on memeing...</p>
+    <p>And still: I could not reach a memetic limit. To this day, I have not really found one!</p>
+    <p>Therefore, I am now convinced that my initial midnight intuition was 100% correct:</p>
+    <ul>
+      <li>Buttcoin is a <strong>BLUE CHIP MEME</strong> simply because it is able to provide endless content. And we are all now tasked to unfold that potential post by post by post.</li>
+      <li>Buttcoin is a <strong>BLUE CHIP MEME</strong> simply because it works across so many dimensions:
+        <ul>
+          <li>Buttcoin has the mindshare of BTC. As long as BTC is alive and kicking, Buttcoin stays relevant.</li>
+          <li>Butt while Buttcoin certainly acknowledges BTC's status as the crypto OG, it's also a parody and a critique of the big one: anti-TradFi, cypherpunk elements, funny, normie-friendly, and it makes fun of everything.</li>
+          <li>Buttcoin is also its own unique thing — an original meme with its own style and history and lore going back to 2013.</li>
+          <li>Plus, it has been endlessly copied by others since its inception. Copycats are legion, buttlieve me. And once again this only shows how fundamentally strong this meme really is.</li>
+        </ul>
+      </li>
+      <li>Buttcoin is a <strong>BLUE CHIP MEME</strong> simply because we have the most ambitious mission: to flip the godfather of them all — BTC itself.</li>
+      <li>And Buttcoin is a <strong>BLUE CHIP MEME</strong> simply because of the people building and carrying it, every day. Because of us Buttcoiners who will not rest until the mission is done.</li>
+    </ul>
+    <p>So, to conclude: this began for me with a literal wake-up call, my friends. And that is what Buttcoin is to me — a chance to wake up and finally get it all.</p>
+    <p>So let's get it. To Uranus.</p>
+    <p><em>Paronthes out.</em></p>`
   },
   'di-news': {
     title: "Buttcoin: Can a 2013 Meme Really Be the Next Bitcoin?",
