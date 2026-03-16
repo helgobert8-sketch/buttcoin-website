@@ -434,7 +434,7 @@ const MEDIA_ITEMS = [
   { type: 'video', title: 'DCA Buttcoin ftw',             src: 'assets/videos/IMG_1606.MP4',                  poster: 'assets/videos/thumbs/IMG_1606.jpg' },
   { type: 'video', title: 'Only Rotation That Makes Sense', src: 'assets/Only rotation that makes sense.mp4', poster: 'assets/videos/thumbs/Only rotation that makes sense.jpg' },
   { type: 'audio', title: 'Buttcoin Song', desc: 'Let\'s get this party started. First the moon, then Uranus!', src: 'assets/BUTTCOIN ANTHEM.mp3' },
-  { type: 'video', title: 'Turtle',                       src: 'assets/videos/Turtle final.mp4',              poster: 'assets/videos/thumbs/Turtle final.jpg' },
+  { type: 'video', title: 'Just Buttcoin and chill',                       src: 'assets/videos/Turtle final.mp4',              poster: 'assets/videos/thumbs/Turtle final.jpg' },
   { type: 'video', title: 'Uranus',                       src: 'assets/videos/uranus.mp4',                    poster: 'assets/videos/thumbs/uranus.jpg' },
   { type: 'video', title: 'Always follow Buttcoin',        src: 'assets/videos/butt girl 1 very nice.mp4',     poster: 'assets/videos/thumbs/butt girl 1 very nice.jpg' },
   { type: 'video', title: 'Diamond in the rough, ready to shine',               src: 'assets/videos/diamond 1 nice.mp4',            poster: 'assets/videos/thumbs/diamond 1 nice.jpg' },
