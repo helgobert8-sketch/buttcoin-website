@@ -1,0 +1,13 @@
+# Firebase credentials — never commit these
+scripts/*-firebase-adminsdk-*.json
+*.serviceAccountKey.json
+serviceAccountKey.json
+
+# Environment / secrets
+.env
+.env.local
+.env*.local
+
+# OS
+.DS_Store
+Thumbs.db
