@@ -229,23 +229,28 @@ const ARTICLE_CONTENT = {
     body: `<p>By Locke, a student of cycles, incentives, and human nature</p>
     <p>In markets — especially in emergent, speculative corners like memecoins — it's easy to mistake volatility for failure and retracements for death. But the truth, drawn from a deeper understanding of how speculative booms behave and how human psychology drives capital flows, is this: sharp retracements are not just inevitable — they're integral to achieving long-term exponential growth and multi-billion-dollar valuations.</p>
     <p>Let's break this down systemically.</p>
+    <p>&nbsp;</p>
     <h4>1. Every market moves in cycles. Memecoins are no exception</h4>
     <p>In every bubble, whether it's tulips in the 1600s, internet stocks in the late 1990s, or Bitcoin in 2017, there's a common pattern: a euphoric rise, a painful correction, and — if there's staying power — another, more measured leg up.</p>
     <p>This isn't random. It's the result of capital flowing too quickly into an immature system, oversaturating it, and then retreating. That retreat clears the inefficiencies, weeds out the speculators who didn't understand the game, and leaves only the committed — those who can build the next leg of growth.</p>
     <p>In the case of memecoins, a 50–90% drawdown isn't a sign of failure. It's the natural clearing mechanism of a parabolic asset class.</p>
     <img src="assets/articles/retracements-1.jpg" style="width:100%;border-radius:8px;margin:16px 0" alt="">
+    <p>&nbsp;</p>
     <h4>2. Big retracements test conviction — and that's what creates strong communities</h4>
     <p>At their core, memecoins are narrative assets. They're belief-driven. They rise because people believe they'll rise, and because that belief becomes contagious.</p>
     <p>But shallow conviction can't take a coin to a $1B+ market cap.</p>
     <p>It takes a cult. A mission. A group of holders who will not sell because they see the $1B outcome as a foregone conclusion, not a moonshot.</p>
     <p>Sharp retracements shake out weak hands. They force the community to ask: What are we building? What do we stand for? Are we a joke, or are we the next cultural revolution on-chain? When the token recovers, it's not just because of market cycles — it's because belief hardened.</p>
+    <p>&nbsp;</p>
     <h4>3. Retracements allow for structural rebalancing and better ownership distribution</h4>
     <p>When memecoins move too fast, early insiders or whales end up holding too large a portion of supply. That's dangerous. It creates fragility, not strength. Retracements give late entrants a second chance to enter at fairer prices, and whales a chance to exit — redistributing tokens more equitably.</p>
     <p>You can't get to a $1B valuation on a few hundred concentrated holders. You need tens of thousands of distributed believers, all with skin in the game. A pullback is what enables that.</p>
+    <p>&nbsp;</p>
     <h4>4. You don't get exponential upside without real pain first</h4>
     <p>The history of all great asymmetric trades is littered with moments of despair. Bitcoin went from $32 to $2 before reaching $20,000. Amazon fell 90% before becoming a trillion-dollar company. Memecoins, for all their absurdity, follow the same law of emotional extremes.</p>
     <p>In order to see a memecoin go 100x, 1000x, or beyond, you must go through a phase where it seems like it will go to zero. It's part of the design. It's the initiation. The few who understand this — and can stomach the volatility — are the ones who earn the outlier returns.</p>
     <img src="assets/articles/retracements-2.jpg" style="width:100%;border-radius:8px;margin:16px 0" alt="">
+    <p>&nbsp;</p>
     <h4>Final Thought:</h4>
     <p>If you're aiming for a $1B+ memecoin, pray for the crash. Because only by surviving it can your token prove it has the resilience, community, and belief system necessary to become the next Doge, the next Fartcoin, or — if you're truly delusional like we are — the next Bitcoin.</p>
     <p>– Locke</p>`
@@ -399,9 +404,9 @@ const ARTICLE_CONTENT = {
     <p>So, to conclude: this has begun for me with a literal wake-up call, my friends. And that is what Buttcoin is to me — a chance to wake up &amp; finally get it all.</p>
     <p>So let's get it.</p>
     <p>To Uranus.</p>
+    <p><em>Paronthes out.</em></p>
     <img src="assets/articles/blue-chip-3.jpg" style="width:100%;border-radius:8px;margin:16px 0" alt="">
-    <p style="color:var(--muted);font-size:0.85rem;font-style:italic;margin-top:-8px">This is Buttcoin, a blue chip meme in the making. Its success is inevitable because it's the next BTC coded. This is not for the elites. It's the people's Bitcoin, no institutions, no central control. Only the steadfast belief that the most hilarious outcome is the most likely...</p>
-    <p><em>Paronthes out.</em></p>`
+    <p style="color:var(--muted);font-size:0.85rem;font-style:italic;margin-top:-8px">This is Buttcoin, a blue chip meme in the making. Its success is inevitable because it's the next BTC coded. This is not for the elites. It's the people's Bitcoin, no institutions, no central control. Only the steadfast belief that the most hilarious outcome is the most likely...</p>`
   },
 };
 
