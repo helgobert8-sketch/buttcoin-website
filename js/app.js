@@ -437,7 +437,7 @@ const MEDIA_ITEMS = [
   { type: 'video', title: 'Turtle',                       src: 'assets/videos/Turtle final.mp4',              poster: 'assets/videos/thumbs/Turtle final.jpg' },
   { type: 'video', title: 'Uranus',                       src: 'assets/videos/uranus.mp4',                    poster: 'assets/videos/thumbs/uranus.jpg' },
   { type: 'video', title: 'Butt Girl 1 Very Nice',        src: 'assets/videos/butt girl 1 very nice.mp4',     poster: 'assets/videos/thumbs/butt girl 1 very nice.jpg' },
-  { type: 'video', title: 'Diamond 1 Nice',               src: 'assets/videos/diamond 1 nice.mp4',            poster: 'assets/videos/thumbs/diamond 1 nice.jpg' },
+  { type: 'video', title: 'Diamond in the rough, ready to shine',               src: 'assets/videos/diamond 1 nice.mp4',            poster: 'assets/videos/thumbs/diamond 1 nice.jpg' },
   { type: 'video', title: 'Levels Upscaled',              src: 'assets/videos/levels upscaled.mp4',           poster: 'assets/videos/thumbs/levels upscaled.jpg' },
   { type: 'video', title: 'IMG 3912',                     src: 'assets/videos/IMG_3912.MP4',                  poster: 'assets/videos/thumbs/IMG_3912.jpg' },
 ];
