@@ -506,7 +506,6 @@ h1, h2, h3, h4 { color: var(--white); font-weight: 700; line-height: 1.2; }
 }
 .dominance-sol .dominance-value { color: #9945ff; }
 .dominance-bar-sol { background: #9945ff !important; }
-.dominance-value-btc { color: var(--orange); }
 .dominance-label {
   font-size: 0.95rem;
   text-transform: uppercase;
@@ -521,6 +520,7 @@ h1, h2, h3, h4 { color: var(--white); font-weight: 700; line-height: 1.2; }
   color: #ffffff;
   margin-bottom: 8px;
 }
+.dominance-value-btc { color: var(--orange); }
 .dominance-desc {
   font-size: 1rem;
   color: var(--text);
