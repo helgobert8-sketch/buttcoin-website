@@ -262,40 +262,40 @@ const ARTICLE_CONTENT = {
     body: `<img src="assets/articles/how-to-buy-1.jpg" style="width:100%;border-radius:8px;margin:0 0 16px" alt="">
     <p>Buying Buttcoin isn't just a trade — it's a religion. Whether you're here for the memes, the mission, the tech, or the community, there's one thing we can all agree on: Buttcoin is the next Bitcoin. That means you don't just buy like a normie — you buy like someone who respects the art of accumulation.</p>
     <p>Here's how to do it right.</p>
-    <br><h4>1. DCA Like a Legend</h4>
+    <h4 style="margin-top:1.5em">1. DCA Like a Legend</h4>
     <p>Dollar Cost Averaging (DCA) is your best friend. Markets are unpredictable — anyone telling you they know exactly when to buy is either lucky or lying. DCA is the strategy that keeps you safe from yourself. Instead of going all-in at once, you buy small, consistent amounts over time.</p>
     <p>It smooths out volatility and reduces the risk of buying the top. The trick is to automate it or commit to it mentally. Buy a set amount daily, weekly, or every time Buttcoin hits a key level. DCA keeps you in the game long enough to win it.</p>
-    <br><h4>2. Buy at Support (Not at the Top)</h4>
+    <h4 style="margin-top:1.5em">2. Buy at Support (Not at the Top)</h4>
     <p>Look at the chart. Find the horizontal levels where price keeps bouncing — that's support. That's where smart money steps in. If you're buying when the candle is green, chances are you're late.</p>
     <p>Be patient. Wait for pullbacks. The market gives you gifts if you're calm enough to accept them.</p>
-    <br><h4>3. Help Break Resistance (Strategically)</h4>
+    <h4 style="margin-top:1.5em">3. Help Break Resistance (Strategically)</h4>
     <p>Sometimes Buttcoin is coiling up under a key level, and you can feel the breakout coming. Volume's rising. Sentiment's shifting. This is when you can help break resistance — by buying with conviction when you see the setup.</p>
     <p>But don't just ape every green candle. Most "breakouts" are fakeouts. Wait for confirmation (a strong candle close above resistance, ideally on volume), then enter with your pre-saved bullets. Don't chase. Lead.</p>
-    <br><h4>4. Buy Lower if You Top-Blasted</h4>
+    <h4 style="margin-top:1.5em">4. Buy Lower if You Top-Blasted</h4>
     <p>Let's be real — everyone buys a top eventually. What separates the pros from the bagholders is how you respond.</p>
     <p>If you aped in and price dropped, don't panic. Zoom out. If you still believe in the project (and if it's Buttcoin, you should), average down. This lowers your average entry and sets you up to break even — or profit — faster on the rebound.</p>
     <p>But don't double down mindlessly. You're not catching falling knives — you're scooping undervalued gold.</p>
-    <br><h4>5. Save Bullets</h4>
+    <h4 style="margin-top:1.5em">5. Save Bullets</h4>
     <p>Never go full send. You want to have dry powder — your bullets — ready for when it really matters. The lower it goes, the better the entries, but only if you've got something left to deploy.</p>
     <p>This is how real traders operate. You don't YOLO. You scale in. If price nukes unexpectedly, you're not sweating — you're buying.</p>
-    <br><h4>6. Have a Strategy. Stick to It.</h4>
+    <h4 style="margin-top:1.5em">6. Have a Strategy. Stick to It.</h4>
     <p>The market doesn't care about your feelings. That's why you need a plan before you click buy.</p>
     <p>Set your entry levels. Decide your position size. Choose your exit targets. Write it down if you have to. The less emotion involved, the better your execution.</p>
     <p>Changing your mind mid-trade is how you lose. Let your future self thank you for your discipline.</p>
-    <br><h4>7. HODL: Buttcoin is the Next Bitcoin</h4>
+    <h4 style="margin-top:1.5em">7. HODL: Buttcoin is the Next Bitcoin</h4>
     <p>Let's not forget why you're here.</p>
     <p>This isn't just a memecoin. It's a movement. Buttcoin is the next Bitcoin. Launched with zero VC backing, zero team allocation, and 100% community energy — it's not just a coin, it's a culture.</p>
     <p>So when things get shaky, when charts bleed and sentiment dips, remember this: respect the voyage. Bitcoin had its doubters too. And look where it went. Buttcoin is on its own path — and you're early.</p>
     <p>Hold the line.</p>
-    <br><h4>Final Thought</h4>
+    <h4 style="margin-top:1.5em">Final Thought</h4>
     <p>Buying Buttcoin isn't about gambling — it's about participating in something bigger. Use strategy. Be patient. Save your bullets. Stick to your plan. And above all, HODL like you believe Buttcoin really is the next Bitcoin — because it just might be.</p>
     <p>Now go buy some BUTTCOIN. See you on the charts.</p>
-    <br><h4>Bonus: No Shame, Only Gains</h4>
+    <h4 style="margin-top:1.5em">Bonus: No Shame, Only Gains</h4>
     <p>Let's be real — everyone starts somewhere. Maybe you bought the top. Maybe you aped and then googled "what is a liquidity pool." It's all good. Here in the Buttcoin community, nobody judges you. We've all been there.</p>
     <p>We're not about elitism or gatekeeping — we're here to learn, help, and laugh along the way. Whether you're a first-time buyer or a seasoned trader, if you believe in the mission and meme of Buttcoin, you're one of us.</p>
     <p>Ask questions. Share your chart. Tell us your wins and your losses. You'll find support, not sarcasm.</p>
     <p>Because at the end of the day, Buttcoin is community-first. It's about building something fun, transparent, and wildly different from the soulless grind of most of crypto.</p>
-    <br><h4>Final Final Thought</h4>
+    <h4 style="margin-top:1.5em">Final Final Thought</h4>
     <p>This isn't just a trading guide — it's an invite.</p>
     <p>To the friendliest corner of the internet.</p>
     <p>To the most explosive meme economy in the universe.</p>
