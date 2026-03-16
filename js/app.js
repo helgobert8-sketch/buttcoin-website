@@ -426,6 +426,75 @@ function openArticle(id) {
   openModal('article-modal');
 }
 
+// ─── MEDIA ─────────────────────────────────────
+const MEDIA_ITEMS = [
+  { type: 'audio', title: 'The Buttcoin Anthem', desc: 'The official anthem of the Buttverse. Turn it up.', src: 'assets/BUTTCOIN ANTHEM.mp3' },
+  { type: 'video', title: 'Buttverse',                    src: 'assets/videos/buttverse version 2 FINAL.mp4', poster: 'assets/videos/thumbs/buttverse version 2 FINAL.jpg' },
+  { type: 'video', title: 'Turtle',                       src: 'assets/videos/Turtle final.mp4',              poster: 'assets/videos/thumbs/Turtle final.jpg' },
+  { type: 'video', title: 'Uranus',                       src: 'assets/videos/uranus.mp4',                    poster: 'assets/videos/thumbs/uranus.jpg' },
+  { type: 'video', title: 'Butt Girl 1 Very Nice',        src: 'assets/videos/butt girl 1 very nice.mp4',     poster: 'assets/videos/thumbs/butt girl 1 very nice.jpg' },
+  { type: 'video', title: 'Diamond 1 Nice',               src: 'assets/videos/diamond 1 nice.mp4',            poster: 'assets/videos/thumbs/diamond 1 nice.jpg' },
+  { type: 'video', title: 'Levels Upscaled',              src: 'assets/videos/levels upscaled.mp4',           poster: 'assets/videos/thumbs/levels upscaled.jpg' },
+  { type: 'video', title: 'IMG 1373',                     src: 'assets/videos/IMG_1373.MOV',                  poster: 'assets/videos/thumbs/IMG_1373.jpg' },
+  { type: 'video', title: 'IMG 1606',                     src: 'assets/videos/IMG_1606.MP4',                  poster: 'assets/videos/thumbs/IMG_1606.jpg' },
+  { type: 'video', title: 'IMG 3912',                     src: 'assets/videos/IMG_3912.MP4',                  poster: 'assets/videos/thumbs/IMG_3912.jpg' },
+  { type: 'video', title: '0001-0251',                    src: 'assets/0001-0251.mp4',                        poster: 'assets/videos/thumbs/0001-0251.jpg' },
+  { type: 'video', title: 'Logo Animated',                src: 'assets/logo-animated.mp4',                    poster: 'assets/videos/thumbs/logo-animated.jpg' },
+  { type: 'video', title: 'Only Rotation That Makes Sense', src: 'assets/Only rotation that makes sense.mp4', poster: 'assets/videos/thumbs/Only rotation that makes sense.jpg' },
+];
+
+const MEDIA_PAGE_SIZE = 6;
+let mediaPage = 0;
+
+function renderMediaPage() {
+  const grid = document.getElementById('media-grid');
+  const pag  = document.getElementById('media-pagination');
+  if (!grid) return;
+
+  const start = mediaPage * MEDIA_PAGE_SIZE;
+  const batch = MEDIA_ITEMS.slice(start, start + MEDIA_PAGE_SIZE);
+  const totalPages = Math.ceil(MEDIA_ITEMS.length / MEDIA_PAGE_SIZE);
+
+  grid.innerHTML = batch.map(item => {
+    if (item.type === 'audio') {
+      return `
+        <div class="media-card media-anthem">
+          <h3>${item.title}</h3>
+          <p>${item.desc}</p>
+          <audio controls class="anthem-player" src="${item.src}">
+            Your browser does not support the audio element.
+          </audio>
+        </div>`;
+    }
+    return `
+      <div class="media-card">
+        <h3>${item.title}</h3>
+        <video controls class="media-video" src="${item.src}" poster="${item.poster}">
+          Your browser does not support video.
+        </video>
+      </div>`;
+  }).join('');
+
+  if (pag) {
+    const nav = window.buildPageNav ? window.buildPageNav(mediaPage + 1, totalPages, 'jumpToMediaPage') : '';
+    pag.innerHTML = totalPages <= 1 ? '' : `
+      <button class="page-btn" onclick="jumpToMediaPage(${mediaPage - 1})" ${mediaPage === 0 ? 'disabled' : ''}>← Previous</button>
+      <span class="page-info">Page ${mediaPage + 1} of ${totalPages}</span>
+      <button class="page-btn" onclick="jumpToMediaPage(${mediaPage + 1})" ${mediaPage >= totalPages - 1 ? 'disabled' : ''}>Next →</button>
+      ${nav}
+    `;
+  }
+}
+
+window.jumpToMediaPage = function(index) {
+  const totalPages = Math.ceil(MEDIA_ITEMS.length / MEDIA_PAGE_SIZE);
+  mediaPage = Math.max(0, Math.min(totalPages - 1, index));
+  renderMediaPage();
+  document.getElementById('media')?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+};
+
+document.addEventListener('DOMContentLoaded', renderMediaPage);
+
 // ─── PRESENTATIONS ─────────────────────────────
 const PRES_DATA = {
   legend: {
