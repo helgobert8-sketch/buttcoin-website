@@ -374,15 +374,6 @@ const ARTICLE_CONTENT = {
     <p style="color:var(--muted);font-size:0.85rem;font-style:italic;margin-top:-8px">This is Buttcoin, a blue chip meme in the making. Its success is inevitable because it's the next BTC coded. This is not for the elites. It's the people's Bitcoin, no institutions, no central control. Only the steadfast belief that the most hilarious outcome is the most likely...</p>
     <p><em>Paronthes out.</em></p>`
   },
-  'di-news': {
-    title: "Buttcoin: Can a 2013 Meme Really Be the Next Bitcoin?",
-    tag: "News",
-    source: "DI News — February 14, 2025",
-    body: `<p>Published in DI News on Valentine's Day, 2025 — the mainstream started to ask the question the Buttcoin community had been answering for weeks.</p>
-    <p>The article explored how a decade-old joke video by James D. McMurray had spawned a Solana-based memecoin with a legitimate thesis: that the meme is fundamentally tied to Bitcoin, and as Bitcoin's relevance grows, so does Buttcoin's.</p>
-    <p>The community's answer to the headline question: <em>Yes. Obviously.</em></p>
-    <p>Hyperbuttcoinification is inevitable.</p>`
-  }
 };
 
 function openArticle(id) {
