@@ -508,22 +508,22 @@ h1, h2, h3, h4 { color: var(--white); font-weight: 700; line-height: 1.2; }
 .dominance-bar-sol { background: #9945ff !important; }
 .dominance-value-btc { color: #f59e0b; }
 .dominance-label {
-  font-size: 0.75rem;
+  font-size: 0.95rem;
   text-transform: uppercase;
   letter-spacing: 0.1em;
-  color: var(--muted);
+  color: var(--text);
   margin-bottom: 12px;
 }
 .dominance-value {
   font-size: 2.5rem;
   font-weight: 700;
   font-style: italic;
-  color: var(--orange);
+  color: #ffffff;
   margin-bottom: 8px;
 }
 .dominance-desc {
-  font-size: 0.85rem;
-  color: var(--muted);
+  font-size: 1rem;
+  color: var(--text);
   margin-bottom: 16px;
 }
 .dominance-bar-wrap {
@@ -544,10 +544,10 @@ h1, h2, h3, h4 { color: var(--white); font-weight: 700; line-height: 1.2; }
   justify-content: space-between;
   padding: 10px 0;
   border-bottom: 1px solid var(--border);
-  font-size: 0.9rem;
+  font-size: 1rem;
 }
 .mcap-row:last-child { border-bottom: none; }
-.mcap-ratio { color: var(--purple); font-weight: 700; }
+.mcap-ratio { color: var(--orange); font-weight: 700; }
 .dominance-quote {
   text-align: center;
   font-style: italic;
