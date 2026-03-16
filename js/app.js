@@ -438,15 +438,13 @@ const PRES_DATA = {
   rules: {
     title: "21 Rules of Buttcoin — Michael J. Buttlor",
     folder: "Saylor 21 rules of BTC",
-    count: 25,
-    prefix: "",
-    suffix: "-25.jpg"
+    count: 26
   },
   standard: {
     title: "The Buttcoin Standard",
     folder: "The Buttcoin Standard",
     isPDF: true,
-    pdfPath: "assets/presentations/The Buttcoin Standard.pdf"
+    pdfPath: "assets/presentations/The Buttcoin Standard/The Buttcoin Standard.pdf"
   }
 };
 
@@ -472,12 +470,15 @@ function openPresentation(id) {
 
   if (id === 'legend') {
     for (let i = 1; i <= pres.count; i++) {
-      currentSlides.push(`assets/presentations/legend/${i}.png`);
+      currentSlides.push(`assets/presentations/The Legend of Buttcoin/Legend of Buttcoin (${i}).png`);
     }
   } else if (id === 'rules') {
-    for (let i = 1; i <= pres.count; i++) {
+    // slide 00 = webp, slide 01 = png, slides 02–25 = jpg
+    currentSlides.push(`assets/presentations/Saylor 21 rules of BTC/00 25.webp`);
+    currentSlides.push(`assets/presentations/Saylor 21 rules of BTC/01 25.png`);
+    for (let i = 2; i <= 25; i++) {
       const num = String(i).padStart(2, '0');
-      currentSlides.push(`assets/presentations/rules/${num}-25.jpg`);
+      currentSlides.push(`assets/presentations/Saylor 21 rules of BTC/${num} 25.jpg`);
     }
   }
 
