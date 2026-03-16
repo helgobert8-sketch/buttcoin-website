@@ -198,6 +198,7 @@ const ARTICLE_CONTENT = {
     author: "paronthes",
     body: `<p>Whenever you are in doubt, just zoom out.</p>
     <p>Ask yourself: What is this thing I'm holding?</p>
+    <img src="assets/articles/fundamentals-1.jpg" style="width:100%;border-radius:8px;margin:16px 0" alt="">
     <p>Ask: What is Buttcoin on its most fundamental level? What are its essences?</p>
     <p>They are threefold:</p>
     <ol>
@@ -206,6 +207,7 @@ const ARTICLE_CONTENT = {
       <li><strong>THE NEXT BITCOIN</strong> — it is the mission to build a community delusional enough to eventually flip Bitcoin</li>
     </ol>
     <p>And you can see all of this for yourself if you simply open CoinMarketCap and search for the OG Buttcoin:</p>
+    <img src="assets/articles/fundamentals-2.png" style="width:100%;border-radius:8px;margin:16px 0" alt="">
     <ol>
       <li>Immediately you recognize the Bitcoin logo and you read the actual word "BITCOIN" itself as well [= mindshare premium: as long as BTC has mindshare, Buttcoin is relevant]</li>
       <li>You also see the added BUTTCOIN at the end [= parody, criticism]</li>
@@ -227,6 +229,7 @@ const ARTICLE_CONTENT = {
     <p>In every bubble — whether it's tulips in the 1600s, internet stocks in the late 1990s, or Bitcoin in 2017 — there's a common pattern: a euphoric rise, a painful correction, and — if there's staying power — another, more measured leg up.</p>
     <p>This isn't random. It's the result of capital flowing too quickly into an immature system, oversaturating it, and then retreating. That retreat clears the inefficiencies, weeds out the speculators who didn't understand the game, and leaves only the committed — those who can build the next leg of growth.</p>
     <p>In the case of memecoins, a 50–90% drawdown isn't a sign of failure. It's the natural clearing mechanism of a parabolic asset class.</p>
+    <img src="assets/articles/retracements-1.jpg" style="width:100%;border-radius:8px;margin:16px 0" alt="">
     <h4>2. Big retracements test conviction — and that's what creates strong communities.</h4>
     <p>At their core, memecoins are narrative assets. They're belief-driven. They rise because people believe they'll rise, and because that belief becomes contagious.</p>
     <p>But shallow conviction can't take a coin to a $1B+ market cap. It takes a cult. A mission. A group of holders who will not sell because they see the $1B outcome as a foregone conclusion, not a moonshot.</p>
@@ -237,6 +240,7 @@ const ARTICLE_CONTENT = {
     <h4>4. You don't get exponential upside without real pain first.</h4>
     <p>The history of all great asymmetric trades is littered with moments of despair. Bitcoin went from $32 to $2 before reaching $20,000. Amazon fell 90% before becoming a trillion-dollar company. Memecoins, for all their absurdity, follow the same law of emotional extremes.</p>
     <p>In order to see a memecoin go 100x, 1000x, or beyond, you must go through a phase where it seems like it will go to zero. It's part of the design. It's the initiation. The few who understand this — and can stomach the volatility — are the ones who earn the outlier returns.</p>
+    <img src="assets/articles/retracements-2.jpg" style="width:100%;border-radius:8px;margin:16px 0" alt="">
     <h4>Final Thought</h4>
     <p>If you're aiming for a $1B+ memecoin, pray for the crash. Because only by surviving it can your token prove it has the resilience, community, and belief system necessary to become the next Doge, the next Fartcoin, or — if you're truly delusional like we are — the next Bitcoin.</p>
     <p><em>— Locke</em></p>`
@@ -244,7 +248,9 @@ const ARTICLE_CONTENT = {
   'how-to-buy-article': {
     title: "How to Buy Buttcoin: An Educational Article",
     tag: "Education",
-    body: `<p>Buying Buttcoin isn't just a trade — it's a religion. Whether you're here for the memes, the mission, the tech, or the community, there's one thing we can all agree on: Buttcoin is the next Bitcoin. That means you don't just buy like a normie — you buy like someone who respects the art of accumulation.</p>
+    author: "Locke",
+    body: `<img src="assets/articles/how-to-buy-1.jpg" style="width:100%;border-radius:8px;margin:0 0 16px" alt="">
+    <p>Buying Buttcoin isn't just a trade — it's a religion. Whether you're here for the memes, the mission, the tech, or the community, there's one thing we can all agree on: Buttcoin is the next Bitcoin. That means you don't just buy like a normie — you buy like someone who respects the art of accumulation.</p>
     <p>Here's how to do it right.</p>
     <h4>1. DCA Like a Legend</h4>
     <p>Dollar Cost Averaging (DCA) is your best friend. Markets are unpredictable — anyone telling you they know exactly when to buy is either lucky or lying. DCA is the strategy that keeps you safe from yourself. Instead of going all-in at once, you buy small, consistent amounts over time.</p>
@@ -272,35 +278,52 @@ const ARTICLE_CONTENT = {
     <p>We're not about elitism or gatekeeping — we're here to learn, help, and laugh along the way. Ask questions. Share your chart. Tell us your wins and your losses. You'll find support, not sarcasm.</p>
     <p>Because at the end of the day, Buttcoin is community-first. It's about building something fun, transparent, and wildly different from the soulless grind of most of crypto.</p>
     <p>This isn't just a trading guide — it's an invite. To the friendliest corner of the internet. To the most explosive meme economy in the universe. To the next Bitcoin.</p>
-    <p>You're early. Welcome to Buttcoin.</p>`
+    <p>You're early. Welcome to Buttcoin.</p>
+    <img src="assets/articles/how-to-buy-2.jpg" style="width:100%;border-radius:8px;margin:16px 0" alt="">`
   },
   believing: {
     title: "Believing in Yourself",
     tag: "Culture",
     author: "Sully",
     body: `<p>It's simple enough to say out loud or to write down on a piece of paper — but the raw power of one's will put into motion is determined by the depth of their belief in themselves.</p>
+    <img src="assets/articles/believing-1.png" style="width:100%;border-radius:8px;margin:16px 0" alt="">
+    <p style="color:var(--muted);font-size:0.85rem;font-style:italic;margin-top:-8px;margin-bottom:16px">The inner child remains playful, because no one told him not to believe in himself.</p>
     <p>Affirmations and daily motivational quotes pacify the most ADHD of OCD self-diagnosed market participants who remain glued to their phones or tied to their desks — while the world continues turning and a beautiful day turns into a picturesque night.</p>
     <p>While the true believers (who believe in themselves) bend the world to their will by remaining steadfast, disciplined, and following a measurable list of actions to further their own pursuits — be it their faith, their fitness, their careers, their relationships or their trading. Or all of the aforementioned, combined.</p>
     <p>Only those who believe in themselves and choose to walk the unforgiving, sometimes painful but necessary path towards discipline deserve to reap the success that comes along its way.</p>
+    <img src="assets/articles/believing-2.png" style="width:100%;border-radius:8px;margin:16px 0" alt="">
+    <p style="color:var(--muted);font-size:0.85rem;font-style:italic;margin-top:-8px;margin-bottom:16px">Choose your hard.</p>
     <p>Buttcoiners understand this in the simplest terms: eat, meme, shill, sleep, repeat. A vast network of Buttcoiners collaborating together, buzzing along the network, each one validating the proof of its memetics to the next, making true believers out of atheist 2x-3x FnF cookers, and so-called swing traders, calling to the fold all those that can see the vision.</p>
     <p>And the vision is as simple as those very three words: believe in yourself.</p>
     <p>So the question is, will you choose to believe in yourself? Or will you continue on your wayward journey?</p>
-    <p>Only you can set you free...</p>`
+    <p>Only you can set you free...</p>
+    <img src="assets/articles/believing-3.jpg" style="width:100%;border-radius:8px;margin:16px 0" alt="">`
   },
   'doge-love': {
     title: "Dr. DOGE-Love, or How I Learned to Stop BONK-ing and Love the Buttcoin",
     tag: "Culture",
-    author: "sully",
-    body: `<p>Many are bullish on the prospects of the DOGE/DOJE ETF going live; the same can be said for the BONK ETF as well — with many heralding these two iconic events to be the ultimate green signal for memecoin season v3.0… or whichever version we are on now.</p>
+    author: "Sully",
+    body: `<img src="assets/articles/doge-love-1.png" style="width:100%;border-radius:8px;margin:0 0 8px" alt="">
+    <p style="color:var(--muted);font-size:0.85rem;font-style:italic;margin-bottom:16px">DOJE or DOGE? Bitcoin or Buttcoin? Interdasting.</p>
+    <p>Many are bullish on the prospects of the DOGE/DOJE ETF going live; the same can be said for the BONK ETF as well — with many heralding these two iconic events to be the ultimate green signal for memecoin season v3.0… or whichever version we are on now.</p>
     <p>However, as is the case with most people who hop into this space daily with goldfish memory and TikTok attention span — they fail to understand the very fundamentals of cause and effect.</p>
     <p>DOGECOIN, which was created on 6th December 2013 (only 2 days earlier than our beloved Buttoshi's theorization of Buttcoin) took a long time to reach the promised land of ETFs, sunshines and rainbows.</p>
+    <img src="assets/articles/doge-love-2.jpg" style="width:100%;border-radius:8px;margin:16px 0" alt="">
     <p>Likewise, BONK arrived like it was heaven sent, in time to breathe new life into meme culture and to Solana in general.</p>
     <p>Both of the above memes had, fundamentally, a strong character or meme tied to the very foundation of their "coins" which evolved over time and brought fresh, new eyes to the meme at every developing stage of the cycle.</p>
     <p><em>(Sidebar: I would rather call them tokenized movements — but saying 'meme-inspired tokenized movements' is quite troublesome.)</em></p>
     <p>This notion that ETF for memes is somehow magically bullish for all memes is one based on mania-induced liquidity coming in and bidding every single coin on the roster.</p>
     <p>Butt there are some that stand head and shoulder above the others.</p>
+    <img src="assets/articles/doge-love-3.png" style="width:100%;border-radius:8px;margin:16px 0" alt="">
+    <p style="color:var(--muted);font-size:0.85rem;font-style:italic;margin-top:-8px;margin-bottom:16px">(refer the graph from @MustStopMurad who no doubt stole it from someone else)</p>
     <p>To be considered exceptional, to be among the God tier memetics, one must hold fast to a community — some have societies, others have religion; what they all have in common is that they offer structure, repeatable consistent actions that progress their respective values, ethos, and produce reliable, measurable and improvable output at every stage.</p>
-    <p>Buttcoin's rise to fame, fall to obscurity and rise to infamy once again — only to… well… fall again — is documented through the hallowed pages of CT. But within all these happenings, under all the vitriol, hate, "scam" and "rug" proclamations — the beating heart of the Buttcoin community and its diehards keep plugging away, memeing Saylor into infinite historical and present-day situations, providing fresh memes, commentary, ANALysis of different charts, some Cheeky Analytics and of course my personal favorite, commenting under thirst traps.</p>
+    <p>Butt just to show you that it's not all theory and calculation, I'll give you an example of a meme that took the world by storm: thrice.</p>
+    <img src="assets/articles/doge-love-4.jpg" style="width:100%;border-radius:8px;margin:16px 0" alt="">
+    <p style="color:var(--muted);font-size:0.85rem;font-style:italic;margin-top:-8px;margin-bottom:16px">Bowling Shoe ugly... or consolidating in silence before the inevitable asscension?</p>
+    <p>Buttcoin's rise to fame, fall to obscurity and rise to infamy once again — only to… well… fall again — is documented through the hallowed pages of CT. But within all these happenings, under all the vitriol, hate, "scam" and "rug" proclamations — the beating heart of the Buttcoin community and its diehards keep plugging away, memeing Saylor into infinite historical and present-day situations,</p>
+    <img src="assets/articles/doge-love-5.png" style="width:100%;border-radius:8px;margin:16px 0" alt="">
+    <p>providing fresh memes, commentary, ANALysis of different charts, some Cheeky Analytics and of course my personal favorite, commenting under thirst traps.</p>
+    <img src="assets/articles/doge-love-6.png" style="width:100%;border-radius:8px;margin:16px 0" alt="">
     <p>Look at that. What do you think happens when this form of bullposting catches on? You might see it and say "sTrAiGhT tO zErO". Do you know what we say?</p>
     <p>It's literally a Buttcoin, don't take it so seriously.</p>
     <p>The truth is no one is coming to save my meme or for that matter, yours — you and your community are going to have to work hard and work for it like your life depends on it.</p>
@@ -320,11 +343,13 @@ const ARTICLE_CONTENT = {
     author: "paronthes",
     body: `<p>An OG Buttcoiner posted this question in our Buttcoiner Community: "Tell me about the feeling when you first discovered Buttcoin." And I responded as follows:</p>
     <p>So a friend called me at late night. Literally woke me up. And he yelled: "Buy this new coin!"</p>
+    <img src="assets/articles/blue-chip-1.gif" style="width:100%;border-radius:8px;margin:16px 0" alt="">
     <p>I was for all intents and purposes still asleep, butt said "Alright, alright!" So I got on my phone and bought the damn thing, so I could get back to sleep.</p>
     <p>But instead of actually falling asleep again, I just dozed, kept tossing and turning, etc.</p>
     <p>Finally I gave up, got back up and had a closer look at what the hell I just bought.</p>
     <p>And my brain exploded... The memetics, the memetics were sick.</p>
     <p>Was this what pure BLUE CHIP memetic potential looks like?</p>
+    <img src="assets/articles/blue-chip-2.png" style="width:100%;border-radius:8px;margin:16px 0" alt="">
     <p>I started to go down the rabbit hole fast. And all I was trying to think of was something I could NOT meme with this… and I could not come up with much!</p>
     <p>That was my basis for building up my position and starting to bullpost about this new project: I just needed to know whether this meme was actually as close to memetically limitless as it gets, or if I was still dreaming.</p>
     <p>So I started memeing, and thinking about the project, and memeing, and writing about it, and memeing, and getting to know other crazy people just like me, and kept on memeing...</p>
@@ -345,6 +370,8 @@ const ARTICLE_CONTENT = {
     </ul>
     <p>So, to conclude: this began for me with a literal wake-up call, my friends. And that is what Buttcoin is to me — a chance to wake up and finally get it all.</p>
     <p>So let's get it. To Uranus.</p>
+    <img src="assets/articles/blue-chip-3.jpg" style="width:100%;border-radius:8px;margin:16px 0" alt="">
+    <p style="color:var(--muted);font-size:0.85rem;font-style:italic;margin-top:-8px">This is Buttcoin, a blue chip meme in the making. Its success is inevitable because it's the next BTC coded. This is not for the elites. It's the people's Bitcoin, no institutions, no central control. Only the steadfast belief that the most hilarious outcome is the most likely...</p>
     <p><em>Paronthes out.</em></p>`
   },
   'di-news': {
