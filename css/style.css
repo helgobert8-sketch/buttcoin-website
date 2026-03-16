@@ -1195,6 +1195,19 @@ cite {
 
 /* ─── GAME ─── */
 #game { background: linear-gradient(135deg, #0d0d0d, #0a0a1a); }
+.game-coming-soon {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 80px 0;
+}
+.game-coming-soon-text {
+  font-size: 3.5rem;
+  font-weight: 800;
+  color: var(--orange);
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+}
 .game-card {
   max-width: 900px;
   margin: 0 auto;
