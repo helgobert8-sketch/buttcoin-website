@@ -428,19 +428,18 @@ function openArticle(id) {
 
 // ─── MEDIA ─────────────────────────────────────
 const MEDIA_ITEMS = [
-  { type: 'audio', title: 'The Buttcoin Anthem', desc: 'The official anthem of the Buttverse. Turn it up.', src: 'assets/BUTTCOIN ANTHEM.mp3' },
-  { type: 'video', title: 'Buttverse',                    src: 'assets/videos/buttverse version 2 FINAL.mp4', poster: 'assets/videos/thumbs/buttverse version 2 FINAL.jpg' },
+  { type: 'video', title: 'Buttcoin Logo Animated',       src: 'assets/logo-animated.mp4',                    poster: 'assets/videos/thumbs/logo-animated.jpg' },
+  { type: 'video', title: 'Buttcoin goes way back',       src: 'assets/videos/IMG_1373.MOV',                  poster: 'assets/videos/thumbs/IMG_1373.jpg' },
+  { type: 'video', title: 'Back into the Buttverse',      src: 'assets/videos/buttverse version 2 FINAL.mp4', poster: 'assets/videos/thumbs/buttverse version 2 FINAL.jpg' },
+  { type: 'video', title: 'DCA Buttcoin ftw',             src: 'assets/videos/IMG_1606.MP4',                  poster: 'assets/videos/thumbs/IMG_1606.jpg' },
+  { type: 'video', title: 'Only Rotation That Makes Sense', src: 'assets/Only rotation that makes sense.mp4', poster: 'assets/videos/thumbs/Only rotation that makes sense.jpg' },
+  { type: 'audio', title: 'Buttcoin Song', desc: 'Let\'s get this party started. First the moon, then Uranus! Real Buttcoiners are on a mission to flip and party at Uranus ;)', src: 'assets/BUTTCOIN ANTHEM.mp3' },
   { type: 'video', title: 'Turtle',                       src: 'assets/videos/Turtle final.mp4',              poster: 'assets/videos/thumbs/Turtle final.jpg' },
   { type: 'video', title: 'Uranus',                       src: 'assets/videos/uranus.mp4',                    poster: 'assets/videos/thumbs/uranus.jpg' },
   { type: 'video', title: 'Butt Girl 1 Very Nice',        src: 'assets/videos/butt girl 1 very nice.mp4',     poster: 'assets/videos/thumbs/butt girl 1 very nice.jpg' },
   { type: 'video', title: 'Diamond 1 Nice',               src: 'assets/videos/diamond 1 nice.mp4',            poster: 'assets/videos/thumbs/diamond 1 nice.jpg' },
   { type: 'video', title: 'Levels Upscaled',              src: 'assets/videos/levels upscaled.mp4',           poster: 'assets/videos/thumbs/levels upscaled.jpg' },
-  { type: 'video', title: 'IMG 1373',                     src: 'assets/videos/IMG_1373.MOV',                  poster: 'assets/videos/thumbs/IMG_1373.jpg' },
-  { type: 'video', title: 'IMG 1606',                     src: 'assets/videos/IMG_1606.MP4',                  poster: 'assets/videos/thumbs/IMG_1606.jpg' },
   { type: 'video', title: 'IMG 3912',                     src: 'assets/videos/IMG_3912.MP4',                  poster: 'assets/videos/thumbs/IMG_3912.jpg' },
-  { type: 'video', title: '0001-0251',                    src: 'assets/0001-0251.mp4',                        poster: 'assets/videos/thumbs/0001-0251.jpg' },
-  { type: 'video', title: 'Logo Animated',                src: 'assets/logo-animated.mp4',                    poster: 'assets/videos/thumbs/logo-animated.jpg' },
-  { type: 'video', title: 'Only Rotation That Makes Sense', src: 'assets/Only rotation that makes sense.mp4', poster: 'assets/videos/thumbs/Only rotation that makes sense.jpg' },
 ];
 
 const MEDIA_PAGE_SIZE = 6;
