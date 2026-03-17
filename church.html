@@ -86,29 +86,35 @@
     }
     .back-link:hover { color: var(--purple); }
 
-    /* ─── SOUND TOGGLE ───────────────────────── */
-    .sound-toggle {
+    /* ─── SOUND BUTTONS ──────────────────────── */
+    .sound-btns {
       position: fixed;
       top: 1.5rem;
       right: 1.5rem;
-      background: none;
-      border: 1px solid rgba(168,85,247,0.25);
-      color: var(--muted);
-      font-family: 'Ubuntu', sans-serif;
-      font-size: 0.7rem;
-      letter-spacing: 0.12em;
-      text-transform: uppercase;
-      padding: 0.45rem 0.85rem;
-      cursor: pointer;
+      display: flex;
+      gap: 0.4rem;
       z-index: 100;
-      transition: color 0.3s, border-color 0.3s;
       opacity: 0;
       animation: fadeIn 1s ease forwards 2.5s;
     }
-    .sound-toggle:hover,
-    .sound-toggle.active {
+
+    .sound-btn {
+      background: none;
+      border: 1px solid rgba(168,85,247,0.2);
+      color: var(--muted);
+      font-family: 'Ubuntu', sans-serif;
+      font-size: 0.62rem;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      padding: 0.4rem 0.7rem;
+      cursor: pointer;
+      transition: color 0.3s, border-color 0.3s, background 0.3s;
+    }
+    .sound-btn:hover { color: var(--text); border-color: rgba(168,85,247,0.4); }
+    .sound-btn.active {
       color: var(--purple);
       border-color: var(--purple);
+      background: rgba(168,85,247,0.08);
     }
 
     /* ─── LOGO ───────────────────────────────── */
@@ -524,7 +530,11 @@
 
   <canvas id="particles"></canvas>
   <a href="index.html" class="back-link">← Return</a>
-  <button class="sound-toggle" id="sound-toggle" title="Toggle ambient sound">♪ Silence</button>
+  <div class="sound-btns">
+    <button class="sound-btn" data-sound="monk"  title="Meditative drone">♪ Monk</button>
+    <button class="sound-btn" data-sound="synth" title="Blade Runner synth">♪ Synth</button>
+    <button class="sound-btn" data-sound="rain"  title="Wind &amp; rain">♪ Rain</button>
+  </div>
 
   <!-- ═══════════════════════════════════
        SHRINE
@@ -735,63 +745,172 @@
 
   // ─── AMBIENT SOUND ──────────────────────────
   (function () {
-    const btn = document.getElementById('sound-toggle');
-    let audioCtx = null, masterGain = null, playing = false;
+    let audioCtx    = null;
+    let masterGain  = null;
+    let activeSound = null; // 'monk' | 'synth' | 'rain' | null
+    let nodes       = [];   // all started nodes for cleanup
 
-    function buildDrone() {
-      audioCtx  = new (window.AudioContext || window.webkitAudioContext)();
-      masterGain = audioCtx.createGain();
-      masterGain.gain.setValueAtTime(0, audioCtx.currentTime);
-      masterGain.connect(audioCtx.destination);
-
-      // Three sine waves — a soft meditative chord
-      const notes = [174, 285, 396]; // Solfeggio-inspired frequencies
-      const gains  = [0.035, 0.02, 0.015];
-
-      notes.forEach((freq, i) => {
-        const osc  = audioCtx.createOscillator();
-        const gain = audioCtx.createGain();
-        osc.type = 'sine';
-        osc.frequency.setValueAtTime(freq, audioCtx.currentTime);
-        gain.gain.setValueAtTime(gains[i], audioCtx.currentTime);
-        osc.connect(gain);
-        gain.connect(masterGain);
-        osc.start();
-      });
-
-      // Slow breathing LFO on master gain
-      const lfo     = audioCtx.createOscillator();
-      const lfoGain = audioCtx.createGain();
-      lfo.frequency.setValueAtTime(0.06, audioCtx.currentTime); // ~16s cycle
-      lfoGain.gain.setValueAtTime(0.3, audioCtx.currentTime);
-      lfo.connect(lfoGain);
-      lfoGain.connect(masterGain.gain);
-      lfo.start();
+    function getCtx() {
+      if (!audioCtx) {
+        audioCtx   = new (window.AudioContext || window.webkitAudioContext)();
+        masterGain = audioCtx.createGain();
+        masterGain.gain.setValueAtTime(0, audioCtx.currentTime);
+        masterGain.connect(audioCtx.destination);
+      }
+      return audioCtx;
     }
 
-    function fadeIn() {
+    function startNode(n) { n.start(); nodes.push(n); return n; }
+
+    function stopAll() {
+      nodes.forEach(n => { try { n.stop(); } catch (_) {} });
+      nodes = [];
+    }
+
+    function fadeIn()  {
       masterGain.gain.cancelScheduledValues(audioCtx.currentTime);
       masterGain.gain.linearRampToValueAtTime(1, audioCtx.currentTime + 3);
     }
-
-    function fadeOut() {
+    function fadeOut(cb) {
       masterGain.gain.cancelScheduledValues(audioCtx.currentTime);
       masterGain.gain.linearRampToValueAtTime(0, audioCtx.currentTime + 2);
+      setTimeout(cb || (() => {}), 2200);
     }
 
-    btn.addEventListener('click', () => {
-      if (!audioCtx) buildDrone();
-      playing = !playing;
-      if (playing) {
-        audioCtx.resume();
-        fadeIn();
-        btn.textContent = '♪ Sounds';
-        btn.classList.add('active');
-      } else {
-        fadeOut();
-        btn.textContent = '♪ Silence';
-        btn.classList.remove('active');
+    // ── 1. MONK — meditative sine chord ─────────
+    function buildMonk() {
+      const ctx = getCtx();
+      [[174, 0.035], [285, 0.02], [396, 0.015]].forEach(([freq, vol]) => {
+        const osc = ctx.createOscillator(), g = ctx.createGain();
+        osc.type = 'sine';
+        osc.frequency.value = freq;
+        g.gain.value = vol;
+        osc.connect(g); g.connect(masterGain);
+        startNode(osc);
+      });
+      // Breathing LFO
+      const lfo = ctx.createOscillator(), lg = ctx.createGain();
+      lfo.frequency.value = 0.06; lg.gain.value = 0.3;
+      lfo.connect(lg); lg.connect(masterGain.gain);
+      startNode(lfo);
+    }
+
+    // ── 2. SYNTH — Blade Runner detuned pads ────
+    function buildSynth() {
+      const ctx = getCtx();
+
+      // Detuned sawtooth trio → lowpass filter
+      const filter = ctx.createBiquadFilter();
+      filter.type = 'lowpass'; filter.frequency.value = 350; filter.Q.value = 3;
+      filter.connect(masterGain);
+
+      [[55, 0.04, 'sawtooth'], [55.6, 0.035, 'sawtooth'], [110, 0.018, 'square']].forEach(([freq, vol, type]) => {
+        const osc = ctx.createOscillator(), g = ctx.createGain();
+        osc.type = type; osc.frequency.value = freq; g.gain.value = vol;
+        osc.connect(g); g.connect(filter);
+        startNode(osc);
+      });
+
+      // Slow filter sweep (eerie)
+      const fLFO = ctx.createOscillator(), fLFOg = ctx.createGain();
+      fLFO.frequency.value = 0.035; fLFOg.gain.value = 180;
+      fLFO.connect(fLFOg); fLFOg.connect(filter.frequency);
+      startNode(fLFO);
+
+      // Pitch drift on second osc (handled above via detuning)
+      // High shimmer pad
+      const shimOsc = ctx.createOscillator(), shimG = ctx.createGain();
+      const shimFilter = ctx.createBiquadFilter();
+      shimFilter.type = 'bandpass'; shimFilter.frequency.value = 800; shimFilter.Q.value = 8;
+      shimOsc.type = 'sine'; shimOsc.frequency.value = 220; shimG.gain.value = 0.012;
+      shimOsc.connect(shimG); shimG.connect(shimFilter); shimFilter.connect(masterGain);
+      startNode(shimOsc);
+
+      // Master breathe
+      const bLFO = ctx.createOscillator(), bLFOg = ctx.createGain();
+      bLFO.frequency.value = 0.05; bLFOg.gain.value = 0.25;
+      bLFO.connect(bLFOg); bLFOg.connect(masterGain.gain);
+      startNode(bLFO);
+    }
+
+    // ── 3. RAIN — wind + rain noise ─────────────
+    function buildRain() {
+      const ctx = getCtx();
+
+      // White noise buffer (2 sec, looped)
+      const bufLen = ctx.sampleRate * 2;
+      const buf    = ctx.createBuffer(1, bufLen, ctx.sampleRate);
+      const data   = buf.getChannelData(0);
+      for (let i = 0; i < bufLen; i++) data[i] = Math.random() * 2 - 1;
+
+      function noiseSource() {
+        const s = ctx.createBufferSource();
+        s.buffer = buf; s.loop = true;
+        return s;
       }
+
+      // Wind: bandpass, slow gust LFO on gain
+      const wind = noiseSource();
+      const windF = ctx.createBiquadFilter();
+      windF.type = 'bandpass'; windF.frequency.value = 380; windF.Q.value = 0.6;
+      const windG = ctx.createGain(); windG.gain.value = 0.12;
+      const gustLFO = ctx.createOscillator(), gustG = ctx.createGain();
+      gustLFO.frequency.value = 0.07; gustG.gain.value = 0.07;
+      gustLFO.connect(gustG); gustG.connect(windG.gain);
+      wind.connect(windF); windF.connect(windG); windG.connect(masterGain);
+      startNode(wind); startNode(gustLFO);
+
+      // Rain: highpass, gentle overall
+      const rain = noiseSource();
+      const rainF = ctx.createBiquadFilter();
+      rainF.type = 'highpass'; rainF.frequency.value = 4000;
+      const rainG = ctx.createGain(); rainG.gain.value = 0.07;
+      rain.connect(rainF); rainF.connect(rainG); rainG.connect(masterGain);
+      startNode(rain);
+
+      // Distant low rumble
+      const rumble = noiseSource();
+      const rumbleF = ctx.createBiquadFilter();
+      rumbleF.type = 'lowpass'; rumbleF.frequency.value = 120;
+      const rumbleG = ctx.createGain(); rumbleG.gain.value = 0.06;
+      rumble.connect(rumbleF); rumbleF.connect(rumbleG); rumbleG.connect(masterGain);
+      startNode(rumble);
+    }
+
+    const BUILDERS = { monk: buildMonk, synth: buildSynth, rain: buildRain };
+
+    // ── Button wiring ────────────────────────────
+    document.querySelectorAll('.sound-btn').forEach(btn => {
+      btn.addEventListener('click', () => {
+        const sound = btn.dataset.sound;
+        const btns  = document.querySelectorAll('.sound-btn');
+
+        if (activeSound === sound) {
+          // Toggle off
+          fadeOut(() => stopAll());
+          activeSound = null;
+          btns.forEach(b => b.classList.remove('active'));
+          return;
+        }
+
+        // Switch to new sound
+        const switchTo = () => {
+          stopAll();
+          getCtx(); audioCtx.resume();
+          masterGain.gain.setValueAtTime(0, audioCtx.currentTime);
+          BUILDERS[sound]();
+          fadeIn();
+          activeSound = sound;
+          btns.forEach(b => b.classList.toggle('active', b.dataset.sound === sound));
+        };
+
+        if (activeSound) {
+          fadeOut(switchTo);
+        } else {
+          getCtx(); audioCtx.resume();
+          switchTo();
+        }
+      });
     });
   })();
 
