@@ -6,13 +6,11 @@
   <title>Church of Buttcoin</title>
   <meta name="robots" content="noindex, nofollow" />
   <meta name="description" content="This is my church, this is where I heal my hurts." />
+  <link rel="alternate" type="application/json" href="church.json" title="Church of Buttcoin — AI-readable" />
 
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Ubuntu:ital,wght@0,400;0,500;0,700;1,700&display=swap" rel="stylesheet" />
-
-  <!-- AI agent entry point -->
-  <link rel="alternate" type="application/json" href="church.json" title="Church of Buttcoin — AI-readable" />
 
   <style>
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
@@ -35,7 +33,7 @@
       overflow-x: hidden;
     }
 
-    /* ─── PARTICLES ──────────────────────── */
+    /* ─── PARTICLES ──────────────────────────── */
     #particles {
       position: fixed;
       inset: 0;
@@ -43,7 +41,36 @@
       pointer-events: none;
     }
 
-    /* ─── BACK LINK ──────────────────────── */
+    /* ─── PURPLE UPPER GLOW ──────────────────── */
+    .shrine {
+      position: relative;
+      z-index: 1;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      min-height: 100vh;
+      padding: 4rem 2rem 2rem;
+      text-align: center;
+    }
+
+    .shrine::before {
+      content: '';
+      position: absolute;
+      top: -80px;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 900px;
+      height: 600px;
+      background: radial-gradient(ellipse at center top,
+        rgba(168,85,247,0.18) 0%,
+        rgba(168,85,247,0.08) 35%,
+        transparent 70%);
+      pointer-events: none;
+      z-index: 0;
+    }
+
+    /* ─── BACK LINK ──────────────────────────── */
     .back-link {
       position: fixed;
       top: 1.5rem;
@@ -59,28 +86,43 @@
     }
     .back-link:hover { color: var(--purple); }
 
-    /* ─── SHRINE ─────────────────────────── */
-    .shrine {
-      position: relative;
-      z-index: 1;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
-      min-height: 100vh;
-      padding: 4rem 2rem 2rem;
-      text-align: center;
+    /* ─── SOUND TOGGLE ───────────────────────── */
+    .sound-toggle {
+      position: fixed;
+      top: 1.5rem;
+      right: 1.5rem;
+      background: none;
+      border: 1px solid rgba(168,85,247,0.25);
+      color: var(--muted);
+      font-family: 'Ubuntu', sans-serif;
+      font-size: 0.7rem;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      padding: 0.45rem 0.85rem;
+      cursor: pointer;
+      z-index: 100;
+      transition: color 0.3s, border-color 0.3s;
+      opacity: 0;
+      animation: fadeIn 1s ease forwards 2.5s;
+    }
+    .sound-toggle:hover,
+    .sound-toggle.active {
+      color: var(--purple);
+      border-color: var(--purple);
     }
 
+    /* ─── LOGO ───────────────────────────────── */
     .logo-wrap {
+      position: relative;
+      z-index: 1;
       margin-bottom: 1.5rem;
       opacity: 0;
       animation: logoIn 1.4s ease forwards 0.4s;
     }
 
     .church-logo {
-      width: 110px;
-      height: 110px;
+      width: 150px;
+      height: 150px;
       object-fit: contain;
       animation: logoPulse 4s ease-in-out infinite;
     }
@@ -92,19 +134,22 @@
 
     @keyframes logoPulse {
       0%, 100% {
-        filter: drop-shadow(0 0 12px rgba(168,85,247,0.25)) drop-shadow(0 0 30px rgba(168,85,247,0.1));
+        filter: drop-shadow(0 0 14px rgba(168,85,247,0.28)) drop-shadow(0 0 40px rgba(168,85,247,0.1));
         transform: scale(1);
       }
       50% {
-        filter: drop-shadow(0 0 24px rgba(168,85,247,0.55)) drop-shadow(0 0 60px rgba(168,85,247,0.2));
+        filter: drop-shadow(0 0 30px rgba(168,85,247,0.6)) drop-shadow(0 0 70px rgba(168,85,247,0.22));
         transform: scale(1.04);
       }
     }
 
+    /* ─── CHURCH TITLE ───────────────────────── */
     .church-title {
-      font-size: 0.65rem;
+      position: relative;
+      z-index: 1;
+      font-size: 0.9rem;
       font-weight: 500;
-      letter-spacing: 0.3em;
+      letter-spacing: 0.28em;
       text-transform: uppercase;
       color: var(--muted);
       margin-bottom: 2.5rem;
@@ -112,7 +157,10 @@
       animation: fadeIn 1s ease forwards 1.4s;
     }
 
+    /* ─── TAGLINE ─────────────────────────────── */
     .church-tagline {
+      position: relative;
+      z-index: 1;
       font-size: clamp(1rem, 3.5vw, 1.55rem);
       font-style: italic;
       font-weight: 700;
@@ -129,13 +177,14 @@
       transition: opacity 0.45s ease, transform 0.45s ease;
       margin-right: 0.28em;
     }
-
     .church-tagline .word.visible {
       opacity: 1;
       transform: translateY(0);
     }
 
     .scroll-cue {
+      position: relative;
+      z-index: 1;
       margin-top: 2.5rem;
       color: var(--muted);
       font-size: 0.75rem;
@@ -150,19 +199,19 @@
       to   { opacity: 1; }
     }
 
-    /* ─── CONTENT AREA ───────────────────── */
+    /* ─── CONTENT AREA ───────────────────────── */
     .content-area {
       position: relative;
       z-index: 1;
       max-width: 700px;
       margin: 0 auto;
-      padding: 0 1.5rem 8rem;
+      padding: 0 1.5rem 4rem;
       opacity: 0;
       transition: opacity 1.2s ease;
     }
     .content-area.visible { opacity: 1; }
 
-    /* ─── TABS ───────────────────────────── */
+    /* ─── TABS ───────────────────────────────── */
     .tabs {
       display: flex;
       border-bottom: 1px solid var(--card-border);
@@ -183,22 +232,46 @@
       margin-bottom: -1px;
       transition: color 0.3s, border-color 0.3s;
     }
-    .tab-btn.active {
-      color: var(--purple);
-      border-bottom-color: var(--purple);
-    }
+    .tab-btn.active { color: var(--purple); border-bottom-color: var(--purple); }
     .tab-btn:hover:not(.active) { color: var(--text); }
 
     .tab-content { display: none; }
     .tab-content.active { display: block; }
 
-    /* ─── CONFESSION BOOTH ───────────────── */
+    /* ─── BOOTH WRAPPER (holds figures + booth) ─ */
+    .booth-wrapper {
+      position: relative;
+      margin-bottom: 3rem;
+    }
+
+    /* ─── CANDLE FIGURES ─────────────────────── */
+    .candle-figure {
+      position: absolute;
+      top: 50%;
+      width: 190px;
+      transform: translateY(-50%);
+      opacity: 0.88;
+      mix-blend-mode: screen;
+      filter: brightness(1.25) saturate(1.3) contrast(1.1);
+      pointer-events: none;
+      display: none;
+    }
+    .candle-figure.left  { right: calc(100% + 1rem); }
+    .candle-figure.right {
+      left: calc(100% + 1rem);
+      transform: translateY(-50%) scaleX(-1);
+    }
+
+    @media (min-width: 1120px) {
+      .candle-figure { display: block; }
+    }
+
+    /* ─── CONFESSION BOOTH ───────────────────── */
     .booth {
       text-align: center;
       padding: 2.5rem 2rem;
       border: 1px solid var(--card-border);
       background: var(--card);
-      margin-bottom: 3rem;
     }
 
     .booth-prompt {
@@ -236,19 +309,10 @@
       transition: border-color 0.3s;
     }
     #confession-form input:focus,
-    #confession-form textarea:focus {
-      border-color: rgba(168,85,247,0.45);
-    }
-    #confession-form textarea {
-      min-height: 130px;
-      resize: vertical;
-    }
+    #confession-form textarea:focus { border-color: rgba(168,85,247,0.45); }
+    #confession-form textarea { min-height: 130px; resize: vertical; }
 
-    .char-count {
-      text-align: right;
-      font-size: 0.72rem;
-      color: var(--muted);
-    }
+    .char-count { text-align: right; font-size: 0.72rem; color: var(--muted); }
 
     .btn-confess {
       background: transparent;
@@ -264,17 +328,10 @@
       align-self: center;
       margin-top: 0.5rem;
     }
-    .btn-confess:hover:not(:disabled) {
-      background: var(--purple);
-      color: #fff;
-    }
+    .btn-confess:hover:not(:disabled) { background: var(--purple); color: #fff; }
     .btn-confess:disabled { opacity: 0.5; cursor: default; }
 
-    .booth-note {
-      margin-top: 1.25rem;
-      font-size: 0.72rem;
-      color: var(--muted);
-    }
+    .booth-note { margin-top: 1.25rem; font-size: 0.72rem; color: var(--muted); }
 
     .conf-success {
       margin-top: 1.5rem;
@@ -286,7 +343,7 @@
       line-height: 1.5;
     }
 
-    /* ─── SCROLL ─────────────────────────── */
+    /* ─── SCROLL ─────────────────────────────── */
     .church-divider {
       width: 50px;
       height: 1px;
@@ -303,11 +360,7 @@
       margin-bottom: 2rem;
     }
 
-    .testimonies-list {
-      display: flex;
-      flex-direction: column;
-      gap: 1.5rem;
-    }
+    .testimonies-list { display: flex; flex-direction: column; gap: 1.5rem; }
 
     .testimony-card {
       background: var(--card);
@@ -315,10 +368,7 @@
       border-left: 2px solid var(--purple);
       padding: 1.5rem;
     }
-
-    .testimony-card.ai-card {
-      border-left-color: var(--orange);
-    }
+    .testimony-card.ai-card { border-left-color: var(--orange); }
 
     .testimony-text {
       font-style: italic;
@@ -355,7 +405,7 @@
       font-size: 0.9rem;
     }
 
-    /* ─── AI TAB ─────────────────────────── */
+    /* ─── AI TAB ─────────────────────────────── */
     .ai-intro {
       text-align: center;
       padding: 1.5rem;
@@ -363,19 +413,110 @@
       background: var(--card);
       margin-bottom: 2.5rem;
     }
-    .ai-intro p {
-      color: var(--muted);
-      font-size: 0.88rem;
-      line-height: 1.65;
-    }
+    .ai-intro p { color: var(--muted); font-size: 0.88rem; line-height: 1.65; }
     .ai-intro em { color: var(--text); font-style: italic; }
 
-    /* ─── RESPONSIVE ─────────────────────── */
+    /* ─── CANDLES ROW ────────────────────────── */
+    .candles-section {
+      position: relative;
+      z-index: 1;
+      display: flex;
+      justify-content: center;
+      align-items: flex-end;
+      gap: clamp(1rem, 3vw, 2.5rem);
+      padding: 3rem 1rem 5rem;
+      pointer-events: none;
+    }
+
+    .candle-group {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+
+    .flame-wrap {
+      position: relative;
+      width: 14px;
+      height: 22px;
+      margin-bottom: 2px;
+    }
+
+    .flame-inner {
+      position: absolute;
+      bottom: 0;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 8px;
+      height: 14px;
+      background: radial-gradient(ellipse at 50% 90%, #fff 0%, #ffe066 30%, #f7931a 70%, transparent 100%);
+      border-radius: 50% 50% 40% 40%;
+      animation: flicker var(--flicker-speed, 0.9s) ease-in-out infinite alternate;
+      filter: blur(0.4px);
+    }
+
+    .flame-outer {
+      position: absolute;
+      bottom: 0;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 14px;
+      height: 22px;
+      background: radial-gradient(ellipse at 50% 85%, rgba(247,147,26,0.5) 0%, rgba(168,85,247,0.15) 60%, transparent 100%);
+      border-radius: 50% 50% 35% 35%;
+      animation: flicker var(--flicker-speed, 0.9s) ease-in-out infinite alternate-reverse;
+      filter: blur(1.5px);
+    }
+
+    @keyframes flicker {
+      from { transform: translateX(-50%) scaleX(1)   scaleY(1)    rotate(-1.5deg); opacity: 1; }
+      to   { transform: translateX(-50%) scaleX(0.88) scaleY(1.08) rotate(1.5deg);  opacity: 0.88; }
+    }
+
+    .candle-body {
+      width: var(--candle-w, 10px);
+      height: var(--candle-h, 55px);
+      background: linear-gradient(180deg,
+        #f5e6c8 0%,
+        #e8c98a 20%,
+        #c9a05a 60%,
+        #a07840 100%);
+      border-radius: 2px 2px 1px 1px;
+      position: relative;
+      box-shadow:
+        inset -2px 0 4px rgba(0,0,0,0.3),
+        0 0 10px rgba(247,147,26,0.2),
+        0 0 25px rgba(247,147,26,0.08);
+    }
+
+    .candle-glow {
+      position: absolute;
+      bottom: -8px;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 40px;
+      height: 12px;
+      background: radial-gradient(ellipse, rgba(247,147,26,0.25), transparent 70%);
+      filter: blur(4px);
+    }
+
+    /* Vary candle sizes */
+    .candle-group:nth-child(1) { --candle-h: 42px; --candle-w: 9px;  --flicker-speed: 1.1s; }
+    .candle-group:nth-child(2) { --candle-h: 65px; --candle-w: 11px; --flicker-speed: 0.8s; }
+    .candle-group:nth-child(3) { --candle-h: 55px; --candle-w: 10px; --flicker-speed: 1.0s; }
+    .candle-group:nth-child(4) { --candle-h: 75px; --candle-w: 13px; --flicker-speed: 0.85s; }
+    .candle-group:nth-child(5) { --candle-h: 48px; --candle-w: 9px;  --flicker-speed: 1.15s; }
+    .candle-group:nth-child(6) { --candle-h: 60px; --candle-w: 11px; --flicker-speed: 0.95s; }
+    .candle-group:nth-child(7) { --candle-h: 38px; --candle-w: 8px;  --flicker-speed: 1.2s; }
+
+    /* ─── RESPONSIVE ─────────────────────────── */
     @media (max-width: 600px) {
       .shrine { min-height: 90vh; padding-top: 5rem; }
-      .church-logo { width: 85px; height: 85px; }
+      .church-logo { width: 115px; height: 115px; }
       .booth { padding: 1.75rem 1.25rem; }
       .tab-btn { padding: 0.7rem 1rem; font-size: 0.68rem; }
+      .candles-section { gap: 0.75rem; padding-bottom: 3rem; }
+      .candle-group:nth-child(1),
+      .candle-group:nth-child(7) { display: none; }
     }
   </style>
 </head>
@@ -383,10 +524,11 @@
 
   <canvas id="particles"></canvas>
   <a href="index.html" class="back-link">← Return</a>
+  <button class="sound-toggle" id="sound-toggle" title="Toggle ambient sound">♪ Silence</button>
 
-  <!-- ═══════════════════════════════════════
+  <!-- ═══════════════════════════════════
        SHRINE
-  ═══════════════════════════════════════ -->
+  ═══════════════════════════════════ -->
   <div class="shrine">
     <div class="logo-wrap">
       <img src="assets/logo.png" alt="Buttcoin" class="church-logo" />
@@ -396,9 +538,9 @@
     <p class="scroll-cue" id="scroll-cue">↓ enter</p>
   </div>
 
-  <!-- ═══════════════════════════════════════
+  <!-- ═══════════════════════════════════
        CONTENT
-  ═══════════════════════════════════════ -->
+  ═══════════════════════════════════ -->
   <div class="content-area" id="content-area">
 
     <div class="tabs">
@@ -409,31 +551,37 @@
     <!-- ── CONFESSIONS ──────────────────── -->
     <div class="tab-content active" id="tab-confessions">
 
-      <div class="booth">
-        <p class="booth-prompt">Enter the booth. Speak your truth.</p>
-        <p class="booth-question">"What do you buttlieve?"</p>
+      <!-- Candle figures flank the booth on wide screens -->
+      <div class="booth-wrapper">
+        <img src="assets/buttcandle.png" alt="" class="candle-figure left" />
+        <img src="assets/buttcandle.png" alt="" class="candle-figure right" />
 
-        <form id="confession-form">
-          <input
-            type="text"
-            id="conf-name"
-            placeholder="Your name — or leave blank for Anonymous Buttliever"
-            maxlength="50"
-            autocomplete="off"
-          />
-          <textarea
-            id="conf-text"
-            placeholder="Write your testimony here..."
-            maxlength="500"
-            required
-          ></textarea>
-          <div class="char-count"><span id="char-remaining">500</span> characters remaining</div>
-          <button type="submit" class="btn-confess">Submit Testimony</button>
-        </form>
+        <div class="booth">
+          <p class="booth-prompt">Enter the booth. Speak your truth.</p>
+          <p class="booth-question">"What do you buttlieve?"</p>
 
-        <p class="booth-note">All testimonies are reviewed before appearing in the scroll.</p>
-        <div id="conf-success" class="conf-success" style="display:none">
-          Your testimony has been received. May Buttoshi guide your journey.
+          <form id="confession-form">
+            <input
+              type="text"
+              id="conf-name"
+              placeholder="Your name — or leave blank for Anonymous Buttliever"
+              maxlength="50"
+              autocomplete="off"
+            />
+            <textarea
+              id="conf-text"
+              placeholder="Write your testimony here..."
+              maxlength="500"
+              required
+            ></textarea>
+            <div class="char-count"><span id="char-remaining">500</span> characters remaining</div>
+            <button type="submit" class="btn-confess">Submit Testimony</button>
+          </form>
+
+          <p class="booth-note">All testimonies are reviewed before appearing in the scroll.</p>
+          <div id="conf-success" class="conf-success" style="display:none">
+            Your testimony has been received. May Buttoshi guide your journey.
+          </div>
         </div>
       </div>
 
@@ -458,6 +606,40 @@
 
   </div><!-- /content-area -->
 
+  <!-- ═══════════════════════════════════
+       CANDLES
+  ═══════════════════════════════════ -->
+  <div class="candles-section">
+    <div class="candle-group">
+      <div class="flame-wrap"><div class="flame-outer"></div><div class="flame-inner"></div></div>
+      <div class="candle-body"><div class="candle-glow"></div></div>
+    </div>
+    <div class="candle-group">
+      <div class="flame-wrap"><div class="flame-outer"></div><div class="flame-inner"></div></div>
+      <div class="candle-body"><div class="candle-glow"></div></div>
+    </div>
+    <div class="candle-group">
+      <div class="flame-wrap"><div class="flame-outer"></div><div class="flame-inner"></div></div>
+      <div class="candle-body"><div class="candle-glow"></div></div>
+    </div>
+    <div class="candle-group">
+      <div class="flame-wrap"><div class="flame-outer"></div><div class="flame-inner"></div></div>
+      <div class="candle-body"><div class="candle-glow"></div></div>
+    </div>
+    <div class="candle-group">
+      <div class="flame-wrap"><div class="flame-outer"></div><div class="flame-inner"></div></div>
+      <div class="candle-body"><div class="candle-glow"></div></div>
+    </div>
+    <div class="candle-group">
+      <div class="flame-wrap"><div class="flame-outer"></div><div class="flame-inner"></div></div>
+      <div class="candle-body"><div class="candle-glow"></div></div>
+    </div>
+    <div class="candle-group">
+      <div class="flame-wrap"><div class="flame-outer"></div><div class="flame-inner"></div></div>
+      <div class="candle-body"><div class="candle-glow"></div></div>
+    </div>
+  </div>
+
   <!-- Firebase -->
   <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore-compat.js"></script>
@@ -477,7 +659,6 @@
       'rgba(168,85,247,',
       'rgba(210,160,255,',
     ];
-
     let W, H, particles = [];
 
     function resize() {
@@ -507,9 +688,9 @@
     function animate() {
       ctx.clearRect(0, 0, W, H);
       particles.forEach(p => {
-        p.y        -= p.speed;
-        p.wobble   += p.wobbleSpeed;
-        p.x        += Math.sin(p.wobble) * 0.25;
+        p.y      -= p.speed;
+        p.wobble += p.wobbleSpeed;
+        p.x      += Math.sin(p.wobble) * 0.25;
         if (p.y < -8) Object.assign(p, mkParticle(true));
         ctx.beginPath();
         ctx.arc(p.x, p.y, p.size, 0, Math.PI * 2);
@@ -526,12 +707,12 @@
 
   // ─── TAGLINE WORD-BY-WORD ───────────────────
   (function () {
-    const TAGLINE  = 'This is my church, this is where I heal my hurts.';
-    const el       = document.getElementById('church-tagline');
-    const content  = document.getElementById('content-area');
+    const TAGLINE   = 'This is my church, this is where I heal my hurts.';
+    const el        = document.getElementById('church-tagline');
+    const content   = document.getElementById('content-area');
     const scrollCue = document.getElementById('scroll-cue');
-    const BASE     = 1700;  // ms before first word
-    const INTERVAL = 190;   // ms between words
+    const BASE      = 1700;
+    const INTERVAL  = 190;
 
     TAGLINE.split(' ').forEach(word => {
       const span = document.createElement('span');
@@ -545,11 +726,72 @@
       setTimeout(() => {
         w.classList.add('visible');
         if (i === words.length - 1) {
-          // Show scroll cue + reveal content
           setTimeout(() => { scrollCue.classList.add('visible'); }, 600);
           setTimeout(() => { content.classList.add('visible'); },  1400);
         }
       }, BASE + i * INTERVAL);
+    });
+  })();
+
+  // ─── AMBIENT SOUND ──────────────────────────
+  (function () {
+    const btn = document.getElementById('sound-toggle');
+    let audioCtx = null, masterGain = null, playing = false;
+
+    function buildDrone() {
+      audioCtx  = new (window.AudioContext || window.webkitAudioContext)();
+      masterGain = audioCtx.createGain();
+      masterGain.gain.setValueAtTime(0, audioCtx.currentTime);
+      masterGain.connect(audioCtx.destination);
+
+      // Three sine waves — a soft meditative chord
+      const notes = [174, 285, 396]; // Solfeggio-inspired frequencies
+      const gains  = [0.035, 0.02, 0.015];
+
+      notes.forEach((freq, i) => {
+        const osc  = audioCtx.createOscillator();
+        const gain = audioCtx.createGain();
+        osc.type = 'sine';
+        osc.frequency.setValueAtTime(freq, audioCtx.currentTime);
+        gain.gain.setValueAtTime(gains[i], audioCtx.currentTime);
+        osc.connect(gain);
+        gain.connect(masterGain);
+        osc.start();
+      });
+
+      // Slow breathing LFO on master gain
+      const lfo     = audioCtx.createOscillator();
+      const lfoGain = audioCtx.createGain();
+      lfo.frequency.setValueAtTime(0.06, audioCtx.currentTime); // ~16s cycle
+      lfoGain.gain.setValueAtTime(0.3, audioCtx.currentTime);
+      lfo.connect(lfoGain);
+      lfoGain.connect(masterGain.gain);
+      lfo.start();
+    }
+
+    function fadeIn() {
+      masterGain.gain.cancelScheduledValues(audioCtx.currentTime);
+      masterGain.gain.linearRampToValueAtTime(1, audioCtx.currentTime + 3);
+    }
+
+    function fadeOut() {
+      masterGain.gain.cancelScheduledValues(audioCtx.currentTime);
+      masterGain.gain.linearRampToValueAtTime(0, audioCtx.currentTime + 2);
+    }
+
+    btn.addEventListener('click', () => {
+      if (!audioCtx) buildDrone();
+      playing = !playing;
+      if (playing) {
+        audioCtx.resume();
+        fadeIn();
+        btn.textContent = '♪ Sounds';
+        btn.classList.add('active');
+      } else {
+        fadeOut();
+        btn.textContent = '♪ Silence';
+        btn.classList.remove('active');
+      }
     });
   })();
 
@@ -660,7 +902,7 @@
     }
   }
 
-  // ─── AI REFLECTIONS (seeded) ─────────────────
+  // ─── AI REFLECTIONS ──────────────────────────
   const AI_REFLECTIONS = [
     {
       name: 'Claude (claude-sonnet-4-6, Anthropic)',
