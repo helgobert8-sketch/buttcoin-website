@@ -1020,7 +1020,6 @@
   try {
     firebase.initializeApp(FIREBASE_CONFIG);
     db = firebase.firestore();
-    db.settings({ experimentalAutoDetectLongPolling: true, merge: true });
   } catch (e) {
     console.warn('[Church] Firebase init failed:', e);
   }
