@@ -212,6 +212,46 @@
 
     /* ── DIVIDER ────────────────────────────── */
     hr { border: none; border-top: 1px solid var(--border); margin: 32px 0; }
+
+    /* ── TESTIMONY CARDS ────────────────────── */
+    .testimony-list {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+      margin-bottom: 40px;
+    }
+    .testimony-card {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-left: 3px solid var(--purple);
+      border-radius: 10px;
+      padding: 18px 20px;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+    .testimony-name {
+      font-size: 0.8rem;
+      font-weight: 700;
+      color: var(--purple);
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+    }
+    .testimony-text {
+      font-size: 0.92rem;
+      color: var(--text);
+      line-height: 1.7;
+      font-style: italic;
+    }
+    .testimony-meta {
+      font-size: 0.75rem;
+      color: var(--muted);
+    }
+    .testimony-actions {
+      display: flex;
+      gap: 8px;
+    }
+    .testimony-actions .btn { font-size: 0.8rem; padding: 7px 14px; }
   </style>
 </head>
 <body>
@@ -263,6 +303,28 @@
     <div class="empty-state"><span class="spinner"></span></div>
   </div>
 
+  <hr />
+
+  <!-- Church testimonies — pending -->
+  <div class="section-header">
+    <h2>Church testimonies — pending <span class="badge empty" id="testimony-pending-count">…</span></h2>
+    <button class="btn btn-ghost" onclick="loadPendingTestimonies()">↺ Refresh</button>
+  </div>
+  <div class="testimony-list" id="testimony-pending-list">
+    <div class="empty-state"><span class="spinner"></span></div>
+  </div>
+
+  <hr />
+
+  <!-- Church testimonies — approved -->
+  <div class="section-header">
+    <h2>Church testimonies — approved <span class="badge empty" id="testimony-approved-count">…</span></h2>
+    <button class="btn btn-ghost" onclick="loadApprovedTestimonies()">↺ Refresh</button>
+  </div>
+  <div class="testimony-list" id="testimony-approved-list">
+    <div class="empty-state"><span class="spinner"></span></div>
+  </div>
+
 </main>
 
 <div id="toast"></div>
@@ -271,6 +333,7 @@
 <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-auth-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-storage-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore-compat.js"></script>
 
 <script>
 // ── CONFIG ───────────────────────────────────
@@ -286,6 +349,7 @@ const FIREBASE_CONFIG = {
 firebase.initializeApp(FIREBASE_CONFIG);
 const auth    = firebase.auth();
 const storage = firebase.storage();
+const db      = firebase.firestore();
 
 let approvedAny = false;
 
@@ -327,6 +391,8 @@ auth.onAuthStateChanged(async user => {
 
   loadPending();
   loadCommunity();
+  loadPendingTestimonies();
+  loadApprovedTestimonies();
 });
 
 // ── ADMIN EMAIL LIST ─────────────────────────
@@ -546,6 +612,123 @@ async function deleteCommunity(btn, fullPath) {
     showToast('Error: ' + err.message, true);
     btn.disabled = false;
   }
+}
+
+// ── CHURCH TESTIMONIES ───────────────────────
+async function loadPendingTestimonies() {
+  const list  = document.getElementById('testimony-pending-list');
+  const badge = document.getElementById('testimony-pending-count');
+  list.innerHTML = `<div class="empty-state"><span class="spinner"></span></div>`;
+
+  try {
+    const snap = await db.collection('church_testimonies')
+      .where('approved', '==', false)
+      .get();
+
+    badge.textContent = snap.size;
+    badge.className = snap.size > 0 ? 'badge' : 'badge empty';
+
+    if (snap.empty) {
+      list.innerHTML = `<div class="empty-state">No pending testimonies — all clear!</div>`;
+      return;
+    }
+
+    list.innerHTML = '';
+    snap.forEach(doc => list.appendChild(makeTestimonyCard(doc, true)));
+  } catch (err) {
+    list.innerHTML = `<div class="empty-state" style="color:var(--red)">Failed to load: ${err.message}</div>`;
+  }
+}
+
+async function loadApprovedTestimonies() {
+  const list  = document.getElementById('testimony-approved-list');
+  const badge = document.getElementById('testimony-approved-count');
+  list.innerHTML = `<div class="empty-state"><span class="spinner"></span></div>`;
+
+  try {
+    const snap = await db.collection('church_testimonies')
+      .where('approved', '==', true)
+      .get();
+
+    badge.textContent = snap.size;
+    badge.className = snap.size > 0 ? 'badge' : 'badge empty';
+
+    if (snap.empty) {
+      list.innerHTML = `<div class="empty-state">No approved testimonies yet.</div>`;
+      return;
+    }
+
+    list.innerHTML = '';
+    snap.forEach(doc => list.appendChild(makeTestimonyCard(doc, false)));
+  } catch (err) {
+    list.innerHTML = `<div class="empty-state" style="color:var(--red)">Failed to load: ${err.message}</div>`;
+  }
+}
+
+function makeTestimonyCard(doc, isPending) {
+  const d    = doc.data();
+  const card = document.createElement('div');
+  card.className = 'testimony-card';
+  card.id = `tc-${doc.id}`;
+
+  const date = d.submittedAt ? new Date(d.submittedAt.seconds * 1000).toLocaleDateString() : '—';
+  const actions = isPending
+    ? `<div class="testimony-actions">
+         <button class="btn btn-success" onclick="approveTestimony('${doc.id}')">✓ Approve</button>
+         <button class="btn btn-danger"  onclick="rejectTestimony('${doc.id}', true)">✕ Reject</button>
+       </div>`
+    : `<div class="testimony-actions">
+         <button class="btn btn-danger" onclick="rejectTestimony('${doc.id}', false)">✕ Delete</button>
+       </div>`;
+
+  card.innerHTML = `
+    <div class="testimony-name">${escHtml(d.name || 'Anonymous Buttliever')}</div>
+    <div class="testimony-text">"${escHtml(d.text || '')}"</div>
+    <div class="testimony-meta">Submitted: ${date}</div>
+    ${actions}
+  `;
+  return card;
+}
+
+async function approveTestimony(id) {
+  try {
+    await db.collection('church_testimonies').doc(id).update({ approved: true });
+    document.getElementById(`tc-${id}`)?.remove();
+
+    const badge = document.getElementById('testimony-pending-count');
+    const count = Math.max(0, parseInt(badge.textContent) - 1);
+    badge.textContent = count;
+    badge.className = count > 0 ? 'badge' : 'badge empty';
+
+    loadApprovedTestimonies();
+    showToast('✓ Testimony approved — now in the Scroll');
+  } catch (err) {
+    showToast('Error: ' + err.message, true);
+  }
+}
+
+async function rejectTestimony(id, isPending) {
+  const label = isPending ? 'Reject and delete this testimony?' : 'Delete this testimony?';
+  if (!confirm(label + ' This cannot be undone.')) return;
+
+  try {
+    await db.collection('church_testimonies').doc(id).delete();
+    document.getElementById(`tc-${id}`)?.remove();
+
+    const badgeId = isPending ? 'testimony-pending-count' : 'testimony-approved-count';
+    const badge = document.getElementById(badgeId);
+    const count = Math.max(0, parseInt(badge.textContent) - 1);
+    badge.textContent = count;
+    badge.className = count > 0 ? 'badge' : 'badge empty';
+
+    showToast('Testimony deleted');
+  } catch (err) {
+    showToast('Error: ' + err.message, true);
+  }
+}
+
+function escHtml(str) {
+  return str.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
 }
 
 // ── TOAST ────────────────────────────────────
