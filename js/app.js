@@ -623,10 +623,57 @@ function loadMoreMemes() {
   if (window.loadNextPage) window.loadNextPage();
 }
 
+// ─── ESSAY ACCORDION ──────────────────────────
+function toggleEssay(btn) {
+  const item = btn.closest('.essay-item');
+  const isOpen = item.classList.contains('open');
+  document.querySelectorAll('.essay-item.open').forEach(i => i.classList.remove('open'));
+  if (!isOpen) item.classList.add('open');
+}
+
+// ─── BUTTPOSTING TASKS ────────────────────────
+function toggleTask(el) {
+  el.classList.toggle('done');
+  const numEl = el.querySelector('.bp-task-n');
+  if (el.classList.contains('done')) {
+    numEl.textContent = '✓';
+  } else {
+    const n = el.dataset.id.replace('t', '');
+    numEl.textContent = n.padStart(2, '0');
+  }
+  saveTasks();
+}
+
+function saveTasks() {
+  const done = [...document.querySelectorAll('.bp-task.done')].map(el => el.dataset.id);
+  localStorage.setItem('bp_tasks', JSON.stringify(done));
+}
+
+function resetTasks() {
+  localStorage.removeItem('bp_tasks');
+  document.querySelectorAll('.bp-task.done').forEach(el => {
+    el.classList.remove('done');
+    const n = el.dataset.id.replace('t', '');
+    el.querySelector('.bp-task-n').textContent = n.padStart(2, '0');
+  });
+}
+
+function loadTasks() {
+  const done = JSON.parse(localStorage.getItem('bp_tasks') || '[]');
+  done.forEach(id => {
+    const el = document.querySelector(`.bp-task[data-id="${id}"]`);
+    if (el) {
+      el.classList.add('done');
+      el.querySelector('.bp-task-n').textContent = '✓';
+    }
+  });
+}
+
 // ─── INIT ─────────────────────────────────────
 document.addEventListener('DOMContentLoaded', () => {
   initNavbar();
   initQuote();
+  loadTasks();
   // Rotate tagline every 4 seconds
   setInterval(rotateTagline, 4000);
   // Auto-advance quote every 30 seconds
