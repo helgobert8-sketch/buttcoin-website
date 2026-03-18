@@ -254,18 +254,25 @@
     .candle-figure {
       position: absolute;
       top: 50%;
-      width: 190px;
-      transform: translateY(-50%);
-      opacity: 0.88;
+      width: auto;
+      max-width: 280px;
+      object-fit: contain;
+      opacity: 0.92;
       mix-blend-mode: screen;
-      filter: brightness(1.25) saturate(1.3) contrast(1.1);
+      filter: brightness(1.1) saturate(1.2) contrast(1.05);
       pointer-events: none;
       display: none;
     }
-    .candle-figure.left  { right: calc(100% + 1rem); }
+    /* Center each figure in the gap between booth-wrapper and screen edge.
+       Gap = (100vw - 700px) / 2 + 24px (content-area padding).
+       Figure centre offset from booth-wrapper left/right edge = –25vw + 163px */
+    .candle-figure.left {
+      left: calc(-25vw + 163px);
+      transform: translateX(-50%) translateY(-50%);
+    }
     .candle-figure.right {
-      left: calc(100% + 1rem);
-      transform: translateY(-50%) scaleX(-1);
+      right: calc(-25vw + 163px);
+      transform: translateX(50%) translateY(-50%) scaleX(-1);
     }
 
     @media (min-width: 1120px) {
@@ -533,7 +540,7 @@
   <div class="sound-btns">
     <button class="sound-btn" data-sound="monk"  title="Meditative drone">♪ Monk</button>
     <button class="sound-btn" data-sound="synth" title="Blade Runner synth">♪ Synth</button>
-    <button class="sound-btn" data-sound="rain"  title="Wind &amp; rain">♪ Rain</button>
+    <button class="sound-btn" data-sound="shore" title="Ocean shore ambience">♪ Shore</button>
   </div>
 
   <!-- ═══════════════════════════════════
@@ -561,10 +568,10 @@
     <!-- ── CONFESSIONS ──────────────────── -->
     <div class="tab-content active" id="tab-confessions">
 
-      <!-- Candle figures flank the booth on wide screens -->
+      <!-- Art figures flank the booth on wide screens -->
       <div class="booth-wrapper">
-        <img src="assets/buttcandle.png" alt="" class="candle-figure left" />
-        <img src="assets/buttcandle.png" alt="" class="candle-figure right" />
+        <img src="assets/buttcoin-art.png" alt="" class="candle-figure left" id="fig-left" />
+        <img src="assets/buttcoin-art.png" alt="" class="candle-figure right" id="fig-right" />
 
         <div class="booth">
           <p class="booth-prompt">Enter the booth. Speak your truth.</p>
@@ -747,8 +754,9 @@
   (function () {
     let audioCtx    = null;
     let masterGain  = null;
-    let activeSound = null; // 'monk' | 'synth' | 'rain' | null
-    let nodes       = [];   // all started nodes for cleanup
+    let activeSound = null; // 'monk' | 'synth' | 'shore' | null
+    let nodes       = [];   // all started AudioNodes
+    let timers      = [];   // all active setTimeouts (e.g. rainmaker)
 
     function getCtx() {
       if (!audioCtx) {
@@ -765,9 +773,11 @@
     function stopAll() {
       nodes.forEach(n => { try { n.stop(); } catch (_) {} });
       nodes = [];
+      timers.forEach(t => clearTimeout(t));
+      timers = [];
     }
 
-    function fadeIn()  {
+    function fadeIn() {
       masterGain.gain.cancelScheduledValues(audioCtx.currentTime);
       masterGain.gain.linearRampToValueAtTime(1, audioCtx.currentTime + 3);
     }
@@ -777,18 +787,29 @@
       setTimeout(cb || (() => {}), 2200);
     }
 
+    // Shared noise buffer factory
+    function makeNoiseBuf(seconds) {
+      const len  = audioCtx.sampleRate * seconds;
+      const buf  = audioCtx.createBuffer(1, len, audioCtx.sampleRate);
+      const data = buf.getChannelData(0);
+      for (let i = 0; i < len; i++) data[i] = Math.random() * 2 - 1;
+      return buf;
+    }
+    function noiseSource(buf) {
+      const s = audioCtx.createBufferSource();
+      s.buffer = buf; s.loop = true;
+      return s;
+    }
+
     // ── 1. MONK — meditative sine chord ─────────
     function buildMonk() {
       const ctx = getCtx();
       [[174, 0.035], [285, 0.02], [396, 0.015]].forEach(([freq, vol]) => {
         const osc = ctx.createOscillator(), g = ctx.createGain();
-        osc.type = 'sine';
-        osc.frequency.value = freq;
-        g.gain.value = vol;
+        osc.type = 'sine'; osc.frequency.value = freq; g.gain.value = vol;
         osc.connect(g); g.connect(masterGain);
         startNode(osc);
       });
-      // Breathing LFO
       const lfo = ctx.createOscillator(), lg = ctx.createGain();
       lfo.frequency.value = 0.06; lg.gain.value = 0.3;
       lfo.connect(lg); lg.connect(masterGain.gain);
@@ -798,86 +819,142 @@
     // ── 2. SYNTH — Blade Runner detuned pads ────
     function buildSynth() {
       const ctx = getCtx();
-
-      // Detuned sawtooth trio → lowpass filter
       const filter = ctx.createBiquadFilter();
       filter.type = 'lowpass'; filter.frequency.value = 350; filter.Q.value = 3;
       filter.connect(masterGain);
-
       [[55, 0.04, 'sawtooth'], [55.6, 0.035, 'sawtooth'], [110, 0.018, 'square']].forEach(([freq, vol, type]) => {
         const osc = ctx.createOscillator(), g = ctx.createGain();
         osc.type = type; osc.frequency.value = freq; g.gain.value = vol;
         osc.connect(g); g.connect(filter);
         startNode(osc);
       });
-
-      // Slow filter sweep (eerie)
       const fLFO = ctx.createOscillator(), fLFOg = ctx.createGain();
       fLFO.frequency.value = 0.035; fLFOg.gain.value = 180;
       fLFO.connect(fLFOg); fLFOg.connect(filter.frequency);
       startNode(fLFO);
-
-      // Pitch drift on second osc (handled above via detuning)
-      // High shimmer pad
       const shimOsc = ctx.createOscillator(), shimG = ctx.createGain();
-      const shimFilter = ctx.createBiquadFilter();
-      shimFilter.type = 'bandpass'; shimFilter.frequency.value = 800; shimFilter.Q.value = 8;
+      const shimF = ctx.createBiquadFilter();
+      shimF.type = 'bandpass'; shimF.frequency.value = 800; shimF.Q.value = 8;
       shimOsc.type = 'sine'; shimOsc.frequency.value = 220; shimG.gain.value = 0.012;
-      shimOsc.connect(shimG); shimG.connect(shimFilter); shimFilter.connect(masterGain);
+      shimOsc.connect(shimG); shimG.connect(shimF); shimF.connect(masterGain);
       startNode(shimOsc);
-
-      // Master breathe
       const bLFO = ctx.createOscillator(), bLFOg = ctx.createGain();
       bLFO.frequency.value = 0.05; bLFOg.gain.value = 0.25;
       bLFO.connect(bLFOg); bLFOg.connect(masterGain.gain);
       startNode(bLFO);
     }
 
-    // ── 3. RAIN — wind + rain noise ─────────────
-    function buildRain() {
+    // ── 3. SHORE — deep hum + synth pads + rain + waves + rainmaker ──
+    function buildShore() {
       const ctx = getCtx();
+      const noiseBuf = makeNoiseBuf(4);
 
-      // White noise buffer (2 sec, looped)
-      const bufLen = ctx.sampleRate * 2;
-      const buf    = ctx.createBuffer(1, bufLen, ctx.sampleRate);
-      const data   = buf.getChannelData(0);
-      for (let i = 0; i < bufLen; i++) data[i] = Math.random() * 2 - 1;
+      // ── Deep drone (55 Hz root + harmonics) ─────
+      [[55, 0.055], [110, 0.022], [82.5, 0.014]].forEach(([freq, vol]) => {
+        const osc = ctx.createOscillator(), g = ctx.createGain();
+        osc.type = 'sine'; osc.frequency.value = freq; g.gain.value = vol;
+        osc.connect(g); g.connect(masterGain);
+        startNode(osc);
+      });
+      // Very slow breathe on the drone
+      const dLFO = ctx.createOscillator(), dLFOg = ctx.createGain();
+      dLFO.frequency.value = 0.038; dLFOg.gain.value = 0.022;
+      dLFO.connect(dLFOg); dLFOg.connect(masterGain.gain);
+      startNode(dLFO);
 
-      function noiseSource() {
-        const s = ctx.createBufferSource();
-        s.buffer = buf; s.loop = true;
-        return s;
-      }
+      // ── Synth pads — three voices, independent LFOs ─
+      const padFilter = ctx.createBiquadFilter();
+      padFilter.type = 'lowpass'; padFilter.frequency.value = 700; padFilter.Q.value = 1.2;
+      padFilter.connect(masterGain);
+      // Slow filter wander
+      const pfLFO = ctx.createOscillator(), pfLFOg = ctx.createGain();
+      pfLFO.frequency.value = 0.042; pfLFOg.gain.value = 220;
+      pfLFO.connect(pfLFOg); pfLFOg.connect(padFilter.frequency);
+      startNode(pfLFO);
 
-      // Wind: bandpass, slow gust LFO on gain
-      const wind = noiseSource();
-      const windF = ctx.createBiquadFilter();
-      windF.type = 'bandpass'; windF.frequency.value = 380; windF.Q.value = 0.6;
-      const windG = ctx.createGain(); windG.gain.value = 0.12;
-      const gustLFO = ctx.createOscillator(), gustG = ctx.createGain();
-      gustLFO.frequency.value = 0.07; gustG.gain.value = 0.07;
-      gustLFO.connect(gustG); gustG.connect(windG.gain);
-      wind.connect(windF); windF.connect(windG); windG.connect(masterGain);
-      startNode(wind); startNode(gustLFO);
+      [
+        [220,   0.016, 0.072, 'sine'],     // fundamental — moves in slowly
+        [220.6, 0.013, 0.11,  'sine'],     // detuned — moves at different rate
+        [330,   0.009, 0.055, 'triangle'], // fifth — quieter, slow pulse
+      ].forEach(([freq, vol, lfoRate, type]) => {
+        const osc = ctx.createOscillator(), g = ctx.createGain();
+        osc.type = type; osc.frequency.value = freq; g.gain.value = vol;
+        osc.connect(g); g.connect(padFilter);
+        startNode(osc);
+        // Each pad has its own LFO for independent movement
+        const lfo = ctx.createOscillator(), lfog = ctx.createGain();
+        lfo.frequency.value = lfoRate; lfog.gain.value = vol * 0.85;
+        lfo.connect(lfog); lfog.connect(g.gain);
+        startNode(lfo);
+      });
 
-      // Rain: highpass, gentle overall
-      const rain = noiseSource();
+      // ── Soft rain — gentle highpass noise ───────
+      const rain = noiseSource(noiseBuf);
       const rainF = ctx.createBiquadFilter();
-      rainF.type = 'highpass'; rainF.frequency.value = 4000;
-      const rainG = ctx.createGain(); rainG.gain.value = 0.07;
+      rainF.type = 'highpass'; rainF.frequency.value = 5500;
+      const rainG = ctx.createGain(); rainG.gain.value = 0.038;
       rain.connect(rainF); rainF.connect(rainG); rainG.connect(masterGain);
       startNode(rain);
 
-      // Distant low rumble
-      const rumble = noiseSource();
-      const rumbleF = ctx.createBiquadFilter();
-      rumbleF.type = 'lowpass'; rumbleF.frequency.value = 120;
-      const rumbleG = ctx.createGain(); rumbleG.gain.value = 0.06;
-      rumble.connect(rumbleF); rumbleF.connect(rumbleG); rumbleG.connect(masterGain);
-      startNode(rumble);
+      // ── Ocean waves — bandpass noise, very slow rolling LFO ──
+      const wave = noiseSource(noiseBuf);
+      const waveF = ctx.createBiquadFilter();
+      waveF.type = 'bandpass'; waveF.frequency.value = 180; waveF.Q.value = 0.45;
+      const waveG = ctx.createGain(); waveG.gain.value = 0.07;
+      wave.connect(waveF); waveF.connect(waveG); waveG.connect(masterGain);
+      startNode(wave);
+      // ~30-second wave roll
+      const wLFO = ctx.createOscillator(), wLFOg = ctx.createGain();
+      wLFO.frequency.value = 0.033; wLFOg.gain.value = 0.055;
+      wLFO.connect(wLFOg); wLFOg.connect(waveG.gain);
+      startNode(wLFO);
+
+      // ── Rainmaker — occasional cascade (every 20–60 s) ───
+      function triggerRainmaker() {
+        // Cascading bead sound: bandpass noise with a slow downward frequency sweep
+        const rmBuf = makeNoiseBuf(5);
+        const rm    = audioCtx.createBufferSource();
+        rm.buffer   = rmBuf;
+        const rmF   = audioCtx.createBiquadFilter();
+        rmF.type    = 'bandpass'; rmF.Q.value = 4;
+        const rmG   = audioCtx.createGain();
+        const now   = audioCtx.currentTime;
+
+        // Frequency sweeps gently downward as the beads cascade
+        rmF.frequency.setValueAtTime(1800, now);
+        rmF.frequency.linearRampToValueAtTime(600, now + 4);
+
+        // Gain envelope: soft fade in, sustained, fade out
+        rmG.gain.setValueAtTime(0, now);
+        rmG.gain.linearRampToValueAtTime(0.10, now + 0.5);
+        rmG.gain.setValueAtTime(0.10, now + 2.5);
+        rmG.gain.linearRampToValueAtTime(0, now + 4.5);
+
+        rm.connect(rmF); rmF.connect(rmG); rmG.connect(masterGain);
+        rm.start(now);
+        rm.stop(now + 5);
+        nodes.push(rm);
+      }
+
+      function scheduleRainmaker() {
+        const id = setTimeout(() => {
+          if (activeSound !== 'shore') return;
+          triggerRainmaker();
+          scheduleRainmaker();
+        }, 20000 + Math.random() * 40000); // 20–60 s
+        timers.push(id);
+      }
+
+      // First rainmaker after 10–25 s so it doesn't feel dead at the start
+      const firstId = setTimeout(() => {
+        if (activeSound !== 'shore') return;
+        triggerRainmaker();
+        scheduleRainmaker();
+      }, 10000 + Math.random() * 15000);
+      timers.push(firstId);
     }
 
-    const BUILDERS = { monk: buildMonk, synth: buildSynth, rain: buildRain };
+    const BUILDERS = { monk: buildMonk, synth: buildSynth, shore: buildShore };
 
     // ── Button wiring ────────────────────────────
     document.querySelectorAll('.sound-btn').forEach(btn => {
@@ -886,14 +963,12 @@
         const btns  = document.querySelectorAll('.sound-btn');
 
         if (activeSound === sound) {
-          // Toggle off
           fadeOut(() => stopAll());
           activeSound = null;
           btns.forEach(b => b.classList.remove('active'));
           return;
         }
 
-        // Switch to new sound
         const switchTo = () => {
           stopAll();
           getCtx(); audioCtx.resume();
@@ -1075,10 +1150,24 @@ Stack butts. Stay humble. The rest follows.`,
       .replace(/"/g, '&quot;');
   }
 
+  // ─── FIGURE HEIGHT SYNC ──────────────────────
+  // Match the art figures' height to the booth wrapper height
+  function syncFigureHeight() {
+    const wrapper = document.querySelector('.booth-wrapper');
+    const figs    = document.querySelectorAll('.candle-figure');
+    if (!wrapper || !figs.length) return;
+    const h = wrapper.getBoundingClientRect().height;
+    if (h > 0) figs.forEach(f => { f.style.height = h + 'px'; });
+  }
+  window.addEventListener('load',   syncFigureHeight);
+  window.addEventListener('resize', syncFigureHeight);
+  setTimeout(syncFigureHeight, 600); // fallback after fonts/images settle
+
   // ─── INIT ────────────────────────────────────
   setTimeout(() => {
     loadTestimonies();
     renderAIReflections();
+    setTimeout(syncFigureHeight, 200); // re-sync after testimonies render
   }, 400);
 
   </script>
