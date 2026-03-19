@@ -329,14 +329,17 @@
 
 <div id="toast"></div>
 
-<!-- Firebase SDK -->
-<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
-<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-auth-compat.js"></script>
-<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-storage-compat.js"></script>
-<!-- Firestore loaded via ES module below -->
+<!-- Firebase: all modular SDK -->
 
-<script>
-// ── CONFIG ───────────────────────────────────
+<script type="module">
+import { initializeApp }    from 'https://www.gstatic.com/firebasejs/9.23.0/firebase-app.js';
+import { getAuth, signInWithPopup, signOut, onAuthStateChanged, GoogleAuthProvider }
+                            from 'https://www.gstatic.com/firebasejs/9.23.0/firebase-auth.js';
+import { getStorage, ref, listAll, getDownloadURL, uploadBytes, deleteObject }
+                            from 'https://www.gstatic.com/firebasejs/9.23.0/firebase-storage.js';
+import { getFirestore, collection, getDocs, doc, updateDoc, deleteDoc, query, where }
+                            from 'https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore.js';
+
 const FIREBASE_CONFIG = {
   apiKey:            "AIzaSyDcdgb_x9IXBqTIgHOc0GEgTcak-PErt9k",
   authDomain:        "buttcoin-fbe0f.firebaseapp.com",
@@ -346,27 +349,27 @@ const FIREBASE_CONFIG = {
   appId:             "1:482524167127:web:761862f55e3312fb97a992"
 };
 
-firebase.initializeApp(FIREBASE_CONFIG);
-const auth    = firebase.auth();
-const storage = firebase.storage();
+const app     = initializeApp(FIREBASE_CONFIG);
+const auth    = getAuth(app);
+const storage = getStorage(app);
+const db      = getFirestore(app, 'default');
 
 let approvedAny = false;
 
 // ── AUTH ─────────────────────────────────────
-async function doSignIn() {
-  const provider = new firebase.auth.GoogleAuthProvider();
+window.doSignIn = async function() {
   try {
-    await auth.signInWithPopup(provider);
+    await signInWithPopup(auth, new GoogleAuthProvider());
   } catch (err) {
     showGateError(err.message);
   }
-}
+};
 
-async function doSignOut() {
-  await auth.signOut();
-}
+window.doSignOut = async function() {
+  await signOut(auth);
+};
 
-auth.onAuthStateChanged(async user => {
+onAuthStateChanged(auth, async user => {
   if (!user) {
     showGate('Sign in with your admin Google account to access the meme review queue.');
     return;
@@ -415,14 +418,13 @@ function showGateError(msg) {
 }
 
 // ── LOAD PENDING ─────────────────────────────
-async function loadPending() {
+window.loadPending = async function() {
   const grid = document.getElementById('pending-grid');
   const badge = document.getElementById('pending-count');
   grid.innerHTML = `<div class="empty-state"><span class="spinner"></span></div>`;
 
   try {
-    const ref = storage.ref('memes/pending');
-    const result = await ref.listAll();
+    const result = await listAll(ref(storage, 'memes/pending'));
     const items = result.items;
 
     badge.textContent = items.length;
@@ -435,13 +437,13 @@ async function loadPending() {
 
     grid.innerHTML = '';
     for (const item of items) {
-      const url = await item.getDownloadURL();
+      const url = await getDownloadURL(item);
       grid.appendChild(makePendingCard(item, url));
     }
   } catch (err) {
     grid.innerHTML = `<div class="empty-state" style="color:var(--red)">Failed to load: ${err.message}</div>`;
   }
-}
+};
 
 function makePendingCard(item, url) {
   const card = document.createElement('div');
@@ -467,23 +469,17 @@ function makePendingCard(item, url) {
 }
 
 // ── APPROVE ──────────────────────────────────
-async function approveMeme(btn, fullPath, filename) {
+window.approveMeme = async function(btn, fullPath, filename) {
   btn.disabled = true;
   btn.closest('.meme-card-actions').querySelectorAll('.btn').forEach(b => b.disabled = true);
 
   try {
-    // Download from pending
-    const pendingRef = storage.ref(fullPath);
-    const url = await pendingRef.getDownloadURL();
-    const response = await fetch(url);
-    const blob = await response.blob();
+    const pendingRef = ref(storage, fullPath);
+    const url = await getDownloadURL(pendingRef);
+    const blob = await fetch(url).then(r => r.blob());
 
-    // Upload to approved/community
-    const destRef = storage.ref(`memes/approved/community/${filename}`);
-    await destRef.put(blob, { contentType: blob.type });
-
-    // Delete from pending
-    await pendingRef.delete();
+    await uploadBytes(ref(storage, `memes/approved/community/${filename}`), blob, { contentType: blob.type });
+    await deleteObject(pendingRef);
 
     // Remove card from grid
     const cardId = `card-${btoa(fullPath).replace(/[^a-z0-9]/gi, '')}`;
@@ -508,21 +504,20 @@ async function approveMeme(btn, fullPath, filename) {
     showToast('Error: ' + err.message, true);
     btn.closest('.meme-card-actions').querySelectorAll('.btn').forEach(b => b.disabled = false);
   }
-}
+};
 
 // ── REJECT ───────────────────────────────────
-async function rejectMeme(btn, fullPath) {
+window.rejectMeme = async function(btn, fullPath) {
   if (!confirm('Delete this submission? This cannot be undone.')) return;
 
   btn.disabled = true;
   btn.closest('.meme-card-actions').querySelectorAll('.btn').forEach(b => b.disabled = true);
 
   try {
-    await storage.ref(fullPath).delete();
+    await deleteObject(ref(storage, fullPath));
 
     const cardId = `card-${btoa(fullPath).replace(/[^a-z0-9]/gi, '')}`;
-    const card = document.getElementById(cardId);
-    if (card) card.remove();
+    document.getElementById(cardId)?.remove();
 
     const badge = document.getElementById('pending-count');
     const count = parseInt(badge.textContent) - 1;
@@ -534,17 +529,16 @@ async function rejectMeme(btn, fullPath) {
     showToast('Error: ' + err.message, true);
     btn.closest('.meme-card-actions').querySelectorAll('.btn').forEach(b => b.disabled = false);
   }
-}
+};
 
 // ── LOAD COMMUNITY ────────────────────────────
-async function loadCommunity() {
+window.loadCommunity = async function() {
   const grid = document.getElementById('community-grid');
   const badge = document.getElementById('community-count');
   grid.innerHTML = `<div class="empty-state"><span class="spinner"></span></div>`;
 
   try {
-    const ref = storage.ref('memes/approved/community');
-    const result = await ref.listAll();
+    const result = await listAll(ref(storage, 'memes/approved/community'));
     const items = result.items;
 
     badge.textContent = items.length;
@@ -557,13 +551,13 @@ async function loadCommunity() {
 
     grid.innerHTML = '';
     for (const item of items) {
-      const url = await item.getDownloadURL();
+      const url = await getDownloadURL(item);
       grid.appendChild(makeCommunityCard(item, url));
     }
   } catch (err) {
     grid.innerHTML = `<div class="empty-state" style="color:var(--red)">Failed to load: ${err.message}</div>`;
   }
-}
+};
 
 function makeCommunityCard(item, url) {
   const card = document.createElement('div');
@@ -587,16 +581,15 @@ function makeCommunityCard(item, url) {
   return card;
 }
 
-async function deleteCommunity(btn, fullPath) {
+window.deleteCommunity = async function(btn, fullPath) {
   if (!confirm('Delete this approved meme? This cannot be undone.')) return;
   btn.disabled = true;
 
   try {
-    await storage.ref(fullPath).delete();
+    await deleteObject(ref(storage, fullPath));
 
     const cardId = `card-${btoa(fullPath).replace(/[^a-z0-9]/gi, '')}`;
-    const card = document.getElementById(cardId);
-    if (card) card.remove();
+    document.getElementById(cardId)?.remove();
 
     const badge = document.getElementById('community-count');
     const count = parseInt(badge.textContent) - 1;
@@ -611,7 +604,7 @@ async function deleteCommunity(btn, fullPath) {
     showToast('Error: ' + err.message, true);
     btn.disabled = false;
   }
-}
+};
 
 function escHtml(str) {
   return str.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
@@ -627,27 +620,9 @@ function showToast(msg, error = false) {
   clearTimeout(toastTimer);
   toastTimer = setTimeout(() => el.classList.remove('show'), 3000);
 }
-</script>
 
-<script type="module">
-  import { initializeApp, getApp } from 'https://www.gstatic.com/firebasejs/9.23.0/firebase-app.js';
-  import { getFirestore, collection, getDocs, doc, updateDoc, deleteDoc, query, where }
-                           from 'https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore.js';
-
-  const FIREBASE_CONFIG = {
-    apiKey:            "AIzaSyDcdgb_x9IXBqTIgHOc0GEgTcak-PErt9k",
-    authDomain:        "buttcoin-fbe0f.firebaseapp.com",
-    projectId:         "buttcoin-fbe0f",
-    storageBucket:     "buttcoin-fbe0f.firebasestorage.app",
-    messagingSenderId: "482524167127",
-    appId:             "1:482524167127:web:761862f55e3312fb97a992"
-  };
-
-  let app;
-  try { app = getApp(); } catch { app = initializeApp(FIREBASE_CONFIG); }
-  const db = getFirestore(app, 'default');
-
-  function makeTestimonyCard(docSnap, isPending) {
+// ── CHURCH TESTIMONIES ───────────────────────
+function makeTestimonyCard(docSnap, isPending) {
     const d    = docSnap.data();
     const card = document.createElement('div');
     card.className = 'testimony-card';
