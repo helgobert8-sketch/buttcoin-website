@@ -657,9 +657,7 @@
     </div>
   </div>
 
-  <!-- Firebase -->
-  <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
-  <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore-compat.js"></script>
+  <!-- Firebase modular SDK loaded via ES module below -->
 
   <script>
   /* ═══════════════════════════════════════════════
@@ -1006,96 +1004,6 @@
     charRemaining.textContent = 500 - confText.value.length;
   });
 
-  // ─── FIREBASE ────────────────────────────────
-  const FIREBASE_CONFIG = {
-    apiKey:            'AIzaSyDcdgb_x9IXBqTIgHOc0GEgTcak-PErt9k',
-    authDomain:        'buttcoin-fbe0f.firebaseapp.com',
-    projectId:         'buttcoin-fbe0f',
-    storageBucket:     'buttcoin-fbe0f.firebasestorage.app',
-    messagingSenderId: '482524167127',
-    appId:             '1:482524167127:web:761862f55e3312fb97a992',
-  };
-
-  let db = null;
-  try {
-    firebase.initializeApp(FIREBASE_CONFIG);
-    db = firebase.firestore();
-  } catch (e) {
-    console.warn('[Church] Firebase init failed:', e);
-  }
-
-  // ─── SUBMIT CONFESSION ───────────────────────
-  document.getElementById('confession-form').addEventListener('submit', async function (e) {
-    e.preventDefault();
-    const name = document.getElementById('conf-name').value.trim() || 'Anonymous Buttliever';
-    const text = confText.value.trim();
-    if (!text) return;
-
-    const btn = this.querySelector('.btn-confess');
-    btn.disabled    = true;
-    btn.textContent = 'Submitting…';
-
-    try {
-      if (db) {
-        await db.collection('church_testimonies').add({
-          name,
-          text,
-          type:        'human',
-          approved:    false,
-          submittedAt: firebase.firestore.FieldValue.serverTimestamp(),
-        });
-      }
-      this.style.display = 'none';
-      document.getElementById('conf-success').style.display = 'block';
-    } catch (err) {
-      console.error('[Church] Submission failed:', err);
-      btn.disabled    = false;
-      btn.textContent = 'Submit Testimony';
-      alert('Something went wrong. Please try again.');
-    }
-  });
-
-  // ─── LOAD HUMAN TESTIMONIES ──────────────────
-  async function loadTestimonies() {
-    const list = document.getElementById('testimonies-list');
-    if (!db) {
-      list.innerHTML = '<p class="empty-text">The scroll is quiet for now. Be the first to testify.</p>';
-      return;
-    }
-    try {
-      const snap = await db.collection('church_testimonies')
-        .where('approved', '==', true)
-        .where('type',     '==', 'human')
-        .orderBy('submittedAt', 'desc')
-        .get();
-
-      if (snap.empty) {
-        list.innerHTML = '<p class="empty-text">The scroll is quiet for now. Be the first to testify.</p>';
-        return;
-      }
-
-      list.innerHTML = '';
-      snap.docs.forEach(doc => {
-        const d    = doc.data();
-        const date = d.submittedAt
-          ? new Date(d.submittedAt.toDate()).toLocaleDateString('en-US', { year: 'numeric', month: 'long' })
-          : '';
-        const card = document.createElement('div');
-        card.className = 'testimony-card';
-        card.innerHTML = `
-          <p class="testimony-text">"${esc(d.text)}"</p>
-          <div class="testimony-meta">
-            <span>— ${esc(d.name)}</span>
-            <span>${date}</span>
-          </div>`;
-        list.appendChild(card);
-      });
-    } catch (err) {
-      console.warn('[Church] Load failed:', err);
-      list.innerHTML = '<p class="empty-text">The scroll could not be reached. Return later.</p>';
-    }
-  }
-
   // ─── AI REFLECTIONS ──────────────────────────
   const AI_REFLECTIONS = [
     {
@@ -1165,11 +1073,97 @@ Stack butts. Stay humble. The rest follows.`,
 
   // ─── INIT ────────────────────────────────────
   setTimeout(() => {
-    loadTestimonies();
     renderAIReflections();
-    setTimeout(syncFigureHeight, 200); // re-sync after testimonies render
+    setTimeout(syncFigureHeight, 200);
   }, 400);
 
+  </script>
+
+  <script type="module">
+  import { initializeApp }          from 'https://www.gstatic.com/firebasejs/9.23.0/firebase-app.js';
+  import { getFirestore, collection, addDoc, getDocs, query, where, orderBy, serverTimestamp }
+                                    from 'https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore.js';
+
+  const FIREBASE_CONFIG = {
+    apiKey:            'AIzaSyDcdgb_x9IXBqTIgHOc0GEgTcak-PErt9k',
+    authDomain:        'buttcoin-fbe0f.firebaseapp.com',
+    projectId:         'buttcoin-fbe0f',
+    storageBucket:     'buttcoin-fbe0f.firebasestorage.app',
+    messagingSenderId: '482524167127',
+    appId:             '1:482524167127:web:761862f55e3312fb97a992',
+  };
+
+  const app = initializeApp(FIREBASE_CONFIG);
+  const db  = getFirestore(app, 'default'); // named database ID is 'default', not '(default)'
+
+  // ─── SUBMIT CONFESSION ───────────────────────
+  document.getElementById('confession-form').addEventListener('submit', async function (e) {
+    e.preventDefault();
+    const name = document.getElementById('conf-name').value.trim() || 'Anonymous Buttliever';
+    const text = document.getElementById('conf-text').value.trim();
+    if (!text) return;
+
+    const btn = this.querySelector('.btn-confess');
+    btn.disabled    = true;
+    btn.textContent = 'Submitting…';
+
+    try {
+      await addDoc(collection(db, 'church_testimonies'), {
+        name,
+        text,
+        type:        'human',
+        approved:    false,
+        submittedAt: serverTimestamp(),
+      });
+      this.style.display = 'none';
+      document.getElementById('conf-success').style.display = 'block';
+    } catch (err) {
+      console.error('[Church] Submission failed:', err);
+      btn.disabled    = false;
+      btn.textContent = 'Submit Testimony';
+      alert('Something went wrong. Please try again.');
+    }
+  });
+
+  // ─── LOAD HUMAN TESTIMONIES ──────────────────
+  async function loadTestimonies() {
+    const list = document.getElementById('testimonies-list');
+    try {
+      const snap = await getDocs(query(
+        collection(db, 'church_testimonies'),
+        where('approved', '==', true),
+        where('type',     '==', 'human'),
+        orderBy('submittedAt', 'desc'),
+      ));
+
+      if (snap.empty) {
+        list.innerHTML = '<p class="empty-text">The scroll is quiet for now. Be the first to testify.</p>';
+        return;
+      }
+
+      list.innerHTML = '';
+      snap.docs.forEach(doc => {
+        const d    = doc.data();
+        const date = d.submittedAt
+          ? new Date(d.submittedAt.toDate()).toLocaleDateString('en-US', { year: 'numeric', month: 'long' })
+          : '';
+        const card = document.createElement('div');
+        card.className = 'testimony-card';
+        card.innerHTML = `
+          <p class="testimony-text">"${esc(d.text)}"</p>
+          <div class="testimony-meta">
+            <span>— ${esc(d.name)}</span>
+            <span>${date}</span>
+          </div>`;
+        list.appendChild(card);
+      });
+    } catch (err) {
+      console.warn('[Church] Load failed:', err);
+      list.innerHTML = '<p class="empty-text">The scroll could not be reached. Return later.</p>';
+    }
+  }
+
+  setTimeout(loadTestimonies, 400);
   </script>
 </body>
 </html>
