@@ -1,4 +1,9 @@
 {
+  "rewrites": [
+    { "source": "/for-ai", "destination": "/for-ai.html" },
+    { "source": "/church", "destination": "/church.html" },
+    { "source": "/admin", "destination": "/admin.html" }
+  ],
   "headers": [
     {
       "source": "/(.*)",
