@@ -1771,7 +1771,7 @@ footer {
   .nav-links.open { display: flex; }
   .nav-links > li > a { padding: 14px 24px; }
   .dropdown-menu { position: static; opacity: 1; pointer-events: all; transform: none; border: none; background: transparent; padding-left: 24px; }
-  .hamburger { display: flex; }
+  .hamburger { display: flex; order: -1; }
   .laser-layout, .randomizer-layout { grid-template-columns: 1fr; }
   .hero-stats { grid-template-columns: repeat(2, 1fr); }
   .footer-links { grid-template-columns: 1fr; }
