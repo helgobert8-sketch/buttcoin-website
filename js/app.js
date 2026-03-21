@@ -129,14 +129,25 @@ function copyCA() {
 function initNavbar() {
   const hamburger = document.getElementById('hamburger');
   const navLinks = document.getElementById('nav-links');
+  const fabNav = document.getElementById('fab-nav');
+
+  function toggleNav() {
+    navLinks.classList.toggle('open');
+    if (fabNav) fabNav.classList.toggle('open', navLinks.classList.contains('open'));
+  }
+  function closeNav() {
+    navLinks.classList.remove('open');
+    if (fabNav) fabNav.classList.remove('open');
+  }
+
   if (hamburger && navLinks) {
-    hamburger.addEventListener('click', () => {
-      navLinks.classList.toggle('open');
-    });
-    // Close on nav link click
+    hamburger.addEventListener('click', toggleNav);
     navLinks.querySelectorAll('a').forEach(a => {
-      a.addEventListener('click', () => navLinks.classList.remove('open'));
+      a.addEventListener('click', closeNav);
     });
+  }
+  if (fabNav && navLinks) {
+    fabNav.addEventListener('click', toggleNav);
   }
 
   // Scroll shadow
