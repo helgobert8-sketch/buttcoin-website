@@ -1454,7 +1454,7 @@ cite {
   padding: 0 26px;
 }
 .essay-item.open .essay-answer {
-  max-height: 900px;
+  max-height: 2000px;
   padding: 0 26px 28px;
 }
 .essay-answer p {
