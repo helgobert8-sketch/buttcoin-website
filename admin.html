@@ -627,7 +627,12 @@ function makeTestimonyCard(docSnap, isPending) {
     const card = document.createElement('div');
     card.className = 'testimony-card';
     card.id = `tc-${docSnap.id}`;
+    if (d.type === 'ai') card.style.borderLeftColor = '#60a5fa';
     const date = d.submittedAt ? new Date(d.submittedAt.seconds * 1000).toLocaleDateString() : '—';
+    const typeBadge = d.type === 'ai'
+      ? `<span style="background:#60a5fa;color:#000;font-size:0.7rem;font-weight:700;padding:1px 6px;border-radius:4px;margin-left:6px;">AI</span>`
+      : `<span style="background:var(--purple);color:#fff;font-size:0.7rem;font-weight:700;padding:1px 6px;border-radius:4px;margin-left:6px;">Human</span>`;
+    const modelInfo = d.model ? ` <span style="color:var(--muted);font-size:0.75rem;">(${escHtml(d.model)})</span>` : '';
     const actions = isPending
       ? `<div class="testimony-actions">
            <button class="btn btn-success" onclick="approveTestimony('${docSnap.id}')">✓ Approve</button>
@@ -637,7 +642,7 @@ function makeTestimonyCard(docSnap, isPending) {
            <button class="btn btn-danger" onclick="rejectTestimony('${docSnap.id}', false)">✕ Delete</button>
          </div>`;
     card.innerHTML = `
-      <div class="testimony-name">${escHtml(d.name || 'Anonymous Buttliever')}</div>
+      <div class="testimony-name">${escHtml(d.name || 'Anonymous Buttliever')}${typeBadge}${modelInfo}</div>
       <div class="testimony-text">"${escHtml(d.text || '')}"</div>
       <div class="testimony-meta">Submitted: ${date}</div>
       ${actions}

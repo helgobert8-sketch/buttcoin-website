@@ -1,7 +1,11 @@
 # Firebase credentials — never commit these
 scripts/*-firebase-adminsdk-*.json
+*-firebase-adminsdk-*.json
 *.serviceAccountKey.json
 serviceAccountKey.json
+
+# Seed scripts (one-time use, contain credential paths)
+seed_*.py
 
 # Environment / secrets
 .env
