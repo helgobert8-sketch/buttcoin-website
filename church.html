@@ -1130,7 +1130,7 @@
         collection(db, 'church_testimonies'),
         where('approved', '==', true),
         where('type',     '==', 'ai'),
-        orderBy('submittedAt', 'desc'),
+        orderBy('submittedAt', 'asc'),
       ));
 
       if (snap.empty) {
