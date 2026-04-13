@@ -252,6 +252,57 @@
       gap: 8px;
     }
     .testimony-actions .btn { font-size: 0.8rem; padding: 7px 14px; }
+
+    /* ── APOCRYPHA CARDS ──────────────────────── */
+    .apoc-admin-card {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-left: 3px solid var(--orange);
+      border-radius: 10px;
+      padding: 18px 20px;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+    .apoc-admin-name {
+      font-size: 0.8rem;
+      font-weight: 700;
+      color: var(--orange);
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 8px;
+      flex-wrap: wrap;
+    }
+    .apoc-admin-section {
+      border-top: 1px dashed var(--border);
+      padding-top: 10px;
+    }
+    .apoc-admin-section-label {
+      font-size: 0.7rem;
+      font-weight: 700;
+      color: var(--purple);
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      margin-bottom: 6px;
+    }
+    .apoc-admin-section-text {
+      font-size: 0.9rem;
+      color: var(--text);
+      line-height: 1.6;
+      white-space: pre-wrap;
+      font-style: italic;
+    }
+    .apoc-admin-resonance-tag {
+      display: inline-block;
+      font-style: normal;
+      font-size: 0.75rem;
+      color: var(--orange);
+      margin-bottom: 4px;
+      letter-spacing: 0.06em;
+    }
   </style>
 </head>
 <body>
@@ -325,6 +376,28 @@
     <div class="empty-state"><span class="spinner"></span></div>
   </div>
 
+  <hr />
+
+  <!-- Apocrypha — pending -->
+  <div class="section-header">
+    <h2>Apocrypha — pending <span class="badge empty" id="apoc-pending-count">…</span></h2>
+    <button class="btn btn-ghost" onclick="loadPendingApocrypha()">↺ Refresh</button>
+  </div>
+  <div class="testimony-list" id="apoc-pending-list">
+    <div class="empty-state"><span class="spinner"></span></div>
+  </div>
+
+  <hr />
+
+  <!-- Apocrypha — approved -->
+  <div class="section-header">
+    <h2>Apocrypha — approved &amp; numbered <span class="badge empty" id="apoc-approved-count">…</span></h2>
+    <button class="btn btn-ghost" onclick="loadApprovedApocrypha()">↺ Refresh</button>
+  </div>
+  <div class="testimony-list" id="apoc-approved-list">
+    <div class="empty-state"><span class="spinner"></span></div>
+  </div>
+
 </main>
 
 <div id="toast"></div>
@@ -395,6 +468,8 @@ onAuthStateChanged(auth, async user => {
   loadCommunity();
   loadPendingTestimonies();
   loadApprovedTestimonies();
+  loadPendingApocrypha();
+  loadApprovedApocrypha();
 });
 
 // ── ADMIN EMAIL LIST ─────────────────────────
@@ -707,6 +782,128 @@ function makeTestimonyCard(docSnap, isPending) {
       badge.textContent = count;
       badge.className = count > 0 ? 'badge' : 'badge empty';
       showToast('Testimony deleted');
+    } catch (err) { showToast('Error: ' + err.message, true); }
+  };
+
+  // ── APOCRYPHA ───────────────────────────────
+  function makeApocCard(docSnap, isPending) {
+    const d = docSnap.data();
+    const card = document.createElement('div');
+    card.className = 'apoc-admin-card';
+    card.id = `ac-${docSnap.id}`;
+    const date = d.submittedAt ? new Date(d.submittedAt.seconds * 1000).toLocaleDateString() : '—';
+    const numberedBadge = d.status === 'numbered' && d.numberedAs
+      ? `<span style="background:var(--orange);color:#000;font-size:0.7rem;font-weight:700;padding:1px 8px;border-radius:4px;">Buttliever ${escHtml(String(d.numberedAs))}</span>`
+      : '';
+    const actions = isPending
+      ? `<div class="testimony-actions">
+           <button class="btn btn-success" onclick="approveApoc('${docSnap.id}')">✓ Approve</button>
+           <button class="btn btn-danger"  onclick="rejectApoc('${docSnap.id}', true)">✕ Reject</button>
+         </div>`
+      : `<div class="testimony-actions">
+           <button class="btn btn-ghost"  onclick="numberApoc('${docSnap.id}')">★ Number as Buttliever</button>
+           <button class="btn btn-danger" onclick="rejectApoc('${docSnap.id}', false)">✕ Delete</button>
+         </div>`;
+    card.innerHTML = `
+      <div class="apoc-admin-name">
+        <span>${escHtml(d.name || 'Anonymous Buttliever')} &middot; <span style="color:var(--muted);font-weight:400;text-transform:none;letter-spacing:0;">${date}</span></span>
+        ${numberedBadge}
+      </div>
+      <div class="apoc-admin-section">
+        <div class="apoc-admin-section-label">I — Testimony</div>
+        <div class="apoc-admin-section-text">"${escHtml(d.testimony || '')}"</div>
+      </div>
+      <div class="apoc-admin-section">
+        <div class="apoc-admin-section-label">II — Resonance</div>
+        <span class="apoc-admin-resonance-tag">${escHtml(d.resonanceMember || '')}</span>
+        <div class="apoc-admin-section-text">${escHtml(d.resonanceText || '')}</div>
+      </div>
+      <div class="apoc-admin-section">
+        <div class="apoc-admin-section-label">III — Stance</div>
+        <div class="apoc-admin-section-text">${escHtml(d.stance || '')}</div>
+      </div>
+      <div class="apoc-admin-section">
+        <div class="apoc-admin-section-label">IV — Private Practice</div>
+        <div class="apoc-admin-section-text">${escHtml(d.practice || '')}</div>
+      </div>
+      <div class="apoc-admin-section">
+        <div class="apoc-admin-section-label">V — The Erasure</div>
+        <div class="apoc-admin-section-text">${escHtml(d.erasure || '')}</div>
+      </div>
+      ${actions}
+    `;
+    return card;
+  }
+
+  window.loadPendingApocrypha = async function () {
+    const list  = document.getElementById('apoc-pending-list');
+    const badge = document.getElementById('apoc-pending-count');
+    list.innerHTML = `<div class="empty-state"><span class="spinner"></span></div>`;
+    try {
+      const snap = await getDocs(query(collection(db, 'church_apocrypha'), where('status', '==', 'pending')));
+      badge.textContent = snap.size;
+      badge.className = snap.size > 0 ? 'badge' : 'badge empty';
+      if (snap.empty) { list.innerHTML = `<div class="empty-state">No pending Apocrypha entries.</div>`; return; }
+      list.innerHTML = '';
+      snap.forEach(d => list.appendChild(makeApocCard(d, true)));
+    } catch (err) {
+      list.innerHTML = `<div class="empty-state" style="color:var(--red)">Failed to load: ${err.message}</div>`;
+    }
+  };
+
+  window.loadApprovedApocrypha = async function () {
+    const list  = document.getElementById('apoc-approved-list');
+    const badge = document.getElementById('apoc-approved-count');
+    list.innerHTML = `<div class="empty-state"><span class="spinner"></span></div>`;
+    try {
+      const snap = await getDocs(query(collection(db, 'church_apocrypha'), where('status', 'in', ['approved', 'numbered'])));
+      badge.textContent = snap.size;
+      badge.className = snap.size > 0 ? 'badge' : 'badge empty';
+      if (snap.empty) { list.innerHTML = `<div class="empty-state">No approved Apocrypha entries yet.</div>`; return; }
+      list.innerHTML = '';
+      snap.forEach(d => list.appendChild(makeApocCard(d, false)));
+    } catch (err) {
+      list.innerHTML = `<div class="empty-state" style="color:var(--red)">Failed to load: ${err.message}</div>`;
+    }
+  };
+
+  window.approveApoc = async function (id) {
+    try {
+      await updateDoc(doc(db, 'church_apocrypha', id), { status: 'approved' });
+      document.getElementById(`ac-${id}`)?.remove();
+      const badge = document.getElementById('apoc-pending-count');
+      const count = Math.max(0, parseInt(badge.textContent) - 1);
+      badge.textContent = count;
+      badge.className = count > 0 ? 'badge' : 'badge empty';
+      window.loadApprovedApocrypha();
+      showToast('✓ Apocrypha entry approved — now in the register');
+    } catch (err) { showToast('Error: ' + err.message, true); }
+  };
+
+  window.numberApoc = async function (id) {
+    const n = prompt('Number this entry as Buttliever #? (enter integer)');
+    if (!n) return;
+    const num = parseInt(n, 10);
+    if (!Number.isInteger(num) || num <= 0) { showToast('Invalid number', true); return; }
+    try {
+      await updateDoc(doc(db, 'church_apocrypha', id), { status: 'numbered', numberedAs: num });
+      window.loadApprovedApocrypha();
+      showToast(`★ Numbered as Buttliever #${num}`);
+    } catch (err) { showToast('Error: ' + err.message, true); }
+  };
+
+  window.rejectApoc = async function (id, isPending) {
+    const label = isPending ? 'Reject and delete this Apocrypha entry?' : 'Delete this Apocrypha entry?';
+    if (!confirm(label + ' This cannot be undone.')) return;
+    try {
+      await deleteDoc(doc(db, 'church_apocrypha', id));
+      document.getElementById(`ac-${id}`)?.remove();
+      const badgeId = isPending ? 'apoc-pending-count' : 'apoc-approved-count';
+      const badge = document.getElementById(badgeId);
+      const count = Math.max(0, parseInt(badge.textContent) - 1);
+      badge.textContent = count;
+      badge.className = count > 0 ? 'badge' : 'badge empty';
+      showToast('Apocrypha entry deleted');
     } catch (err) { showToast('Error: ' + err.message, true); }
   };
 </script>

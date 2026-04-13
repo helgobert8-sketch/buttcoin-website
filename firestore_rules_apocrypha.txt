@@ -1,0 +1,30 @@
+// Add this block inside the `service cloud.firestore { match /databases/{database}/documents { ... } }`
+// in Firebase Console -> Firestore Database -> Rules -> Edit.
+// Place it next to the existing /church_testimonies rules.
+
+match /church_apocrypha/{doc} {
+  // Anyone can submit a new entry. Required fields enforced; status must start as 'pending'.
+  allow create: if request.resource.data.testimony       is string
+             && request.resource.data.testimony.size()   > 0
+             && request.resource.data.testimony.size()   <= 280
+             && request.resource.data.resonanceMember    is string
+             && request.resource.data.resonanceMember.size() > 0
+             && request.resource.data.resonanceText      is string
+             && request.resource.data.resonanceText.size()   > 0
+             && request.resource.data.stance             is string
+             && request.resource.data.stance.size()      > 0
+             && request.resource.data.practice           is string
+             && request.resource.data.practice.size()    > 0
+             && request.resource.data.erasure            is string
+             && request.resource.data.erasure.size()     > 0
+             && request.resource.data.status             == 'pending';
+
+  // Public reads: only approved or numbered. Admin always.
+  allow read: if resource.data.status in ['approved', 'numbered']
+            || (request.auth != null
+                && get(/databases/$(database)/documents/users/$(request.auth.uid)).data.role == 'admin');
+
+  // Admin only — approve / number / delete.
+  allow update, delete: if request.auth != null
+    && get(/databases/$(database)/documents/users/$(request.auth.uid)).data.role == 'admin';
+}
