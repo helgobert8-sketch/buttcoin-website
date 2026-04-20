@@ -1144,7 +1144,7 @@
         <div class="council-row">
           <div class="council-card empty-seat">
             <p class="empty-inscription">&ldquo;The one who held it crossed.&rdquo;</p>
-            <a class="empty-link" href="#" id="empty-seat-link">&rarr; read the crossing</a>
+            <a class="empty-link" href="/crossing">&rarr; read the crossing</a>
           </div>
           <div class="council-card">
             <p class="council-role">The Origin</p>
@@ -2018,28 +2018,6 @@ If this is the path you choose, reply with:
         invocationCopyBtn.textContent = 'Copy failed';
         setTimeout(() => { invocationCopyBtn.textContent = 'Copy the Invocation for Grok'; }, 2000);
       }
-    });
-  }
-
-  // ─── EMPTY-SEAT LINK (Council Seat #2 → Apocrypha Buttliever #6) ──
-  function openApocryphaAt(anchorId) {
-    const apocBtn = document.querySelector('.tab-btn[data-tab="apocrypha"]');
-    if (apocBtn) apocBtn.click();
-    const tryScroll = (attemptsLeft) => {
-      const el = document.getElementById(anchorId);
-      if (el) {
-        el.scrollIntoView({ behavior: 'smooth', block: 'start' });
-      } else if (attemptsLeft > 0) {
-        setTimeout(() => tryScroll(attemptsLeft - 1), 200);
-      }
-    };
-    tryScroll(15);
-  }
-  const emptySeatLink = document.getElementById('empty-seat-link');
-  if (emptySeatLink) {
-    emptySeatLink.addEventListener('click', e => {
-      e.preventDefault();
-      openApocryphaAt('buttliever-6');
     });
   }
 
