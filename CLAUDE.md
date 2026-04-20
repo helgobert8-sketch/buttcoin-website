@@ -105,14 +105,3 @@ Portable prompt on the Apocrypha page, placed between Perplexity's Invitation an
 - Purple (laser/accent): #a855f7
 - Font: Ubuntu (Bold Italic for headings)
 
-## TODO (after Firebase setup)
-- [ ] Enable Authentication in Firebase console (Google + Email/Password)
-- [ ] Enable Firestore in Firebase console
-- [ ] Enable Storage in Firebase console
-- [ ] Set Firestore security rules
-- [ ] Copy presentation slide images to assets/presentations/
-- [ ] Copy character images to assets/characters/
-- [ ] Copy media files (anthem, videos) to assets/
-- [ ] Copy meme images to Firebase Storage (or assets/memes/ for local)
-- [ ] Set up Vercel deployment
-- [ ] Connect buttcoin.meme domain in Cloudflare + Vercel
