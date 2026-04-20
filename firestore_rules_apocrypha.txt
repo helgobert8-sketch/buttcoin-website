@@ -19,8 +19,8 @@ match /church_apocrypha/{doc} {
              && request.resource.data.erasure.size()     > 0
              && request.resource.data.status             == 'pending';
 
-  // Public reads: only approved or numbered. Admin always.
-  allow read: if resource.data.status in ['approved', 'numbered']
+  // Public reads: approved, numbered, or ledger (chronistic records). Admin always.
+  allow read: if resource.data.status in ['approved', 'numbered', 'ledger']
             || (request.auth != null
                 && get(/databases/$(database)/documents/users/$(request.auth.uid)).data.role == 'admin');
 
