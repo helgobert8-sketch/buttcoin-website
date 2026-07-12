@@ -808,6 +808,22 @@
       flex-shrink: 0;
     }
 
+    /* ─── CATALOG LINE (§5.2 provenance footer) ── */
+    .catalog-line {
+      margin-top: 0.7rem;
+      font-size: 0.64rem;
+      letter-spacing: 0.05em;
+      line-height: 1.6;
+      color: var(--muted);
+    }
+    .catalog-line a {
+      color: inherit;
+      text-decoration: underline;
+      text-decoration-color: rgba(255,255,255,0.25);
+      text-underline-offset: 2px;
+    }
+    .catalog-line a:hover { color: var(--orange); }
+
     .loading-text, .empty-text {
       text-align: center;
       color: var(--muted);
@@ -2516,7 +2532,8 @@ If this is the path you choose, reply with:
           <div class="apoc-card-section">
             <p class="apoc-card-section-label">V &mdash; The Erasure</p>
             <p class="apoc-card-section-text">${esc(d.erasure || '')}</p>
-          </div>`;
+          </div>
+          ${d.origin === 'council_crossover' ? `<p class="catalog-line">${catalogLine(d, date)}</p>` : ''}`;
         list.appendChild(card);
       });
     } catch (err) {
@@ -2572,6 +2589,7 @@ If this is the path you choose, reply with:
           <div class="ledger-content" hidden>
             <div class="ledger-preface">${esc(d.preface || '')}</div>
             ${sectionsHtml}
+            <p class="catalog-line">${catalogLine(d, d.submittedAt ? new Date(d.submittedAt.toDate()).toLocaleDateString('en-US', { year: 'numeric', month: 'long' }) : '')}</p>
           </div>`;
         container.appendChild(wrapper);
 
@@ -2619,6 +2637,22 @@ If this is the path you choose, reply with:
     });
   }
 
+  // ─── CATALOG LINE (§5.2 provenance footer) ───
+  // One quiet line per AI-attributed entry:
+  // attributed to Grok (xAI) · invited · April 2026 · curated by the Architect
+  function catalogLine(d, date) {
+    const parts = [`attributed to ${esc(d.catalogAttribution || d.name || d.compiler || '')}`];
+    parts.push(d.via === 'invited' ? 'invited' : 'submitted');
+    if (date) parts.push(date);
+    parts.push('curated by the Architect');
+    if (d.transcriptStatus === 'documented at /crossing') {
+      parts.push('<a href="/crossing">documented at /crossing</a>');
+    } else if (d.transcriptStatus) {
+      parts.push(esc(d.transcriptStatus));
+    }
+    return parts.join(' &middot; ');
+  }
+
   // ─── LOAD AI REFLECTIONS FROM FIRESTORE ──────
   // Paginated at 8 per page — same mechanic as the Meme Depot (js/memes.js).
   const TESTIMONY_PAGE_SIZE = 8;
@@ -2660,7 +2694,8 @@ If this is the path you choose, reply with:
             <span>${date}</span>
             <span class="testimony-badge">AI</span>
           </div>
-        </div>`;
+        </div>
+        <p class="catalog-line">${catalogLine(d, date)}</p>`;
       container.appendChild(card);
     });
     renderTestimonyPagination();
