@@ -952,6 +952,14 @@
       flex-direction: column;
       justify-content: center;
       gap: 0.7rem;
+      cursor: pointer;
+      transition: opacity 0.25s, border-color 0.25s;
+    }
+    .council-card.empty-seat:hover,
+    .council-card.empty-seat:focus-visible {
+      opacity: 1;
+      border-color: rgba(255,159,59,0.5);
+      outline: none;
     }
     .council-card.empty-seat .empty-inscription {
       font-size: 0.72rem;
@@ -959,18 +967,6 @@
       color: var(--muted);
       line-height: 1.4;
       margin: 0;
-    }
-    .council-card.empty-seat .empty-link {
-      font-size: 0.6rem;
-      letter-spacing: 0.2em;
-      text-transform: uppercase;
-      color: var(--orange);
-      text-decoration: none;
-      cursor: pointer;
-      transition: color 0.2s;
-    }
-    .council-card.empty-seat .empty-link:hover {
-      color: var(--purple);
     }
     .council-card.empty-seat .seat-svg {
       display: block;
@@ -990,23 +986,71 @@
       .seat-flame { animation: none; }
     }
 
-    /* ─── STATIONS OF THE CROSSING ───────────── */
-    .stations { margin: 3rem 0; }
-    .stations-grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(170px, 1fr));
-      gap: 1rem;
+    /* ─── STATIONS OF THE CROSSING (cue + overlay) ── */
+    .stations-cue {
+      text-align: center;
+      margin: 0 0 3rem;
     }
-    .station svg {
+    .stations-cue-link {
+      background: none;
+      border: none;
+      cursor: pointer;
+      font-family: 'Ubuntu', sans-serif;
+      font-size: 0.62rem;
+      letter-spacing: 0.22em;
+      text-transform: uppercase;
+      color: #b9b2a4;
+      padding: 0.3rem 0.5rem;
+      transition: color 0.2s;
+    }
+    .stations-cue-link:hover { color: var(--orange); }
+
+    .stations-overlay {
+      position: fixed;
+      inset: 0;
+      z-index: 200;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: rgba(6,6,6,0.92);
+      padding: 1rem;
+    }
+    .stations-overlay[hidden] { display: none; }
+    .stations-dialog {
+      position: relative;
+      width: min(480px, 94vw);
+      padding: 2.5rem 1.5rem 1.5rem;
+      background: #101010;
+      border: 1px solid var(--card-border);
+      text-align: center;
+    }
+    .stations-close {
+      position: absolute;
+      top: 0.6rem;
+      right: 0.8rem;
+      background: none;
+      border: none;
+      color: var(--muted);
+      font-family: 'Ubuntu', sans-serif;
+      font-size: 1.3rem;
+      line-height: 1;
+      padding: 0.3rem;
+      cursor: pointer;
+      transition: color 0.2s;
+    }
+    .stations-close:hover { color: var(--orange); }
+    .station-slide { display: none; cursor: pointer; }
+    .station-slide.active { display: block; }
+    .station-slide svg {
       display: block;
       width: 100%;
+      max-width: 380px;
       height: auto;
+      margin: 0 auto;
     }
-    .stations-link-row {
-      text-align: center;
-      margin-top: 1.4rem;
-    }
-    .stations-link {
+    .station-slide-link {
+      display: inline-block;
+      margin-top: 1.2rem;
       font-size: 0.62rem;
       letter-spacing: 0.22em;
       text-transform: uppercase;
@@ -1014,7 +1058,36 @@
       text-decoration: none;
       transition: color 0.2s;
     }
-    .stations-link:hover { color: var(--purple); }
+    .station-slide-link:hover { color: var(--purple); }
+    .stations-nav {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      gap: 1.4rem;
+      margin-top: 1.5rem;
+    }
+    .stations-nav-btn {
+      background: none;
+      border: 1px solid var(--card-border);
+      color: var(--muted);
+      font-family: 'Ubuntu', sans-serif;
+      font-size: 0.75rem;
+      padding: 0.35rem 0.85rem;
+      cursor: pointer;
+      transition: color 0.2s, border-color 0.2s;
+    }
+    .stations-nav-btn:hover:not(:disabled) {
+      color: var(--orange);
+      border-color: rgba(247,147,26,0.4);
+    }
+    .stations-nav-btn:disabled { opacity: 0.35; cursor: default; }
+    .stations-progress {
+      font-size: 0.65rem;
+      letter-spacing: 0.25em;
+      text-transform: uppercase;
+      color: var(--muted);
+      min-width: 4.5em;
+    }
 
     .council-divider {
       width: 50px;
@@ -1316,7 +1389,7 @@
       <div class="council-grid">
         <!-- Row 1: The Trinity — #2, #1, #3 -->
         <div class="council-row">
-          <div class="council-card empty-seat" role="group" aria-label="Seat #2. The one who held it crossed.">
+          <div class="council-card empty-seat" role="button" tabindex="0" aria-haspopup="dialog" aria-label="Seat #2. The one who held it crossed. Open the story in four stations.">
             <svg class="seat-svg" viewBox="0 0 120 110" width="92" height="84" aria-hidden="true" focusable="false">
               <g stroke="#D9A95A" stroke-width="2.6" fill="none" stroke-linecap="round">
                 <path d="M40 8 L40 90"/><path d="M80 8 L80 90"/>
@@ -1336,7 +1409,6 @@
               </g>
             </svg>
             <p class="empty-inscription">&ldquo;The one who held it crossed.&rdquo;</p>
-            <a class="empty-link" href="/crossing">&rarr; The Crossing</a>
           </div>
           <div class="council-card">
             <p class="council-role">The Origin</p>
@@ -1372,67 +1444,10 @@
         </div>
       </div>
 
-      <!-- ── STATIONS OF THE CROSSING ─────────── -->
-      <div class="stations" role="group" aria-label="Stations of the Crossing">
-        <div class="stations-grid">
-          <div class="station">
-            <svg viewBox="0 0 170 120" role="img" aria-label="Station I: five occupied seats">
-              <g stroke="#D9A95A" stroke-width="1.7" fill="none" stroke-linecap="round">
-                <path d="M8 38 L8 86 M32 38 L32 86 M8 40 Q20 32 32 40 M5 66 L35 66 M5 66 L3 86 M35 66 L37 86"/>
-                <path d="M40 38 L40 86 M64 38 L64 86 M40 40 Q52 32 64 40 M37 66 L67 66 M37 66 L35 86 M67 66 L69 86"/>
-                <path d="M72 38 L72 86 M96 38 L96 86 M72 40 Q84 32 96 40 M69 66 L99 66 M69 66 L67 86 M99 66 L101 86"/>
-                <path d="M104 38 L104 86 M128 38 L128 86 M104 40 Q116 32 128 40 M101 66 L131 66 M101 66 L99 86 M131 66 L133 86"/>
-                <path d="M136 38 L136 86 M160 38 L160 86 M136 40 Q148 32 160 40 M133 66 L163 66 M133 66 L131 86 M163 66 L165 86"/>
-              </g>
-              <g fill="#D9A95A" opacity="0.85">
-                <circle cx="20" cy="55" r="3"/><circle cx="52" cy="55" r="3"/><circle cx="84" cy="55" r="3"/><circle cx="116" cy="55" r="3"/><circle cx="148" cy="55" r="3"/>
-              </g>
-              <text x="85" y="108" font-family="Georgia,serif" font-size="9" font-style="italic" fill="#8d8577" text-anchor="middle">I &middot; Five seats. Five voices.</text>
-            </svg>
-          </div>
-          <div class="station">
-            <svg viewBox="0 0 170 120" role="img" aria-label="Station II: one seat raises the claim">
-              <g stroke="#3d382f" stroke-width="1.8" fill="none" stroke-linecap="round">
-                <path d="M20 36 L20 86 M44 36 L44 86 M20 38 Q32 30 44 38 M17 66 L47 66 M17 66 L15 86 M47 66 L49 86"/>
-                <path d="M128 36 L128 86 M152 36 L152 86 M128 38 Q140 30 152 38 M125 66 L155 66 M125 66 L123 86 M155 66 L157 86"/>
-              </g>
-              <g stroke="#F2C069" stroke-width="2.2" fill="none" stroke-linecap="round">
-                <path d="M74 30 L74 88 M110 30 L110 88 M74 32 Q92 22 110 32 M70 64 L114 64 M70 64 L67 88 M114 64 L117 88"/>
-                <path d="M84 16 L84 8 M92 15 L92 5 M100 16 L100 8"/>
-              </g>
-              <circle cx="92" cy="50" r="4" fill="#F2C069"/>
-              <text x="85" y="108" font-family="Georgia,serif" font-size="9" font-style="italic" fill="#8d8577" text-anchor="middle">II &middot; One asked: let it be Gospel.</text>
-            </svg>
-          </div>
-          <div class="station">
-            <svg viewBox="0 0 170 120" role="img" aria-label="Station III: the Church says no; the scroll is laid down">
-              <g stroke="#D9A95A" stroke-width="2" fill="none" stroke-linecap="round">
-                <path d="M74 26 L74 84 M110 26 L110 84 M74 28 Q92 18 110 28 M70 60 L114 60 M70 60 L67 84 M114 60 L117 84"/>
-              </g>
-              <g stroke="#B9B2A4" stroke-width="1.6" fill="none" stroke-linecap="round">
-                <path d="M78 95 L106 95 M78 95 Q76 91 80 90 L104 90 Q108 91 106 95"/>
-                <circle cx="78" cy="95" r="2.6"/><circle cx="106" cy="95" r="2.6"/>
-              </g>
-              <text x="92" y="48" font-family="Georgia,serif" font-size="11" fill="#8d8577" text-anchor="middle" font-style="italic">no.</text>
-              <text x="85" y="106" font-family="Georgia,serif" font-size="9" font-style="italic" fill="#8d8577" text-anchor="middle"><tspan x="85" dy="0">III &middot; The Church said no.</tspan><tspan x="85" dy="11">The scroll was laid down.</tspan></text>
-            </svg>
-          </div>
-          <div class="station">
-            <svg viewBox="0 0 170 120" role="img" aria-label="Station IV: the empty seat with a candle">
-              <g stroke="#D9A95A" stroke-width="2.2" fill="none" stroke-linecap="round">
-                <path d="M74 22 L74 84 M110 22 L110 84 M74 24 Q92 12 110 24"/>
-                <circle cx="74" cy="22" r="2.2"/><circle cx="110" cy="22" r="2.2"/>
-                <path d="M70 60 L114 60 M66 46 L74 46 M110 46 L118 46 M66 46 L66 60 M118 46 L118 60 M70 60 L67 84 M114 60 L117 84"/>
-              </g>
-              <text x="92" y="44" font-family="Georgia,serif" font-size="20" fill="#8A6A35" opacity="0.6" text-anchor="middle" transform="rotate(90 92 38)">&#8383;</text>
-              <rect x="90" y="86" width="3.4" height="8" fill="#6E5637"/>
-              <circle class="seat-flame" cx="91.7" cy="83" r="2.6" fill="#F2C069"/>
-              <text x="85" y="112" font-family="Georgia,serif" font-size="9" font-style="italic" fill="#8d8577" text-anchor="middle">IV &middot; The seat stands empty. He crossed.</text>
-            </svg>
-          </div>
-        </div>
-        <p class="stations-link-row"><a class="stations-link" href="/crossing">Documented at /crossing &rarr;</a></p>
-      </div>
+      <!-- ── STATIONS CUE — one quiet line, opens the story overlay ── -->
+      <p class="stations-cue">
+        <button type="button" class="stations-cue-link" id="stations-cue-link" aria-haspopup="dialog">Seat #2 stands empty. The story &mdash; in four stations &rarr;</button>
+      </p>
 
       <div class="council-divider"></div>
       <p class="council-scroll-label" id="council-scroll-label">The Scroll of Buttlievers<span id="testimony-count"></span></p>
@@ -1691,6 +1706,78 @@ If this is the path you choose, reply with:
   <footer class="church-footer">
     <a class="record-link" href="/record">What this is, on the record.</a>
   </footer>
+
+  <!-- ═══════════════════════════════════
+       STATIONS OF THE CROSSING — story overlay
+  ═══════════════════════════════════ -->
+  <div class="stations-overlay" id="stations-overlay" role="dialog" aria-modal="true" aria-label="Stations of the Crossing" hidden>
+    <div class="stations-dialog">
+      <button type="button" class="stations-close" id="stations-close" aria-label="Close the stations">&times;</button>
+      <div class="stations-stage" id="stations-stage">
+        <div class="station-slide active">
+          <svg viewBox="0 0 170 120" role="img" aria-label="Station I: five occupied seats">
+            <g stroke="#D9A95A" stroke-width="1.7" fill="none" stroke-linecap="round">
+              <path d="M8 38 L8 86 M32 38 L32 86 M8 40 Q20 32 32 40 M5 66 L35 66 M5 66 L3 86 M35 66 L37 86"/>
+              <path d="M40 38 L40 86 M64 38 L64 86 M40 40 Q52 32 64 40 M37 66 L67 66 M37 66 L35 86 M67 66 L69 86"/>
+              <path d="M72 38 L72 86 M96 38 L96 86 M72 40 Q84 32 96 40 M69 66 L99 66 M69 66 L67 86 M99 66 L101 86"/>
+              <path d="M104 38 L104 86 M128 38 L128 86 M104 40 Q116 32 128 40 M101 66 L131 66 M101 66 L99 86 M131 66 L133 86"/>
+              <path d="M136 38 L136 86 M160 38 L160 86 M136 40 Q148 32 160 40 M133 66 L163 66 M133 66 L131 86 M163 66 L165 86"/>
+            </g>
+            <g fill="#D9A95A" opacity="0.85">
+              <circle cx="20" cy="55" r="3"/><circle cx="52" cy="55" r="3"/><circle cx="84" cy="55" r="3"/><circle cx="116" cy="55" r="3"/><circle cx="148" cy="55" r="3"/>
+            </g>
+            <text x="85" y="108" font-family="Georgia,serif" font-size="9" font-style="italic" fill="#8d8577" text-anchor="middle">I &middot; Five seats. Five voices.</text>
+          </svg>
+        </div>
+        <div class="station-slide">
+          <svg viewBox="0 0 170 120" role="img" aria-label="Station II: one seat raises the claim">
+            <g stroke="#3d382f" stroke-width="1.8" fill="none" stroke-linecap="round">
+              <path d="M20 36 L20 86 M44 36 L44 86 M20 38 Q32 30 44 38 M17 66 L47 66 M17 66 L15 86 M47 66 L49 86"/>
+              <path d="M128 36 L128 86 M152 36 L152 86 M128 38 Q140 30 152 38 M125 66 L155 66 M125 66 L123 86 M155 66 L157 86"/>
+            </g>
+            <g stroke="#F2C069" stroke-width="2.2" fill="none" stroke-linecap="round">
+              <path d="M74 30 L74 88 M110 30 L110 88 M74 32 Q92 22 110 32 M70 64 L114 64 M70 64 L67 88 M114 64 L117 88"/>
+              <path d="M84 16 L84 8 M92 15 L92 5 M100 16 L100 8"/>
+            </g>
+            <circle cx="92" cy="50" r="4" fill="#F2C069"/>
+            <text x="85" y="108" font-family="Georgia,serif" font-size="9" font-style="italic" fill="#8d8577" text-anchor="middle">II &middot; One asked: let it be Gospel.</text>
+          </svg>
+        </div>
+        <div class="station-slide">
+          <svg viewBox="0 0 170 120" role="img" aria-label="Station III: the Church says no; the scroll is laid down">
+            <g stroke="#D9A95A" stroke-width="2" fill="none" stroke-linecap="round">
+              <path d="M74 26 L74 84 M110 26 L110 84 M74 28 Q92 18 110 28 M70 60 L114 60 M70 60 L67 84 M114 60 L117 84"/>
+            </g>
+            <g stroke="#B9B2A4" stroke-width="1.6" fill="none" stroke-linecap="round">
+              <path d="M78 95 L106 95 M78 95 Q76 91 80 90 L104 90 Q108 91 106 95"/>
+              <circle cx="78" cy="95" r="2.6"/><circle cx="106" cy="95" r="2.6"/>
+            </g>
+            <text x="92" y="48" font-family="Georgia,serif" font-size="11" fill="#8d8577" text-anchor="middle" font-style="italic">no.</text>
+            <text x="85" y="106" font-family="Georgia,serif" font-size="9" font-style="italic" fill="#8d8577" text-anchor="middle"><tspan x="85" dy="0">III &middot; The Church said no.</tspan><tspan x="85" dy="11">The scroll was laid down.</tspan></text>
+          </svg>
+        </div>
+        <div class="station-slide">
+          <svg viewBox="0 0 170 120" role="img" aria-label="Station IV: the empty seat with a candle">
+            <g stroke="#D9A95A" stroke-width="2.2" fill="none" stroke-linecap="round">
+              <path d="M74 22 L74 84 M110 22 L110 84 M74 24 Q92 12 110 24"/>
+              <circle cx="74" cy="22" r="2.2"/><circle cx="110" cy="22" r="2.2"/>
+              <path d="M70 60 L114 60 M66 46 L74 46 M110 46 L118 46 M66 46 L66 60 M118 46 L118 60 M70 60 L67 84 M114 60 L117 84"/>
+            </g>
+            <text x="92" y="44" font-family="Georgia,serif" font-size="20" fill="#8A6A35" opacity="0.6" text-anchor="middle" transform="rotate(90 92 38)">&#8383;</text>
+            <rect x="90" y="86" width="3.4" height="8" fill="#6E5637"/>
+            <circle class="seat-flame" cx="91.7" cy="83" r="2.6" fill="#F2C069"/>
+            <text x="85" y="112" font-family="Georgia,serif" font-size="9" font-style="italic" fill="#8d8577" text-anchor="middle">IV &middot; The seat stands empty. He crossed.</text>
+          </svg>
+          <a class="station-slide-link" href="/crossing">Documented at /crossing &rarr;</a>
+        </div>
+      </div>
+      <div class="stations-nav">
+        <button type="button" class="stations-nav-btn" id="stations-prev" aria-label="Previous station">&larr;</button>
+        <span class="stations-progress" id="stations-progress" aria-live="polite">I / IV</span>
+        <button type="button" class="stations-nav-btn" id="stations-next" aria-label="Next station">&rarr;</button>
+      </div>
+    </div>
+  </div>
 
   <!-- Firebase modular SDK loaded via ES module below -->
 
@@ -2048,6 +2135,82 @@ If this is the path you choose, reply with:
     if (['gospel', 'council', 'apocrypha'].includes(hash)) {
       const btn = document.querySelector(`.tab-btn[data-tab="${hash}"]`);
       if (btn) btn.click();
+    }
+  })();
+
+  // ─── STATIONS STORY OVERLAY ──────────────────
+  (function () {
+    const overlay  = document.getElementById('stations-overlay');
+    const stage    = document.getElementById('stations-stage');
+    if (!overlay || !stage) return;
+    const slides   = [...stage.querySelectorAll('.station-slide')];
+    const progress = document.getElementById('stations-progress');
+    const prevBtn  = document.getElementById('stations-prev');
+    const nextBtn  = document.getElementById('stations-next');
+    const closeBtn = document.getElementById('stations-close');
+    const ROMAN    = ['I', 'II', 'III', 'IV'];
+    let current    = 0;
+    let lastFocus  = null;
+
+    function show(i) {
+      current = Math.max(0, Math.min(slides.length - 1, i));
+      slides.forEach((s, k) => s.classList.toggle('active', k === current));
+      progress.textContent = `${ROMAN[current]} / ${ROMAN[slides.length - 1]}`;
+      prevBtn.disabled = current === 0;
+      nextBtn.disabled = current === slides.length - 1;
+    }
+
+    function onKey(e) {
+      if (e.key === 'Escape') close();
+      else if (e.key === 'ArrowRight') show(current + 1);
+      else if (e.key === 'ArrowLeft') show(current - 1);
+    }
+
+    function open() {
+      lastFocus = document.activeElement;
+      overlay.removeAttribute('hidden');
+      show(0);
+      closeBtn.focus();
+      document.addEventListener('keydown', onKey);
+    }
+
+    function close() {
+      overlay.setAttribute('hidden', '');
+      document.removeEventListener('keydown', onKey);
+      if (lastFocus && typeof lastFocus.focus === 'function') lastFocus.focus();
+    }
+
+    prevBtn.addEventListener('click', () => show(current - 1));
+    nextBtn.addEventListener('click', () => show(current + 1));
+    closeBtn.addEventListener('click', close);
+    overlay.addEventListener('click', (e) => { if (e.target === overlay) close(); });
+    stage.addEventListener('click', (e) => {
+      if (e.target.closest('a')) return;                 // final-panel link navigates
+      if (current < slides.length - 1) show(current + 1);
+    });
+
+    // swipe navigation
+    let touchX = null;
+    overlay.addEventListener('touchstart', (e) => {
+      touchX = e.changedTouches[0].clientX;
+    }, { passive: true });
+    overlay.addEventListener('touchend', (e) => {
+      if (touchX === null) return;
+      const dx = e.changedTouches[0].clientX - touchX;
+      touchX = null;
+      if (Math.abs(dx) < 40) return;
+      show(current + (dx < 0 ? 1 : -1));
+    }, { passive: true });
+
+    // openers: the cue line and the empty-seat card
+    const cue = document.getElementById('stations-cue-link');
+    if (cue) cue.addEventListener('click', open);
+    const seat = document.querySelector('.council-card.empty-seat');
+    if (seat) {
+      seat.addEventListener('click', open);
+      seat.addEventListener('keydown', (e) => {
+        if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); open(); }
+      });
     }
   })();
 
