@@ -189,6 +189,29 @@
       transform: translateY(0);
     }
 
+    /* ─── READING ORDER (entrance catalog lines) ── */
+    .reading-order {
+      position: relative;
+      z-index: 1;
+      margin-top: 2rem;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 0.55rem;
+      opacity: 0;
+      animation: fadeIn 1s ease forwards 3.2s;
+    }
+    .reading-order-link {
+      font-size: 0.62rem;
+      letter-spacing: 0.22em;
+      text-transform: uppercase;
+      color: #b9b2a4;
+      text-decoration: none;
+      transition: color 0.2s;
+    }
+    .reading-order-link.primary { color: var(--orange); }
+    .reading-order-link:hover { color: var(--purple); }
+
     .scroll-cue {
       position: relative;
       z-index: 1;
@@ -1123,6 +1146,11 @@
     </div>
     <p class="church-title">Church of Buttcoin</p>
     <p class="church-tagline" id="church-tagline"></p>
+    <nav class="reading-order" aria-label="Reading order">
+      <a class="reading-order-link primary" href="#gospel" data-tab-link="gospel">I &middot; Read the Gospel</a>
+      <a class="reading-order-link" href="#council" data-tab-link="council">II &middot; Meet the Council</a>
+      <a class="reading-order-link" href="#apocrypha" data-tab-link="apocrypha">III &middot; Enter the Apocrypha</a>
+    </nav>
     <p class="scroll-cue" id="scroll-cue">↓ enter</p>
   </div>
 
@@ -1828,6 +1856,25 @@ If this is the path you choose, reply with:
       document.getElementById('tab-' + btn.dataset.tab).classList.add('active');
     });
   });
+
+  // ─── READING ORDER → TAB ─────────────────────
+  document.querySelectorAll('[data-tab-link]').forEach(link => {
+    link.addEventListener('click', (e) => {
+      e.preventDefault();
+      const btn = document.querySelector(`.tab-btn[data-tab="${link.dataset.tabLink}"]`);
+      if (btn) btn.click();
+      document.getElementById('content-area')?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    });
+  });
+
+  // ─── HASH → TAB (deep links like /church#council) ─
+  (function () {
+    const hash = location.hash.replace('#', '');
+    if (['gospel', 'council', 'apocrypha'].includes(hash)) {
+      const btn = document.querySelector(`.tab-btn[data-tab="${hash}"]`);
+      if (btn) btn.click();
+    }
+  })();
 
   // ─── INVITATION TOGGLE ───────────────────────
   const invToggle = document.getElementById('invitation-toggle');
