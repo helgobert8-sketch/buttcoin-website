@@ -62,6 +62,38 @@ function parseJsonLd(html) {
   return documents;
 }
 
+function markdownSection(markdown, heading) {
+  const lines = markdown.split(/\r?\n/);
+  const start = lines.indexOf(`## ${heading}`);
+  assert.notEqual(start, -1, `missing Markdown section: ${heading}`);
+  const nextHeading = lines.findIndex((line, index) => index > start && line.startsWith('## '));
+  return lines.slice(start + 1, nextHeading === -1 ? lines.length : nextHeading).join('\n');
+}
+
+function normalizeHtml(html) {
+  return html.replace(/\s+/g, ' ').trim();
+}
+
+function factTableCell(html, label) {
+  const table = html.match(
+    /<table\b[^>]*class=["'][^"']*\bfact-table\b[^"']*["'][^>]*>([\s\S]*?)<\/table>/i,
+  );
+  assert.ok(table, 'fact table missing');
+
+  const matchingCells = [];
+  for (const row of table[1].matchAll(/<tr\b[^>]*>([\s\S]*?)<\/tr>/gi)) {
+    const cells = [...row[1].matchAll(/<td\b[^>]*>([\s\S]*?)<\/td>/gi)].map((cell) =>
+      normalizeHtml(cell[1]),
+    );
+    if (cells.length === 2 && cells[0].replace(/<[^>]+>/g, '') === label) {
+      matchingCells.push(cells[1]);
+    }
+  }
+
+  assert.equal(matchingCells.length, 1, `expected one ${label} fact-table row`);
+  return matchingCells[0];
+}
+
 let tokenomics;
 let timeline;
 let church;
@@ -191,6 +223,52 @@ reviewCheck('structured links are authoritative rather than presence-only', () =
   assert.deepEqual(timeline?.links, { memeDepot: MEME_DEPOT });
 });
 
+reviewCheck('llms authoritative identity and channel lines are exact', () => {
+  const identity = markdownSection(sources['llms.txt'], 'Canonical Identity');
+  const channels = markdownSection(sources['llms.txt'], 'Current Public Channels');
+
+  const pairLines = identity
+    .split('\n')
+    .filter((line) => line.startsWith('- DEX Pair Address:'));
+  assert.deepEqual(pairLines, [`- DEX Pair Address: ${PAIR}`]);
+
+  const depotLines = channels.split('\n').filter((line) => line.startsWith('- Meme Depot:'));
+  assert.deepEqual(depotLines, [`- Meme Depot: ${MEME_DEPOT}`]);
+
+  const statusLines = channels
+    .split('\n')
+    .filter((line) => line.trim() !== '' && !line.startsWith('- '));
+  assert.deepEqual(statusLines, [X_TRANSITION]);
+});
+
+reviewCheck('for-ai fact-table identity and channel cells are exact', () => {
+  assert.equal(factTableCell(sources['for-ai.html'], 'DEX pair address'), `<code>${PAIR}</code>`);
+  assert.equal(factTableCell(sources['for-ai.html'], 'X status'), X_TRANSITION);
+  assert.equal(
+    factTableCell(sources['for-ai.html'], 'Meme Depot'),
+    `<a href="${MEME_DEPOT}">${MEME_DEPOT}</a>`,
+  );
+});
+
+reviewCheck('for-ai current-channel instruction is exact', () => {
+  const item = sources['for-ai.html'].match(
+    /<div class="agent-item">\s*<div class="agent-n">5<\/div>\s*<div class="agent-text">([\s\S]*?)<\/div>\s*<\/div>/i,
+  );
+  assert.ok(item, 'agent instruction 5 missing');
+  const instruction = normalizeHtml(item[1]);
+  assert.match(instruction, /^Current channels:/);
+  assert.equal(instruction.split(X_TRANSITION).length - 1, 1);
+
+  const depotHrefs = [...instruction.matchAll(
+    /href="([^"]*(?:memedepot|meme[-_]?depot|#meme-depot)[^"]*)"/gi,
+  )].map((match) => match[1]);
+  assert.deepEqual(depotHrefs, [MEME_DEPOT]);
+  assert.ok(
+    instruction.includes(`<a href="${MEME_DEPOT}">on-site Meme Depot</a>`),
+    'current-channel instruction lacks the canonical on-site Meme Depot link',
+  );
+});
+
 reviewCheck('publication set rejects competing pair and canonical X values', () => {
   for (const name of ['llms.txt', 'tokenomics.json', 'timeline.json', 'for-ai.html']) {
     const candidates = new Set();
@@ -206,10 +284,13 @@ reviewCheck('publication set rejects competing pair and canonical X values', () 
   }
 
   for (const [name, contents] of publicationSources) {
-    const handles = [...contents.matchAll(/@Buttcoin[A-Za-z0-9_]*/gi)].map(
-      (match) => match[0],
-    );
-    assert.deepEqual(handles, [], `${name} publishes a canonical X handle`);
+    const handleSurface = contents.replace(/<style\b[^>]*>[\s\S]*?<\/style>/gi, '');
+    const handles = [...handleSurface.matchAll(
+      /(?:^|[^A-Za-z0-9_])(@[A-Za-z0-9_]{1,15}\b)/g,
+    )]
+      .map((match) => match[1])
+      .filter((handle) => !['@context', '@type'].includes(handle));
+    assert.deepEqual(handles, [], `${name} publishes an @handle`);
 
     const xUrls = [...contents.matchAll(
       /https?:\/\/(?:www\.)?(?:x|twitter)\.com\/[^\s"'<>),]+/gi,
