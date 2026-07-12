@@ -22,7 +22,23 @@ const shareText = document.querySelector('#share-text');
 const copyShare = document.querySelector('#copy-share');
 const copyFeedback = document.querySelector('#copy-feedback');
 
-let state = loadPersistedState(window.localStorage);
+const unavailableStorage = {
+  getItem() {
+    return null;
+  },
+  setItem() {},
+};
+
+function getStorage() {
+  try {
+    return window.localStorage ?? unavailableStorage;
+  } catch {
+    return unavailableStorage;
+  }
+}
+
+const storage = getStorage();
+let state = loadPersistedState(storage);
 let phase = 'idle';
 let roundStartedAt = 0;
 let roundSpeed = speedForLevel(state.speedLevel);
@@ -112,7 +128,7 @@ function stopRound(inputTimestamp) {
   const result = classifyAngle(absoluteAngle);
   const relativeAngle = relativeFlipAngle(absoluteAngle);
   state = applyResult(state, result);
-  savePersistedState(window.localStorage, state);
+  savePersistedState(storage, state);
   renderCounters();
 
   surface.dataset.state = phase;
@@ -183,7 +199,7 @@ surface.addEventListener('keydown', (event) => {
 
 muteToggle.addEventListener('click', () => {
   state = { ...state, muted: !state.muted };
-  savePersistedState(window.localStorage, state);
+  savePersistedState(storage, state);
   renderMute();
 });
 

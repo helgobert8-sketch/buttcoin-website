@@ -1,4 +1,5 @@
 import assert from 'node:assert/strict';
+import { spawnSync } from 'node:child_process';
 import { readFile } from 'node:fs/promises';
 
 const tests = [];
@@ -133,8 +134,9 @@ test('rotation renders with rAF while scoring uses the unrendered input time', a
 test('progress and mute state persist only through the Task 1 storage API', async () => {
   const js = await source('../js/game.mjs');
 
-  assert.match(js, /loadPersistedState\(window\.localStorage\)/);
-  assert.match(js, /savePersistedState\(window\.localStorage,\s*state\)/);
+  assert.equal((js.match(/window\.localStorage/g) ?? []).length, 1);
+  assert.match(js, /loadPersistedState\(storage\)/);
+  assert.match(js, /savePersistedState\(storage,\s*state\)/);
   assert.match(js, /state\s*=\s*applyResult\(state,\s*result\)/);
   assert.match(js, /muted:\s*!state\.muted/);
   assert.match(js, /muteToggle\.setAttribute\(['"]aria-pressed['"],\s*String\(state\.muted\)\)/);
@@ -187,6 +189,76 @@ test('pointer input accepts only the primary pointer and primary button', async 
   assert.match(js, /event\.isPrimary\s*===\s*false/);
   assert.match(js, /event\.button\s*!==\s*undefined/);
   assert.match(js, /event\.button\s*!==\s*0/);
+});
+
+test('the controller survives a throwing localStorage getter across load and saves', () => {
+  const moduleUrl = new URL('../js/game.mjs', import.meta.url).href;
+  const repro = `
+    import assert from 'node:assert/strict';
+
+    class FakeElement {
+      constructor() {
+        this.attributes = new Map();
+        this.classList = { remove() {}, toggle() {} };
+        this.dataset = {};
+        this.hidden = false;
+        this.listeners = new Map();
+        this.style = {};
+        this.textContent = '';
+        this.value = '';
+      }
+
+      addEventListener(type, listener) { this.listeners.set(type, listener); }
+      setAttribute(name, value) { this.attributes.set(name, value); }
+      focus() {}
+      select() {}
+      setSelectionRange() {}
+      dispatch(type, event = {}) { return this.listeners.get(type)?.(event); }
+    }
+
+    const selectors = [
+      '#game-surface', '#coin', '#game-status', '#milestone', '#lifetime-flips',
+      '#streak', '#best-deviation', '#mute-toggle', '#share-block', '#share-text',
+      '#copy-share', '#copy-feedback',
+    ];
+    const elements = new Map(selectors.map((selector) => [selector, new FakeElement()]));
+    globalThis.document = { querySelector: (selector) => elements.get(selector) };
+    globalThis.requestAnimationFrame = () => 1;
+    globalThis.cancelAnimationFrame = () => {};
+
+    let storageGetterReads = 0;
+    const syntheticWindow = { setTimeout: () => 1 };
+    Object.defineProperty(syntheticWindow, 'localStorage', {
+      get() {
+        storageGetterReads += 1;
+        const error = new Error('storage access blocked');
+        error.name = 'SecurityError';
+        throw error;
+      },
+    });
+    globalThis.window = syntheticWindow;
+
+    await import(${JSON.stringify(moduleUrl)});
+    const surface = elements.get('#game-surface');
+    surface.dispatch('pointerdown', { timeStamp: 1000, isPrimary: true, button: 0 });
+    surface.dispatch('pointerdown', { timeStamp: 1750, isPrimary: true, button: 0 });
+    elements.get('#mute-toggle').dispatch('click');
+
+    assert.equal(elements.get('#lifetime-flips').textContent, '1');
+    assert.equal(elements.get('#mute-toggle').textContent, 'Sound: off');
+    assert.equal(storageGetterReads, 1);
+  `;
+  const result = spawnSync(
+    process.execPath,
+    ['--input-type=module', '--eval', repro],
+    { encoding: 'utf8' },
+  );
+
+  assert.equal(
+    result.status,
+    0,
+    `controller crashed with unavailable storage:\n${result.stderr || result.stdout}`,
+  );
 });
 
 test('the stylesheet and controller cannot add hidden network dependencies', async () => {
