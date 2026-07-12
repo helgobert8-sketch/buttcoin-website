@@ -1892,8 +1892,8 @@ footer {
   .hero-ctas { flex-direction: column; }
   .hero-stats { grid-template-columns: repeat(2, 1fr); }
   .ca-address { font-size: 0.65rem; }
-  .meme-grid { gap: 8px; }
-  .meme-item { flex: 0 1 calc(50% - 4px); width: calc(50% - 4px); }
+  .meme-grid { gap: 6px; }
+  .meme-item { flex: 0 1 calc(33.333% - 4px); width: calc(33.333% - 4px); }
 }
 
 /* ── Floating nav button (mobile only) ── */
