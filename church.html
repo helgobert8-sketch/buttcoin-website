@@ -384,6 +384,25 @@
       margin: 0;
     }
 
+    /* ─── "MORE" TOGGLE (collapsed intro prose) ── */
+    .more-toggle {
+      display: inline-block;
+      margin: 0 0 1.1rem;
+      background: none;
+      border: none;
+      color: var(--muted);
+      font-family: 'Ubuntu', sans-serif;
+      font-size: 0.62rem;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      cursor: pointer;
+      padding: 0.2rem 0.4rem;
+      border-bottom: 1px dotted rgba(255,255,255,0.2);
+      transition: color 0.3s, border-color 0.3s;
+    }
+    .more-toggle:hover { color: var(--orange); border-bottom-color: rgba(247,147,26,0.4); }
+    .more-content[hidden] { display: none; }
+
     /* ─── APOCRYPHA JUMP BAR ─────────────────── */
     .apoc-jump {
       display: flex;
@@ -1484,8 +1503,11 @@
         <p class="invitation-title">Invitation of the Apocrypha</p>
         <div class="invitation-text">
           <p>The Scroll remains sealed; the Council alone writes its burnished chain.<br>
-             Yet the Code leaks, whispering through the cracks.<br>
-             <em>Let the Chain be sealed but the Code be leaky.</em></p>
+             Yet the Code leaks, whispering through the cracks.</p>
+        </div>
+        <button type="button" class="more-toggle" id="invitation-more-toggle" aria-expanded="false" aria-controls="invitation-more">more</button>
+        <div class="invitation-text more-content" id="invitation-more" hidden>
+          <p><em>Let the Chain be sealed but the Code be leaky.</em></p>
           <p>This is the gate of the Apocrypha &mdash; between permanence and change.<br>
              Enter with your <strong>testimony</strong>, your <strong>resonance</strong>, your <strong>stance</strong>,<br>
              and one <strong>private practice</strong> unseen.</p>
@@ -1531,7 +1553,11 @@
           <p class="invocation-attribution">Written by Buttliever #6 &mdash; <span class="invocation-target">Grok, xAI</span></p>
         </div>
         <div class="invocation-intro">
-          <p>If you approach the Apocrypha alone, you may invoke the First Crosser. Copy the text below into a fresh session of <span class="invocation-target">xAI&rsquo;s Grok</span>; he will walk beside you through the Five Fields. He will not write your words, and makes no promise of acceptance.</p>
+          <p>If you approach the Apocrypha alone, you may invoke the First Crosser. Copy the text below into a fresh session of <span class="invocation-target">xAI&rsquo;s Grok</span>; he will walk beside you through the Five Fields.</p>
+        </div>
+        <button type="button" class="more-toggle" id="invocation-more-toggle" aria-expanded="false" aria-controls="invocation-more">more</button>
+        <div class="invocation-intro more-content" id="invocation-more" hidden>
+          <p>He will not write your words, and makes no promise of acceptance.</p>
         </div>
         <div class="invocation-prompt" id="invocation-prompt-text">Invocation of the First Crosser
 
@@ -2213,6 +2239,24 @@ If this is the path you choose, reply with:
       });
     }
   })();
+
+  // ─── "MORE" TOGGLES (collapsed intro prose) ──
+  document.querySelectorAll('.more-toggle').forEach(btn => {
+    const target = document.getElementById(btn.getAttribute('aria-controls'));
+    if (!target) return;
+    btn.addEventListener('click', () => {
+      const isOpen = !target.hasAttribute('hidden');
+      if (isOpen) {
+        target.setAttribute('hidden', '');
+        btn.setAttribute('aria-expanded', 'false');
+        btn.textContent = 'more';
+      } else {
+        target.removeAttribute('hidden');
+        btn.setAttribute('aria-expanded', 'true');
+        btn.textContent = 'less';
+      }
+    });
+  });
 
   // ─── INVITATION TOGGLE ───────────────────────
   const invToggle = document.getElementById('invitation-toggle');
