@@ -57,6 +57,13 @@ let displayedMemes  = [];
 let page            = 0;
 const PAGE_SIZE     = 32;
 
+function emptyShelfMarkup(category) {
+  const note = category === 'community'
+    ? '<p>No community submissions on this shelf yet.</p><p style="margin-top:12px">Approved uploads land here — use the “Submit a Meme” tab above.</p>'
+    : '<p>Nothing on this shelf yet.</p>';
+  return `<div class="meme-loading">${note}</div>`;
+}
+
 function showMemeImageError(image) {
   const item = image.closest('.meme-item');
   if (!item) return;
@@ -100,15 +107,7 @@ async function loadFromFirebase(category) {
     displayedMemes = memes;
     if (grid) grid.innerHTML = '';
     if (memes.length === 0) {
-      if (grid) grid.innerHTML = `
-        <div class="meme-loading">
-          <p>Memes loading from the Buttverse…</p>
-          <p style="margin-top:12px">
-            <a href="https://buttcoin.wtf/#meme-depot" class="btn btn-outline btn-sm">
-              Return to the on-site Meme Depot
-            </a>
-          </p>
-        </div>`;
+      if (grid) grid.innerHTML = emptyShelfMarkup(category);
       return;
     }
     memes.forEach(meme => {
@@ -178,15 +177,7 @@ function renderMemes() {
   grid.innerHTML = '';
 
   if (batch.length === 0) {
-    grid.innerHTML = `
-      <div class="meme-loading">
-        <p>Memes loading from the Buttverse…</p>
-        <p style="margin-top:12px">
-          <a href="https://buttcoin.wtf/#meme-depot" class="btn btn-outline btn-sm">
-            Return to the on-site Meme Depot
-          </a>
-        </p>
-      </div>`;
+    grid.innerHTML = emptyShelfMarkup(currentCategory);
     renderPagination();
     return;
   }

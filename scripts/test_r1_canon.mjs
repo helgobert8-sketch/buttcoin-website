@@ -1016,8 +1016,11 @@ check('Meme Depot uses the 3,018 count and only the on-site target', () => {
   const depotLinks = [...humanSources['js/memes.js'].matchAll(
     /<a\b[^>]*href="([^"]+)"[^>]*>[\s\S]{0,160}?Meme Depot/gi,
   )].map((match) => match[1]);
-  assert.ok(depotLinks.length >= 3, 'on-site Meme Depot fallback links are under-published');
-  assert.ok(depotLinks.every((href) => href === MEME_DEPOT));
+  assert.ok(depotLinks.every((href) => href === MEME_DEPOT), 'Meme Depot links must stay on-site');
+  assert.ok(
+    humanSources['js/memes.js'].includes('function emptyShelfMarkup('),
+    'honest empty-shelf state missing from gallery render paths',
+  );
 
   for (const [name, contents] of Object.entries(trackedSources)) {
     assert.doesNotMatch(contents, RETIRED_DEPOT_DOMAIN, `${name} retains retired Depot domain`);
