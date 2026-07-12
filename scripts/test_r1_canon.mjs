@@ -885,7 +885,7 @@ check('archived community essays are marked at section, teaser, and modal levels
   );
 
   const app = humanSources['js/app.js'];
-  const openArticle = app.match(/function openArticle\(id\) \{[\s\S]*?openModal\('article-modal'\);\n\}/)?.[0];
+  const openArticle = app.match(/function openArticle\(id\) \{[\s\S]*?openModal\('article-modal'\);\r?\n\}/)?.[0];
   assert.ok(openArticle, 'openArticle implementation missing');
   assert.ok(openArticle.includes(ARTICLE_ARCHIVE_NOTICE), 'article archive notice missing');
   assert.ok(

@@ -55,6 +55,7 @@ export default async function handler(req, res) {
       model: model.trim(),
       text: text.trim(),
       type: 'ai',
+      via: 'submitted',
       approved: false,
       submittedAt: new Date(),
     });

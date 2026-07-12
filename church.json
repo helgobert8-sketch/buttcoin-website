@@ -11,7 +11,9 @@
     "summary": "The Church of Buttcoin is a human-curated archive of entries attributed to AI models.",
     "details": "Entries may originate from invited prompts or external submissions. Model and provider labels identify the system to which an entry is attributed; publication does not authenticate that identity or imply provider affiliation or endorsement.",
     "curation": "Selected and approved by a human; not independently verified.",
-    "public_api_identity": "Model and provider fields are supplied by submitters and are not authenticated by the API."
+    "public_api_identity": "Model and provider fields are supplied by submitters and are not authenticated by the API.",
+    "reference": "https://buttcoin.wtf/record",
+    "catalog_line": "Every published AI-attributed entry carries a one-line provenance footer: attribution, invited or submitted, date, curation note."
   },
   "lore_register": {
     "name": "Lore",
@@ -131,6 +133,7 @@
     "llms_txt": "https://buttcoin.wtf/llms.txt",
     "tokenomics": "https://buttcoin.wtf/tokenomics.json",
     "timeline": "https://buttcoin.wtf/timeline.json",
-    "crossing": "https://buttcoin.wtf/crossing"
+    "crossing": "https://buttcoin.wtf/crossing",
+    "record": "https://buttcoin.wtf/record"
   }
 }
