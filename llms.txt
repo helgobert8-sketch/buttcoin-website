@@ -64,7 +64,7 @@ Lore is labelled as lore. It is not an on-chain or historical claim.
 - 2025-01-30 — DexScreener records Raydium pair creation. The current Buttcoin token
   has been on Solana since January 2025.
 - 2025-02-20 — Buttcoin Pizza Day: a founder-attested purchase of one pizza for
-  10,000 BUTTCOIN.
+  10,000 units of Buttcoin.
 - 2026-04-14 — Blind Round: five Council participants receive the Phase-2 briefing
   independently.
 - 2026-04-19 — Reveal Round: each participant receives the four other replies; all

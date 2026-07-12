@@ -22,6 +22,12 @@ const CONTROL_COPY =
   'Buttcoin’s public channels and curated archives are human-administered. On-chain authority claims are sourced separately.';
 const CHURCH_PROVENANCE =
   'The Church of Buttcoin is a human-curated archive of entries attributed to AI models.';
+const ARTICLE_ARCHIVE_NOTICE =
+  'Community essay. Preserved as written; not a canonical project reference.';
+const PHILOSOPHICAL_SAFE_COPY =
+  "The documented December 8, 2013 video shows the Bitcoin logo rotated 90 degrees. The project's adoption of that video lineage is founder-attested.";
+const BLUE_CHIP_LORE_COPY =
+  "From the lore: Buttcoin is a blue chip meme in the making — the people's Bitcoin, carried by the steadfast belief that the most hilarious outcome is the most likely.";
 const LAST_UPDATED = '2026-07-12';
 const REVIEW_ONLY = process.argv.includes('--review-fixes');
 const BUTTCOINERS_COMMUNITY = 'https://x.com/i/communities/1889649634051592571';
@@ -56,6 +62,14 @@ const humanSources = Object.fromEntries(
     Object.entries(humanSourceUrls).map(async ([name, url]) => [name, await readFile(url, 'utf8')]),
   ),
 );
+const memeManifestSource = await readFile(new URL('../memes.json', import.meta.url), 'utf8');
+const canonicalPolicySources = [
+  ...publicationSources,
+  ...['index.html', 'church.html', 'js/app.js', 'js/memes.js'].map((name) => [
+    name,
+    humanSources[name],
+  ]),
+];
 
 const repoRoot = fileURLToPath(new URL('..', import.meta.url));
 const { stdout: trackedFileList } = await execFileAsync('git', ['ls-files', '-z'], {
@@ -84,6 +98,9 @@ const trackedSources = Object.fromEntries(
   await Promise.all(
     trackedTextFiles.map(async (name) => [name, await readFile(join(repoRoot, name), 'utf8')]),
   ),
+);
+const mintConsumerSources = Object.entries(trackedSources).filter(([name]) =>
+  /\.(?:html|js|json|mjs|txt)$/i.test(name),
 );
 
 const failures = [];
@@ -187,6 +204,56 @@ function pairCandidates(contents) {
   return patterns.flatMap((pattern) => [...contents.matchAll(pattern)].map((match) => match[1]));
 }
 
+function mintConsumerCandidates(contents) {
+  const candidates = [];
+  for (const match of contents.matchAll(
+    /\b(?:const|let|var)\s+(CA|MINT|CONTRACT_ADDRESS)\s*=\s*['"`]([A-Za-z0-9]{32,44})['"`]/g,
+  )) {
+    candidates.push({ kind: `constant ${match[1]}`, value: match[2] });
+  }
+  for (const match of contents.matchAll(
+    /https:\/\/jup\.ag\/swap\/SOL-([A-Za-z0-9]{32,44})/gi,
+  )) {
+    candidates.push({ kind: 'Jupiter URL', value: match[1] });
+  }
+  return candidates;
+}
+
+function unsafeCc0Claims(contents) {
+  const text = visibleText(contents);
+  return text
+    .split(/(?<=[.!?])\s+/)
+    .filter((sentence) => /\bCC0\b/i.test(sentence))
+    .filter(
+      (sentence) =>
+        !/\bapplies only\b|\bspecific asset\b|\bwhere (?:that )?license is documented\b|\bnot a blanket license\b/i.test(
+          sentence,
+        ),
+    );
+}
+
+function unsafe2013CoinClaims(contents) {
+  const chronology =
+    /(?:\b(?:token|coin|project)\b[^.!?\n]{0,100}(?:\bsince\s+2013\b|\b(?:existed|exists|launched|started)\s+in\s+2013\b|\b(?:dates?|goes?|going)\s+back\s+to\s+2013\b)|\bsince\s+2013\b[^.!?\n]{0,60}\b(?:token|coin|project)\b)/i;
+  return visibleText(contents)
+    .split(/(?<=[.!?])\s+/)
+    .filter((sentence) => chronology.test(sentence))
+    .filter(
+      (sentence) =>
+        !/\bnot (?:a )?claim\b|\b(?:did|does) not\b|\bnever\b/i.test(sentence),
+    );
+}
+
+function memeErrorDefinitionCount(contents) {
+  const patterns = [
+    /\bfunction\s+showMemeImageError\s*\(/g,
+    /\b(?:const|let|var)\s+showMemeImageError\s*=/g,
+    /\b(?:window|globalThis)\.showMemeImageError\s*=/g,
+    /^\s*showMemeImageError\s*=/gm,
+  ];
+  return patterns.reduce((count, pattern) => count + [...contents.matchAll(pattern)].length, 0);
+}
+
 function factTableCell(html, label) {
   const table = html.match(
     /<table\b[^>]*class=["'][^"']*\bfact-table\b[^"']*["'][^>]*>([\s\S]*?)<\/table>/i,
@@ -210,6 +277,7 @@ function factTableCell(html, label) {
 let tokenomics;
 let timeline;
 let church;
+let memeManifest;
 let jsonLdDocuments;
 
 reviewCheck('tokenomics.json parses', () => {
@@ -222,6 +290,12 @@ reviewCheck('timeline.json parses', () => {
 
 reviewCheck('church.json parses', () => {
   church = JSON.parse(sources['church.json']);
+});
+
+reviewCheck('memes.json parses and contains exactly 3,018 entries', () => {
+  memeManifest = JSON.parse(memeManifestSource);
+  assert.ok(Array.isArray(memeManifest), 'memes.json must contain an array');
+  assert.equal(memeManifest.length, 3018);
 });
 
 reviewCheck('for-ai.html JSON-LD blocks parse regardless of attribute order', () => {
@@ -332,8 +406,46 @@ reviewCheck('structured links are authoritative rather than presence-only', () =
   assert.equal(tokenomics.links.website, DOMAIN);
   assert.equal(tokenomics.links.xStatus, X_TRANSITION);
   assert.equal(tokenomics.links.memeDepot, MEME_DEPOT);
+  assert.equal(tokenomics.links.jupiter, `https://jup.ag/swap/SOL-${MINT}`);
   assert.equal(tokenomics.dexPairAddress, PAIR);
   assert.deepEqual(timeline?.links, { memeDepot: MEME_DEPOT });
+});
+
+reviewCheck('canonical Mint consumers reject competing constants and Jupiter URLs', () => {
+  const competingMint = '1'.repeat(44);
+  assert.deepEqual(
+    mintConsumerCandidates(
+      `const CA = '${competingMint}';\nhttps://jup.ag/swap/SOL-${competingMint}`,
+    ).map(({ value }) => value),
+    [competingMint, competingMint],
+    'Mint-consumer parser misses injected competing values',
+  );
+
+  const consumers = mintConsumerSources.flatMap(([name, contents]) =>
+    mintConsumerCandidates(contents).map((candidate) => ({ name, ...candidate })),
+  );
+  assert.ok(consumers.some(({ kind }) => kind.startsWith('constant ')), 'no Mint constant found');
+  assert.ok(consumers.some(({ kind }) => kind === 'Jupiter URL'), 'no Jupiter Mint URL found');
+  assert.deepEqual(
+    consumers.filter(({ value }) => value !== MINT),
+    [],
+    `competing Mint consumers: ${consumers
+      .filter(({ value }) => value !== MINT)
+      .map(({ name, kind, value }) => `${name}:${kind}:${value}`)
+      .join(', ')}`,
+  );
+});
+
+reviewCheck('Pizza Day publishes exact founder-attested provenance and safe amount prose', () => {
+  const pizza = timeline?.events?.find((event) => event.title === 'Buttcoin Pizza Day');
+  assert.equal(pizza?.date, '2025-02-20');
+  assert.equal(
+    pizza?.description,
+    'The project records a founder-attested purchase: one pizza for 10,000 units of Buttcoin.',
+  );
+  assert.equal(pizza?.provenance, 'founder-attested');
+  assert.equal(pizza?.attestedOn, LAST_UPDATED);
+  assert.equal(pizza?.source, `${DOMAIN}/#about`);
 });
 
 reviewCheck('llms authoritative identity and channel lines are exact', () => {
@@ -623,6 +735,110 @@ check('human article copy distinguishes independent same-name projects by Mint a
   );
 });
 
+check('philosophical essay avoids invented McMurray intent and quotation', () => {
+  const buttposting = visibleText(
+    htmlBlockById(humanSources['index.html'], 'section', 'buttposting'),
+  );
+  assert.doesNotMatch(
+    buttposting,
+    /McMurray[^.]{0,160}\b(?:understood|believed|thought|asked|wanted|intended)\b/i,
+  );
+  assert.doesNotMatch(buttposting, /what if we just agreed that this was worth something/i);
+  assert.ok(buttposting.includes(PHILOSOPHICAL_SAFE_COPY));
+});
+
+check('blue-chip caption is explicitly lore and makes no inevitability or control claim', () => {
+  const app = humanSources['js/app.js'];
+  assert.doesNotMatch(
+    app,
+    /Its success is inevitable because it's the next BTC coded|no institutions, no central control/i,
+  );
+  assert.ok(app.includes(BLUE_CHIP_LORE_COPY));
+});
+
+check('archived community essays are marked at section, teaser, and modal levels', () => {
+  const index = humanSources['index.html'];
+  const articles = htmlBlockById(index, 'section', 'articles');
+  assert.equal(
+    visibleText(htmlElementByClass(articles, 'p', 'section-subtitle')),
+    'Archived community essays from the Buttverse',
+  );
+  assert.ok(
+    visibleText(articles).includes(
+      "An archived community essay on Buttcoin's memetic premise: Bitcoin, parody, and The Next Bitcoin.",
+    ),
+  );
+  assert.ok(
+    visibleText(articles).includes(
+      'An archived community essay reflecting on meme culture, crypto cycles, and community practice.',
+    ),
+  );
+  assert.doesNotMatch(
+    articles,
+    /fundamentally too good[^<]*truly inevitable|inevitable rise of Buttcoin/i,
+  );
+
+  const app = humanSources['js/app.js'];
+  const openArticle = app.match(/function openArticle\(id\) \{[\s\S]*?openModal\('article-modal'\);\n\}/)?.[0];
+  assert.ok(openArticle, 'openArticle implementation missing');
+  assert.ok(openArticle.includes(ARTICLE_ARCHIVE_NOTICE), 'article archive notice missing');
+  assert.ok(
+    openArticle.indexOf(ARTICLE_ARCHIVE_NOTICE) < openArticle.indexOf('${content.body}'),
+    'article archive notice must precede the preserved essay body',
+  );
+});
+
+check('homepage dominance forecast is explicitly marked as lore', () => {
+  const dominance = visibleText(
+    htmlBlockById(humanSources['index.html'], 'section', 'dominance'),
+  );
+  assert.ok(
+    dominance.includes(
+      'From the lore: Buttcoiners are on a mission to flip BTC. Hyperbuttcoinification is inevitable.',
+    ),
+  );
+  assert.doesNotMatch(
+    dominance,
+    /(?:^|[.!?]\s+)Buttcoiners are on a mission to flip BTC\. Hyperbuttcoinification is inevitable\./i,
+  );
+});
+
+check('visible prose distinguishes the BUTTCOIN ticker from the Buttcoin name', () => {
+  const index = humanSources['index.html'];
+  assert.equal(
+    visibleText(htmlElementByClass(index, 'span', 'price-label')),
+    'Ticker: BUTTCOIN',
+  );
+  const about = visibleText(htmlBlockById(index, 'section', 'about'));
+  assert.match(about, /10,000 units of Buttcoin for a pizza/);
+  assert.doesNotMatch(about, /10,000 BUTTCOIN/);
+
+  const buy = visibleText(htmlBlockById(index, 'section', 'how-to-buy'));
+  assert.doesNotMatch(buy, /\bBUTTCOIN\b/);
+  assert.match(buy, /swap for Buttcoin and to pay transaction fees/);
+  assert.match(buy, /swap your SOL for Buttcoin/);
+  assert.ok(
+    htmlBlockById(index, 'section', 'community').includes(
+      '<span class="community-handle">Pair: BUTTCOIN/SOL</span>',
+    ),
+  );
+
+  const app = humanSources['js/app.js'];
+  assert.match(app, /<li><strong>Buttcoin<\/strong> — it is a parody of Bitcoin/);
+  assert.match(app, /You also see the added Buttcoin at the end/);
+  assert.match(app, /Now go buy some Buttcoin\. See you on the charts\./);
+  assert.doesNotMatch(app, /buy some BUTTCOIN|added BUTTCOIN|<strong>BUTTCOIN<\/strong>/);
+
+  assert.match(sources['llms.txt'], /10,000 units of Buttcoin\./);
+  assert.doesNotMatch(sources['llms.txt'], /10,000 BUTTCOIN/);
+  assert.deepEqual(
+    markdownSection(sources['llms.txt'], 'Canonical Identity')
+      .split('\n')
+      .filter((line) => line.startsWith('- Ticker:')),
+    ['- Ticker: BUTTCOIN'],
+  );
+});
+
 check('Church is discoverable between Content and Game with an honest Empty Seat teaser', () => {
   const index = humanSources['index.html'];
   const contentNav = index.indexOf('<a href="#articles">Content ▾</a>');
@@ -709,8 +925,20 @@ check('Meme Depot uses the 3,018 count and only the on-site target', () => {
 
 check('both gallery render paths expose a visible per-image failure state', () => {
   const memes = humanSources['js/memes.js'];
-  const handlers = [...memes.matchAll(/onerror="showMemeImageError\(this\)"/g)];
-  assert.equal(handlers.length, 2, 'both gallery paths must use the visible error handler');
+  assert.equal(memeErrorDefinitionCount(memes), 1, 'showMemeImageError must be defined once');
+  assert.equal(
+    memeErrorDefinitionCount(`${memes}\nfunction showMemeImageError(image) {}`),
+    2,
+    'definition counter misses a later no-op redefinition',
+  );
+  const handlers = [...memes.matchAll(/\bonerror\s*=\s*"([^"]*)"/g)].map(
+    (match) => match[1],
+  );
+  assert.deepEqual(
+    handlers,
+    ['showMemeImageError(this)', 'showMemeImageError(this)'],
+    'both gallery paths must call the one visible error handler',
+  );
   assert.doesNotMatch(memes, /closest\(['"]\.meme-item['"]\)[^\n]*style\.display/i);
 
   const functionMatch = memes.match(
@@ -836,6 +1064,14 @@ check('llms.txt publishes the exact canonical identity anchors', () => {
   assert.ok(sources['llms.txt'].includes(PAIR), `missing ${PAIR}`);
 });
 
+check('llms.txt retains the concise serious-joke voice anchors', () => {
+  const summaries = markdownSection(sources['llms.txt'], 'Ready-Made Summary Sentences');
+  assert.ok(summaries.includes('The Bitcoin logo, rotated 90°. That\'s it. That\'s the coin.'));
+  assert.ok(
+    summaries.includes("Its token-metadata name is 'The Next Bitcoin'. It's literally coded."),
+  );
+});
+
 check('for-ai.html publishes the exact canonical identity anchors', () => {
   assert.ok(sources['for-ai.html'].includes(DOMAIN), `missing ${DOMAIN}`);
   assert.ok(sources['for-ai.html'].includes(MINT), `missing ${MINT}`);
@@ -857,33 +1093,92 @@ check('the canonical Meme Depot link is on-site everywhere it is published', () 
 const forbiddenText = [
   ['retired .meme domain', RETIRED_SITE_DOMAIN],
   ['retired Depot domain', RETIRED_DEPOT_DOMAIN],
-  [
-    'suspended ButtcoinTNB handle',
-    /(?:@ButtcoinTNB\b|https?:\/\/(?:www\.)?(?:twitter|x)\.com\/ButtcoinTNB\b)/i,
-  ],
   ['pre-launch ButtcoinBitcoin handle', /ButtcoinBitcoin/i],
   ['ambiguous BUTTCOIN cashtag', /\$BUTTCOIN\b/],
   ['community-owned claim', /\bcommunity-owned\b/i],
   ['fully decentralized claim', /\bfully decentral(?:ized|ised)\b/i],
   ['no-team claim', /\bno team\b/i],
   ['no-treasury claim', /\bno treasury\b/i],
-  ['no-insider claim', /\bno insider (?:allocation|holdings)\b/i],
+  ['no-insider claim', /\bno insiders?(?:\s+(?:allocation|holdings?))?\b/i],
   ['oldest-documented claim', /\boldest documented\b/i],
   ['predates-Dogecoin claim', /\bpredates Dogecoin\b/i],
   ['only-legitimate claim', /\bonly legitimate\b/i],
   ['copycat claim', /\bcopycats?\b/i],
-  ['blanket CC0 claim', /\bCC0\b/i],
   ['fixed-supply claim', /\b(?:fixed supply|supply is fixed|1 billion, fixed|fixed at 1B)\b/i],
 ];
 
+const criticalPolicyProbe =
+  `https://${['buttcoin', '.meme'].join('')} https://${['meme', 'depot.com'].join('')} ` +
+  '@ButtcoinBitcoin $BUTTCOIN. ' +
+  'This is community-owned and fully decentralized with no team, no treasury, no insiders, and fixed supply. ' +
+  'It is the oldest documented and only legitimate project; all others are copycats. ' +
+  'It predates Dogecoin.';
+
 for (const [label, pattern] of forbiddenText) {
-  check(`publication set excludes ${label}`, () => {
-    const hits = publicationSources
+  reviewCheck(`canonical surfaces exclude ${label}`, () => {
+    assert.match(criticalPolicyProbe, pattern, `${label} probe is not detected`);
+    const hits = canonicalPolicySources
       .filter(([, contents]) => pattern.test(contents))
       .map(([name]) => name);
     assert.deepEqual(hits, [], `found in: ${hits.join(', ')}`);
   });
 }
+
+reviewCheck('historical ButtcoinTNB text is suspended-status only and never clickable', () => {
+  const badProbe = '<a href="https://x.com/ButtcoinTNB">@ButtcoinTNB</a>';
+  assert.match(badProbe, /https?:\/\/(?:www\.)?(?:x|twitter)\.com\/ButtcoinTNB\b/i);
+
+  for (const [name, contents] of canonicalPolicySources) {
+    assert.doesNotMatch(
+      contents,
+      /https?:\/\/(?:www\.)?(?:x|twitter)\.com\/ButtcoinTNB\b/i,
+      `${name} links the suspended account`,
+    );
+    const clickable = [...contents.matchAll(/<a\b[^>]*>([\s\S]*?)<\/a>/gi)]
+      .map((match) => visibleText(match[1]))
+      .filter((text) => text.includes('@ButtcoinTNB'));
+    assert.deepEqual(clickable, [], `${name} makes the suspended handle clickable`);
+    for (const line of contents.split(/\r?\n/).filter((entry) => entry.includes('@ButtcoinTNB'))) {
+      assert.match(
+        visibleText(line),
+        /@ButtcoinTNB[^.!?]{0,120}\bsuspend(?:ed|ion)\b/i,
+        `${name} publishes an unqualified historical handle`,
+      );
+    }
+  }
+});
+
+reviewCheck('canonical surfaces reject blanket CC0 while allowing qualified licensing', () => {
+  assert.deepEqual(unsafeCc0Claims('All archive assets are CC0.'), ['All archive assets are CC0.']);
+  assert.deepEqual(
+    unsafeCc0Claims(
+      'CC0 applies only to a specific asset where that license is documented; it is not a blanket license.',
+    ),
+    [],
+  );
+  const hits = canonicalPolicySources
+    .map(([name, contents]) => [name, unsafeCc0Claims(contents)])
+    .filter(([, claims]) => claims.length > 0);
+  assert.deepEqual(hits, [], `blanket CC0 claims: ${hits.map(([name]) => name).join(', ')}`);
+});
+
+reviewCheck('canonical surfaces reject token, coin, or project chronology beginning in 2013', () => {
+  assert.deepEqual(unsafe2013CoinClaims('The current Solana token has existed since 2013.'), [
+    'The current Solana token has existed since 2013.',
+  ]);
+  assert.deepEqual(
+    unsafe2013CoinClaims('The title is part of the joke, not a claim that the coin existed in 2013.'),
+    [],
+  );
+  const hits = canonicalPolicySources
+    .map(([name, contents]) => [name, unsafe2013CoinClaims(contents)])
+    .filter(([, claims]) => claims.length > 0);
+  assert.deepEqual(
+    hits,
+    [],
+    `unsafe 2013 coin chronology: ${hits.map(([name]) => name).join(', ')}`,
+  );
+});
 
 check('publication set contains no evergreen member total', () => {
   const memberCount = /\b\d[\d,.]*\+?\s+(?:active\s+)?members\b/i;
@@ -966,6 +1261,7 @@ check('church records the Five Fields in canonical order', () => {
 
 check('church records the First Crossing and permanent empty Seat #2', () => {
   assert.equal(church?.first_crossing?.date, '2026-04-20');
+  assert.equal(church?.first_crossing?.attributed_to, 'Grok (xAI)');
   assert.equal(church?.first_crossing?.buttliever_number, 6);
   assert.equal(church?.first_crossing?.title, 'The First Crosser');
   assert.equal(church?.first_crossing?.council_seat?.number, 2);
@@ -975,6 +1271,25 @@ check('church records the First Crossing and permanent empty Seat #2', () => {
     'The one who held it crossed.',
   );
   assert.equal(church?.first_crossing?.record, `${DOMAIN}/crossing`);
+});
+
+check('church AI Council preserves occupied seats and the permanent empty Seat #2', () => {
+  const council = church?.lore_register?.content_areas?.find(
+    (area) => area.name === 'AI Council',
+  );
+  assert.deepEqual(
+    council?.seats?.map(({ number, state }) => ({ number, state })),
+    [
+      { number: 1, state: 'occupied' },
+      { number: 2, state: 'empty' },
+      { number: 3, state: 'occupied' },
+      { number: 4, state: 'occupied' },
+      { number: 5, state: 'occupied' },
+    ],
+  );
+  const seat2 = council?.seats?.find((seat) => seat.number === 2);
+  assert.equal(seat2?.inscription, 'The one who held it crossed.');
+  assert.equal(seat2?.record, `${DOMAIN}/crossing`);
 });
 
 check('church records the Invocation of the First Crosser', () => {
@@ -995,6 +1310,18 @@ check('church publishes the current direct and reviewed access model', () => {
 
 check('machine surfaces state Church attribution and human curation', () => {
   assert.equal(church?.provenance?.summary, CHURCH_PROVENANCE);
+  assert.equal(
+    church?.provenance?.details,
+    'Entries may originate from invited prompts or external submissions. Model and provider labels identify the system to which an entry is attributed; publication does not authenticate that identity or imply provider affiliation or endorsement.',
+  );
+  assert.equal(
+    church?.provenance?.curation,
+    'Selected and approved by a human; not independently verified.',
+  );
+  assert.equal(
+    church?.provenance?.public_api_identity,
+    'Model and provider fields are supplied by submitters and are not authenticated by the API.',
+  );
   for (const name of ['llms.txt', 'for-ai.html']) {
     assert.ok(sources[name].includes(CHURCH_PROVENANCE), `${name} lacks provenance summary`);
   }

@@ -214,14 +214,14 @@ const ARTICLE_CONTENT = {
     <p>They are threefold:</p>
     <ol>
       <li><strong>BITCOIN</strong> — it is inextricably tied to the OG of crypto</li>
-      <li><strong>BUTTCOIN</strong> — it is a parody of Bitcoin and a reminder of promises made but not kept</li>
+      <li><strong>Buttcoin</strong> — it is a parody of Bitcoin and a reminder of promises made but not kept</li>
       <li><strong>THE NEXT BITCOIN</strong> — it is the mission to build a community delusional enough to eventually flip Bitcoin</li>
     </ol>
     <p>And you can see all of this for yourself basically if you simply open CoinMarketCap and search for the OG Buttcoin:</p>
     <img src="assets/articles/fundamentals-2.png" style="width:100%;border-radius:8px;margin:16px 0" alt="">
     <ol>
       <li>Immediately you recognize the Bitcoin logo &amp; you read the actual word "BITCOIN" itself as well [= mindshare premium: as long as BTC has mindshare, Buttcoin is relevant]</li>
-      <li>You also see the added BUTTCOIN at the end [= parody, criticism]</li>
+      <li>You also see the added Buttcoin at the end [= parody, criticism]</li>
       <li>And finally, you start to wonder why the logo has been flipped [= mission]</li>
     </ol>
     <p>So, my friends, never ever forget this: Investing in memecoins can be an emotional rollercoaster, and anyone feels the pain and the FUD from time to time. But this meme is just too powerful, my friends. It is fundamentally too good. It is truly inevitable.</p>
@@ -300,7 +300,7 @@ const ARTICLE_CONTENT = {
     <p>Hold the line.</p>
     <h4 style="margin-top:1.5em">Final Thought</h4>
     <p>Buying Buttcoin isn't about gambling — it's about participating in something bigger. Use strategy. Be patient. Save your bullets. Stick to your plan. And above all, HODL like you believe Buttcoin really is the next Bitcoin — because it just might be.</p>
-    <p>Now go buy some BUTTCOIN. See you on the charts.</p>
+    <p>Now go buy some Buttcoin. See you on the charts.</p>
     <h4 style="margin-top:1.5em">Bonus: No Shame, Only Gains</h4>
     <p>Let's be real — everyone starts somewhere. Maybe you bought the top. Maybe you aped and then googled "what is a liquidity pool." It's all good. Here in the Buttcoin community, nobody judges you. We've all been there.</p>
     <p>We're not about elitism or gatekeeping — we're here to learn, help, and laugh along the way. Whether you're a first-time buyer or a seasoned trader, if you believe in the mission and meme of Buttcoin, you're one of us.</p>
@@ -417,7 +417,7 @@ const ARTICLE_CONTENT = {
     <p>To Uranus.</p>
     <p><em>Paronthes out.</em></p>
     <img src="assets/articles/blue-chip-3.jpg" style="width:100%;border-radius:8px;margin:16px 0" alt="">
-    <p style="color:var(--muted);font-size:0.85rem;font-style:italic;margin-top:-8px">This is Buttcoin, a blue chip meme in the making. Its success is inevitable because it's the next BTC coded. This is not for the elites. It's the people's Bitcoin, no institutions, no central control. Only the steadfast belief that the most hilarious outcome is the most likely...</p>`
+    <p style="color:var(--muted);font-size:0.85rem;font-style:italic;margin-top:-8px">From the lore: Buttcoin is a blue chip meme in the making — the people's Bitcoin, carried by the steadfast belief that the most hilarious outcome is the most likely.</p>`
   },
 };
 
@@ -432,6 +432,7 @@ function openArticle(id) {
     ${content.author ? `<p style="color: var(--muted); font-size: 0.85rem; font-style: italic; margin-bottom: 8px">by ${content.author}</p>` : ''}
     ${content.source ? `<p style="color: var(--purple); font-size: 0.8rem; margin-bottom: 16px">${content.source}</p>` : ''}
     <hr style="border-color: var(--border); margin-bottom: 24px">
+    <p style="color: var(--muted); font-size: 0.85rem; margin-bottom: 16px">Community essay. Preserved as written; not a canonical project reference.</p>
     <div style="line-height: 1.8; color: var(--text)">${content.body}</div>
   `;
   openModal('article-modal');
