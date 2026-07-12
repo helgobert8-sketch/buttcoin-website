@@ -214,7 +214,8 @@ function mintConsumerCandidates(contents) {
     const isMintIdentifier =
       /^(?:CA|MINT|CONTRACT_ADDRESS|TOKEN_ADDRESS)$/i.test(identifier) ||
       /_(?:CA|MINT|CONTRACT_ADDRESS|TOKEN_ADDRESS)$/i.test(identifier) ||
-      /(?:Mint|CA|ContractAddress|tokenAddress)$/.test(identifier);
+      /(?:Mint|CA|ContractAddress|tokenAddress)$/.test(identifier) ||
+      /mintAddress$/i.test(identifier);
     if (isMintIdentifier) {
       candidates.push({ kind: `constant ${identifier}`, value: match[2] });
     }
@@ -225,6 +226,12 @@ function mintConsumerCandidates(contents) {
     candidates.push({ kind: 'Jupiter URL', value: match[1] });
   }
   return candidates;
+}
+
+function clipboardMintLiterals(contents) {
+  return [...contents.matchAll(
+    /\bnavigator\.clipboard\.writeText\(\s*(['"`])([1-9A-HJ-NP-Za-km-z]{32,44})\1\s*\)/g,
+  )].map((match) => match[2]);
 }
 
 function unsafeCc0Claims(contents) {
@@ -251,14 +258,14 @@ function unsafe2013CoinClaims(contents) {
 }
 
 function normalizePolicyText(contents) {
-  return contents.replace(/&#(?:36|x24);/gi, '$');
+  return contents.replace(/&#(?:36|x24);|&dollar;/gi, '$');
 }
 
 function assertAllowedXUrls(entries) {
   const violations = [];
   for (const [name, contents] of entries) {
     const urls = [...contents.matchAll(
-      /https?:\/\/(?:www\.)?(?:x|twitter)\.com\/[^\s"'<>),]+/gi,
+      /https?:\/\/(?:[A-Za-z0-9-]+\.)*(?:x|twitter)\.com\/[^\s"'<>),]+/gi,
     )].map((match) => match[0].replace(/[.;]+$/, ''));
     for (const url of urls) {
       if (url !== BUTTCOINERS_COMMUNITY) violations.push(`${name}:${url}`);
@@ -276,6 +283,15 @@ function memeErrorDefinitionCount(contents) {
     /^\s*showMemeImageError\s*=/gm,
   ];
   return patterns.reduce((count, pattern) => count + [...contents.matchAll(pattern)].length, 0);
+}
+
+function memeErrorCallerCount(contents) {
+  const directCalls = [...contents.matchAll(/\bshowMemeImageError\s*\(/g)].length;
+  const declarations = [...contents.matchAll(/\bfunction\s+showMemeImageError\s*\(/g)].length;
+  const bracketCalls = [...contents.matchAll(
+    /\b(?:window|globalThis)\s*\[\s*(['"])showMemeImageError\1\s*\]\s*\(/g,
+  )].length;
+  return directCalls - declarations + bracketCalls;
 }
 
 function factTableCell(html, label) {
@@ -447,6 +463,8 @@ reviewCheck('canonical Mint consumers reject competing constants and Jupiter URL
         `const TOKEN_ADDRESS = '${competingMint}';`,
         `const backup_token_address = '${competingMint}';`,
         `const tokenAddress = '${competingMint}';`,
+        `const mintAddress = '${competingMint}';`,
+        `const MintAddress = '${competingMint}';`,
         `const canonicalMint = '${competingMint}';`,
         `const treasuryCA = '${competingMint}';`,
         `const escrowContractAddress = '${competingMint}';`,
@@ -461,6 +479,8 @@ reviewCheck('canonical Mint consumers reject competing constants and Jupiter URL
       'constant TOKEN_ADDRESS',
       'constant backup_token_address',
       'constant tokenAddress',
+      'constant mintAddress',
+      'constant MintAddress',
       'constant canonicalMint',
       'constant treasuryCA',
       'constant escrowContractAddress',
@@ -485,6 +505,22 @@ reviewCheck('canonical Mint consumers reject competing constants and Jupiter URL
   assert.match(
     humanSources['js/app.js'],
     /function copyCA\(\) \{[\s\S]*?navigator\.clipboard\.writeText\(CA\)/,
+  );
+  assert.deepEqual(
+    clipboardMintLiterals(`navigator.clipboard.writeText('${competingMint}')`),
+    [competingMint],
+    'Clipboard literal parser misses Base58 values',
+  );
+  const clipboardConsumers = canonicalPolicySources.flatMap(([name, contents]) =>
+    clipboardMintLiterals(contents).map((value) => ({ name, value })),
+  );
+  assert.deepEqual(
+    clipboardConsumers.filter(({ value }) => value !== MINT),
+    [],
+    `competing Clipboard Mint literals: ${clipboardConsumers
+      .filter(({ value }) => value !== MINT)
+      .map(({ name, value }) => `${name}:${value}`)
+      .join(', ')}`,
   );
 
   const consumers = mintConsumerSources.flatMap(([name, contents]) =>
@@ -577,6 +613,10 @@ reviewCheck('publication set rejects competing pair and canonical X values', () 
   assert.throws(
     () => assertAllowedXUrls([['profile probe', 'https://x.com/NewButtcoin']]),
     /NewButtcoin/,
+  );
+  assert.throws(
+    () => assertAllowedXUrls([['subdomain probe', 'https://mobile.x.com/NewButtcoin']]),
+    /mobile\.x\.com\/NewButtcoin/,
   );
   assertAllowedXUrls(canonicalPolicySources);
 
@@ -1007,10 +1047,13 @@ check('both gallery render paths expose a visible per-image failure state', () =
     2,
     'definition counter misses globalThis bracket notation',
   );
+  assert.equal(memeErrorCallerCount(memes), 2, 'expected exactly two real callers');
   assert.equal(
-    [...memes.matchAll(/\bshowMemeImageError\s*\(/g)].length,
-    3,
-    'expected one definition and exactly two real callers',
+    memeErrorCallerCount(
+      `window['showMemeImageError'](null); globalThis["showMemeImageError"](null);`,
+    ),
+    2,
+    'caller counter misses bracket invocation',
   );
   const handlers = [...memes.matchAll(/\bonerror\s*=\s*"([^"]*)"/g)].map(
     (match) => match[1],
@@ -1102,7 +1145,9 @@ check('homepage advertises llms.txt and keeps Mint plus Domain copyable in the f
   const footer = htmlBlockById(index, 'footer', 'footer');
   const verification = htmlElementByClass(footer, 'div', 'footer-verification');
   assert.match(verification, new RegExp(`<code[^>]*>${MINT}<\\/code>`));
-  assert.match(verification, /<button\b[^>]*onclick="[^"]*(?:clipboard|copyCA)[^"]*"[^>]*>Copy<\/button>/i);
+  const footerCopyButtons = [...verification.matchAll(/<button\b[^>]*>Copy<\/button>/gi)];
+  assert.equal(footerCopyButtons.length, 1, 'expected one footer Copy button');
+  assert.equal(attributeValue(footerCopyButtons[0][0], 'onclick'), 'copyCA()');
   assert.match(verification, /<a\b[^>]*href="https:\/\/buttcoin\.wtf"[^>]*>buttcoin\.wtf<\/a>/i);
   assert.match(footer, /<a\b[^>]*href="\/llms\.txt"[^>]*>llms\.txt<\/a>/i);
 });
@@ -1178,12 +1223,12 @@ const forbiddenText = [
   ['ambiguous BUTTCOIN cashtag', /\$BUTTCOIN\b/i],
   ['community-owned claim', /\bcommunity(?:-|\s+)owned\b/i],
   ['fully decentralized claim', /\bfully decentral(?:ized|ised)\b/i],
-  ['central-control claim', /\bno central (?:control|authority)\b/i],
+  ['central-control claim', /\b(?:no|zero) central (?:control|authority)\b/i],
   ['no-team claim', /\bno team\b/i],
   ['no-treasury claim', /\bno treasury\b/i],
   ['no-insider claim', /\bno insiders?(?:\s+(?:allocation|holdings?))?\b/i],
   ['oldest-documented claim', /\boldest\b/i],
-  ['predates-Dogecoin claim', /\bpredat(?:e|es|ed|ing)\s+Dogecoin\b/i],
+  ['predates-Dogecoin claim', /\bpre-?dat(?:e|es|ed|ing)\s+Dogecoin\b/i],
   ['only-legitimate claim', /\bonly legitimate\b/i],
   ['copycat claim', /\bcopycats?\b/i],
   ['fixed-supply claim', /\b(?:fixed supply|supply is fixed|1 billion, fixed|fixed at 1B)\b/i],
@@ -1210,9 +1255,9 @@ reviewCheck('critical policy patterns cover spacing, tense, authority, and oldes
   const patterns = Object.fromEntries(forbiddenText.map(([label, pattern]) => [label, pattern]));
   for (const [label, probes] of Object.entries({
     'community-owned claim': ['community-owned', 'community owned'],
-    'central-control claim': ['no central control', 'no central authority'],
+    'central-control claim': ['no central control', 'no central authority', 'zero central authority'],
     'oldest-documented claim': ['oldest documented', 'oldest Bitcoin parody', 'the oldest project'],
-    'predates-Dogecoin claim': ['predates Dogecoin', 'predated Dogecoin'],
+    'predates-Dogecoin claim': ['predates Dogecoin', 'predated Dogecoin', 'pre-dated Dogecoin'],
   })) {
     for (const probe of probes) assert.match(probe, patterns[label], `${label}: ${probe}`);
   }
@@ -1223,6 +1268,7 @@ reviewCheck('cashtag policy is case-insensitive and normalizes HTML dollar entit
   assert.match('$Buttcoin', cashtag);
   assert.match('&#36;BUTTCOIN'.replace(/&#(?:36|x24);/gi, '$'), cashtag);
   assert.match('&#x24;Buttcoin'.replace(/&#(?:36|x24);/gi, '$'), cashtag);
+  assert.match(normalizePolicyText('&DoLlAr;Buttcoin'), cashtag);
 });
 
 reviewCheck('historical ButtcoinTNB text is suspended-status only and never clickable', () => {
