@@ -557,6 +557,46 @@ check('rotating public quotes preserve the 2013/2025 split and distributed Butto
   }
 });
 
+check('homepage editorial copy separates the 2013 video, 2025 coin, and Buttoshi role', () => {
+  const buttposting = visibleText(
+    htmlBlockById(humanSources['index.html'], 'section', 'buttposting'),
+  );
+  assert.doesNotMatch(buttposting, /A 2013 origin\. A Satoshi figure\./i);
+  assert.ok(
+    buttposting.includes(
+      'The documented Buttcoin video lineage dates to December 8, 2013. The Solana coin has been on Solana since January 2025. Buttoshi is a distributed role, not a founder identity.',
+    ),
+  );
+});
+
+check('human article copy makes no unsupported allocation or authority claim', () => {
+  const app = humanSources['js/app.js'];
+  assert.doesNotMatch(app, /zero VC backing|zero team allocation|100% community energy/i);
+  assert.ok(
+    app.includes(
+      'Allocation and on-chain authority claims require dated sources; neither is asserted here.',
+    ),
+  );
+});
+
+check('human article copy distinguishes independent same-name projects by Mint and Domain', () => {
+  const app = humanSources['js/app.js'];
+  assert.doesNotMatch(
+    app,
+    /history and lore \(going back to 2013\)|endlessly copied|copycats? are legion|own unique thing|original meme/i,
+  );
+  assert.ok(
+    app.includes(
+      'The project follows a documented video lineage dated December 8, 2013. The current Solana coin has been on Solana since January 2025.',
+    ),
+  );
+  assert.ok(
+    app.includes(
+      `Independent same-name projects exist. Distinguish this project by the full Mint ${MINT} and buttcoin.wtf.`,
+    ),
+  );
+});
+
 check('Church is discoverable between Content and Game with an honest Empty Seat teaser', () => {
   const index = humanSources['index.html'];
   const contentNav = index.indexOf('<a href="#articles">Content ▾</a>');
@@ -653,12 +693,17 @@ check('both gallery render paths expose a visible per-image failure state', () =
   assert.ok(functionMatch, 'showMemeImageError is missing');
   const runHandler = new Function('image', functionMatch[1]);
   const classes = [];
+  const attributes = new Map();
   const item = {
     classList: { add: (className) => classes.push(className) },
     innerHTML: '',
+    style: {},
+    setAttribute: (name, value) => attributes.set(name, value),
   };
   runHandler({ closest: (selector) => (selector === '.meme-item' ? item : null) });
   assert.deepEqual(classes, ['meme-item-error']);
+  assert.equal(attributes.get('aria-disabled'), 'true');
+  assert.equal(item.style.pointerEvents, 'none');
   assert.match(item.innerHTML, /class="meme-image-error"/);
   assert.match(item.innerHTML, /role="status"/);
   assert.match(item.innerHTML, /Image unavailable/);

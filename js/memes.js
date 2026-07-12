@@ -61,6 +61,8 @@ function showMemeImageError(image) {
   const item = image.closest('.meme-item');
   if (!item) return;
   item.classList.add('meme-item-error');
+  item.setAttribute('aria-disabled', 'true');
+  item.style.pointerEvents = 'none';
   item.innerHTML = '<span class="meme-image-error" role="status">Image unavailable</span>';
 }
 

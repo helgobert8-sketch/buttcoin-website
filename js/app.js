@@ -295,7 +295,7 @@ const ARTICLE_CONTENT = {
     <p>Changing your mind mid-trade is how you lose. Let your future self thank you for your discipline.</p>
     <h4 style="margin-top:1.5em">7. HODL: Buttcoin is the Next Bitcoin</h4>
     <p>Let's not forget why you're here.</p>
-    <p>This isn't just a memecoin. It's a movement. Buttcoin is the next Bitcoin. Launched with zero VC backing, zero team allocation, and 100% community energy — it's not just a coin, it's a culture.</p>
+    <p>Buttcoin is a memecoin with a documented video lineage and a coin on Solana since January 2025. Allocation and on-chain authority claims require dated sources; neither is asserted here.</p>
     <p>So when things get shaky, when charts bleed and sentiment dips, remember this: respect the voyage. Bitcoin had its doubters too. And look where it went. Buttcoin is on its own path — and you're early.</p>
     <p>Hold the line.</p>
     <h4 style="margin-top:1.5em">Final Thought</h4>
@@ -399,8 +399,8 @@ const ARTICLE_CONTENT = {
         <ul>
           <li>Buttcoin has got mindshare of BTC (and Fart and SPX imo). As long as BTC is alive and kicking, Buttcoin stays relevant.</li>
           <li>Butt while Buttcoin certainly acknowledges BTC's status as the crypto OG, it's also a parody and a critique of the big one: Buttcoin is anti-TradFi, it's got cypherpunk-elements, it's funny, it's normie-friendly, and it also makes fun of everything.</li>
-          <li>Buttcoin is also its own unique thing. It's an original meme with its own style and its own history and lore (going back to 2013).</li>
-          <li>Plus, it has been endlessly copied by others since its inception, copycats are legion, buttlieve me. And once again this only shows how fundamentally strong this meme really is.</li>
+          <li>The project follows a documented video lineage dated December 8, 2013. The current Solana coin has been on Solana since January 2025.</li>
+          <li>Independent same-name projects exist. Distinguish this project by the full Mint FasH397CeZLNYWkd3wWK9vrmjd1z93n3b59DssRXpump and buttcoin.wtf.</li>
         </ul>
       </li>
       <li>Buttcoin is a <strong>BLUE CHIP MEME</strong> simply because we have the most ambitious mission: to flip the godfather of them all, that is BTC itself.
