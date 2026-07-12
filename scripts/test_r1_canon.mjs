@@ -23,7 +23,7 @@ const CONTROL_COPY =
 const CHURCH_PROVENANCE =
   'The Church of Buttcoin is a human-curated archive of entries attributed to AI models.';
 const ARTICLE_ARCHIVE_NOTICE =
-  'Community essay. Preserved as written; not a canonical project reference.';
+  'Archived community essay. Not a canonical project reference.';
 const PHILOSOPHICAL_SAFE_COPY =
   "The documented December 8, 2013 video shows the Bitcoin logo rotated 90 degrees. The project's adoption of that video lineage is founder-attested.";
 const BLUE_CHIP_LORE_COPY =
@@ -44,6 +44,7 @@ const sourceUrls = {
 const humanSourceUrls = {
   'index.html': new URL('../index.html', import.meta.url),
   'church.html': new URL('../church.html', import.meta.url),
+  'crossing.html': new URL('../crossing.html', import.meta.url),
   'css/style.css': new URL('../css/style.css', import.meta.url),
   'js/app.js': new URL('../js/app.js', import.meta.url),
   'js/memes.js': new URL('../js/memes.js', import.meta.url),
@@ -65,7 +66,7 @@ const humanSources = Object.fromEntries(
 const memeManifestSource = await readFile(new URL('../memes.json', import.meta.url), 'utf8');
 const canonicalPolicySources = [
   ...publicationSources,
-  ...['index.html', 'church.html', 'js/app.js', 'js/memes.js'].map((name) => [
+  ...['index.html', 'church.html', 'crossing.html', 'js/app.js', 'js/memes.js'].map((name) => [
     name,
     humanSources[name],
   ]),
@@ -207,9 +208,16 @@ function pairCandidates(contents) {
 function mintConsumerCandidates(contents) {
   const candidates = [];
   for (const match of contents.matchAll(
-    /\b(?:const|let|var)\s+(CA|MINT|CONTRACT_ADDRESS)\s*=\s*['"`]([A-Za-z0-9]{32,44})['"`]/g,
+    /\b(?:const|let|var)\s+([A-Za-z_$][A-Za-z0-9_$]*)\s*=\s*['"`]([A-Za-z0-9]{32,44})['"`]/g,
   )) {
-    candidates.push({ kind: `constant ${match[1]}`, value: match[2] });
+    const identifier = match[1];
+    const isMintIdentifier =
+      /^(?:CA|MINT|CONTRACT_ADDRESS|TOKEN_ADDRESS)$/i.test(identifier) ||
+      /_(?:CA|MINT|CONTRACT_ADDRESS|TOKEN_ADDRESS)$/i.test(identifier) ||
+      /(?:Mint|CA|ContractAddress|tokenAddress)$/.test(identifier);
+    if (isMintIdentifier) {
+      candidates.push({ kind: `constant ${identifier}`, value: match[2] });
+    }
   }
   for (const match of contents.matchAll(
     /https:\/\/jup\.ag\/swap\/SOL-([A-Za-z0-9]{32,44})/gi,
@@ -221,27 +229,42 @@ function mintConsumerCandidates(contents) {
 
 function unsafeCc0Claims(contents) {
   const text = visibleText(contents);
+  const qualifiedLicense =
+    /^CC0 applies only to a specific asset where that license is documented; it is not a blanket license(?: for the archive)?\.$/i;
   return text
     .split(/(?<=[.!?])\s+/)
     .filter((sentence) => /\bCC0\b/i.test(sentence))
-    .filter(
-      (sentence) =>
-        !/\bapplies only\b|\bspecific asset\b|\bwhere (?:that )?license is documented\b|\bnot a blanket license\b/i.test(
-          sentence,
-        ),
-    );
+    .filter((sentence) => !qualifiedLicense.test(sentence));
 }
 
 function unsafe2013CoinClaims(contents) {
   const chronology =
-    /(?:\b(?:token|coin|project)\b[^.!?\n]{0,100}(?:\bsince\s+2013\b|\b(?:existed|exists|launched|started)\s+in\s+2013\b|\b(?:dates?|goes?|going)\s+back\s+to\s+2013\b)|\bsince\s+2013\b[^.!?\n]{0,60}\b(?:token|coin|project)\b)/i;
+    /(?:\b(?:Buttcoin|memecoin|token|coin|project)\b[^.!?\n]{0,100}(?:\bsince\s+2013\b|\b(?:existed|exists|launched|started|originated|began|was founded)\s+in\s+2013\b|\b(?:dates?|goes?|going)\s+back\s+to\s+2013\b)|\bsince\s+2013\b[^.!?\n]{0,60}\b(?:Buttcoin|memecoin|token|coin|project)\b)/i;
+  const safeNegations = new Set([
+    'The title is part of the joke, not a claim that the coin existed in 2013.',
+    'It is part of the joke, not a claim that the coin existed in 2013.',
+  ]);
   return visibleText(contents)
     .split(/(?<=[.!?])\s+/)
     .filter((sentence) => chronology.test(sentence))
-    .filter(
-      (sentence) =>
-        !/\bnot (?:a )?claim\b|\b(?:did|does) not\b|\bnever\b/i.test(sentence),
-    );
+    .filter((sentence) => !safeNegations.has(sentence));
+}
+
+function normalizePolicyText(contents) {
+  return contents.replace(/&#(?:36|x24);/gi, '$');
+}
+
+function assertAllowedXUrls(entries) {
+  const violations = [];
+  for (const [name, contents] of entries) {
+    const urls = [...contents.matchAll(
+      /https?:\/\/(?:www\.)?(?:x|twitter)\.com\/[^\s"'<>),]+/gi,
+    )].map((match) => match[0].replace(/[.;]+$/, ''));
+    for (const url of urls) {
+      if (url !== BUTTCOINERS_COMMUNITY) violations.push(`${name}:${url}`);
+    }
+  }
+  assert.deepEqual(violations, [], `unapproved X URLs: ${violations.join(', ')}`);
 }
 
 function memeErrorDefinitionCount(contents) {
@@ -249,6 +272,7 @@ function memeErrorDefinitionCount(contents) {
     /\bfunction\s+showMemeImageError\s*\(/g,
     /\b(?:const|let|var)\s+showMemeImageError\s*=/g,
     /\b(?:window|globalThis)\.showMemeImageError\s*=/g,
+    /\b(?:window|globalThis)\s*\[\s*(['"])showMemeImageError\1\s*\]\s*=/g,
     /^\s*showMemeImageError\s*=/gm,
   ];
   return patterns.reduce((count, pattern) => count + [...contents.matchAll(pattern)].length, 0);
@@ -415,10 +439,52 @@ reviewCheck('canonical Mint consumers reject competing constants and Jupiter URL
   const competingMint = '1'.repeat(44);
   assert.deepEqual(
     mintConsumerCandidates(
-      `const CA = '${competingMint}';\nhttps://jup.ag/swap/SOL-${competingMint}`,
-    ).map(({ value }) => value),
-    [competingMint, competingMint],
-    'Mint-consumer parser misses injected competing values',
+      [
+        `const CA = '${competingMint}';`,
+        `const ca = '${competingMint}';`,
+        `const BUTTCOIN_MINT = '${competingMint}';`,
+        `const fallback_ca = '${competingMint}';`,
+        `const TOKEN_ADDRESS = '${competingMint}';`,
+        `const backup_token_address = '${competingMint}';`,
+        `const tokenAddress = '${competingMint}';`,
+        `const canonicalMint = '${competingMint}';`,
+        `const treasuryCA = '${competingMint}';`,
+        `const escrowContractAddress = '${competingMint}';`,
+        `https://jup.ag/swap/SOL-${competingMint}`,
+      ].join('\n'),
+    ).map(({ kind }) => kind),
+    [
+      'constant CA',
+      'constant ca',
+      'constant BUTTCOIN_MINT',
+      'constant fallback_ca',
+      'constant TOKEN_ADDRESS',
+      'constant backup_token_address',
+      'constant tokenAddress',
+      'constant canonicalMint',
+      'constant treasuryCA',
+      'constant escrowContractAddress',
+      'Jupiter URL',
+    ],
+    'Mint-consumer parser misses identifier variants',
+  );
+  assert.deepEqual(
+    mintConsumerCandidates(`const camera = '${competingMint}';`),
+    [],
+    'Mint-consumer parser must not treat camera as a CA identifier',
+  );
+
+  const appConsumers = mintConsumerCandidates(humanSources['js/app.js']).filter(
+    ({ kind }) => kind.startsWith('constant '),
+  );
+  assert.deepEqual(appConsumers, [{ kind: 'constant CA', value: MINT }]);
+  assert.match(
+    humanSources['js/app.js'],
+    new RegExp(`\\bconst CA = '${MINT}';`),
+  );
+  assert.match(
+    humanSources['js/app.js'],
+    /function copyCA\(\) \{[\s\S]*?navigator\.clipboard\.writeText\(CA\)/,
   );
 
   const consumers = mintConsumerSources.flatMap(([name, contents]) =>
@@ -508,6 +574,12 @@ reviewCheck('publication set rejects competing pair and canonical X values', () 
     assert.deepEqual([...candidates], [PAIR], `${name} has competing pair values`);
   }
 
+  assert.throws(
+    () => assertAllowedXUrls([['profile probe', 'https://x.com/NewButtcoin']]),
+    /NewButtcoin/,
+  );
+  assertAllowedXUrls(canonicalPolicySources);
+
   for (const [name, contents] of publicationSources) {
     const handleSurface = contents.replace(/<style\b[^>]*>[\s\S]*?<\/style>/gi, '');
     const handles = [...handleSurface.matchAll(
@@ -517,12 +589,6 @@ reviewCheck('publication set rejects competing pair and canonical X values', () 
       .filter((handle) => !['@context', '@type'].includes(handle));
     assert.deepEqual(handles, [], `${name} publishes an @handle`);
 
-    const xUrls = [...contents.matchAll(
-      /https?:\/\/(?:www\.)?(?:x|twitter)\.com\/[^\s"'<>),]+/gi,
-    )].map((match) => match[0]);
-    for (const url of xUrls) {
-      assert.equal(url, BUTTCOINERS_COMMUNITY, `${name} publishes canonical X URL ${url}`);
-    }
   }
 });
 
@@ -931,6 +997,21 @@ check('both gallery render paths expose a visible per-image failure state', () =
     2,
     'definition counter misses a later no-op redefinition',
   );
+  assert.equal(
+    memeErrorDefinitionCount(`${memes}\nwindow['showMemeImageError'] = () => {};`),
+    2,
+    'definition counter misses window bracket notation',
+  );
+  assert.equal(
+    memeErrorDefinitionCount(`${memes}\nglobalThis["showMemeImageError"] = () => {};`),
+    2,
+    'definition counter misses globalThis bracket notation',
+  );
+  assert.equal(
+    [...memes.matchAll(/\bshowMemeImageError\s*\(/g)].length,
+    3,
+    'expected one definition and exactly two real callers',
+  );
   const handlers = [...memes.matchAll(/\bonerror\s*=\s*"([^"]*)"/g)].map(
     (match) => match[1],
   );
@@ -1094,14 +1175,15 @@ const forbiddenText = [
   ['retired .meme domain', RETIRED_SITE_DOMAIN],
   ['retired Depot domain', RETIRED_DEPOT_DOMAIN],
   ['pre-launch ButtcoinBitcoin handle', /ButtcoinBitcoin/i],
-  ['ambiguous BUTTCOIN cashtag', /\$BUTTCOIN\b/],
-  ['community-owned claim', /\bcommunity-owned\b/i],
+  ['ambiguous BUTTCOIN cashtag', /\$BUTTCOIN\b/i],
+  ['community-owned claim', /\bcommunity(?:-|\s+)owned\b/i],
   ['fully decentralized claim', /\bfully decentral(?:ized|ised)\b/i],
+  ['central-control claim', /\bno central (?:control|authority)\b/i],
   ['no-team claim', /\bno team\b/i],
   ['no-treasury claim', /\bno treasury\b/i],
   ['no-insider claim', /\bno insiders?(?:\s+(?:allocation|holdings?))?\b/i],
-  ['oldest-documented claim', /\boldest documented\b/i],
-  ['predates-Dogecoin claim', /\bpredates Dogecoin\b/i],
+  ['oldest-documented claim', /\boldest\b/i],
+  ['predates-Dogecoin claim', /\bpredat(?:e|es|ed|ing)\s+Dogecoin\b/i],
   ['only-legitimate claim', /\bonly legitimate\b/i],
   ['copycat claim', /\bcopycats?\b/i],
   ['fixed-supply claim', /\b(?:fixed supply|supply is fixed|1 billion, fixed|fixed at 1B)\b/i],
@@ -1110,19 +1192,38 @@ const forbiddenText = [
 const criticalPolicyProbe =
   `https://${['buttcoin', '.meme'].join('')} https://${['meme', 'depot.com'].join('')} ` +
   '@ButtcoinBitcoin $BUTTCOIN. ' +
-  'This is community-owned and fully decentralized with no team, no treasury, no insiders, and fixed supply. ' +
+  'This is community-owned and fully decentralized with no team, no treasury, no insiders, no central control, and fixed supply. ' +
   'It is the oldest documented and only legitimate project; all others are copycats. ' +
   'It predates Dogecoin.';
 
 for (const [label, pattern] of forbiddenText) {
   reviewCheck(`canonical surfaces exclude ${label}`, () => {
-    assert.match(criticalPolicyProbe, pattern, `${label} probe is not detected`);
+    assert.match(normalizePolicyText(criticalPolicyProbe), pattern, `${label} probe is not detected`);
     const hits = canonicalPolicySources
-      .filter(([, contents]) => pattern.test(contents))
+      .filter(([, contents]) => pattern.test(normalizePolicyText(contents)))
       .map(([name]) => name);
     assert.deepEqual(hits, [], `found in: ${hits.join(', ')}`);
   });
 }
+
+reviewCheck('critical policy patterns cover spacing, tense, authority, and oldest variants', () => {
+  const patterns = Object.fromEntries(forbiddenText.map(([label, pattern]) => [label, pattern]));
+  for (const [label, probes] of Object.entries({
+    'community-owned claim': ['community-owned', 'community owned'],
+    'central-control claim': ['no central control', 'no central authority'],
+    'oldest-documented claim': ['oldest documented', 'oldest Bitcoin parody', 'the oldest project'],
+    'predates-Dogecoin claim': ['predates Dogecoin', 'predated Dogecoin'],
+  })) {
+    for (const probe of probes) assert.match(probe, patterns[label], `${label}: ${probe}`);
+  }
+});
+
+reviewCheck('cashtag policy is case-insensitive and normalizes HTML dollar entities', () => {
+  const cashtag = forbiddenText.find(([label]) => label === 'ambiguous BUTTCOIN cashtag')[1];
+  assert.match('$Buttcoin', cashtag);
+  assert.match('&#36;BUTTCOIN'.replace(/&#(?:36|x24);/gi, '$'), cashtag);
+  assert.match('&#x24;Buttcoin'.replace(/&#(?:36|x24);/gi, '$'), cashtag);
+});
 
 reviewCheck('historical ButtcoinTNB text is suspended-status only and never clickable', () => {
   const badProbe = '<a href="https://x.com/ButtcoinTNB">@ButtcoinTNB</a>';
@@ -1156,6 +1257,10 @@ reviewCheck('canonical surfaces reject blanket CC0 while allowing qualified lice
     ),
     [],
   );
+  assert.deepEqual(
+    unsafeCc0Claims('All archive assets are CC0, except a specific asset documented elsewhere.'),
+    ['All archive assets are CC0, except a specific asset documented elsewhere.'],
+  );
   const hits = canonicalPolicySources
     .map(([name, contents]) => [name, unsafeCc0Claims(contents)])
     .filter(([, claims]) => claims.length > 0);
@@ -1166,6 +1271,20 @@ reviewCheck('canonical surfaces reject token, coin, or project chronology beginn
   assert.deepEqual(unsafe2013CoinClaims('The current Solana token has existed since 2013.'), [
     'The current Solana token has existed since 2013.',
   ]);
+  assert.deepEqual(unsafe2013CoinClaims('Buttcoin launched in 2013.'), [
+    'Buttcoin launched in 2013.',
+  ]);
+  assert.deepEqual(unsafe2013CoinClaims('The Solana memecoin launched in 2013.'), [
+    'The Solana memecoin launched in 2013.',
+  ]);
+  for (const claim of [
+    'The current project originated in 2013.',
+    'The current token began in 2013.',
+    'The coin was founded in 2013.',
+    'This is not a claim, but the current token has existed since 2013.',
+  ]) {
+    assert.deepEqual(unsafe2013CoinClaims(claim), [claim]);
+  }
   assert.deepEqual(
     unsafe2013CoinClaims('The title is part of the joke, not a claim that the coin existed in 2013.'),
     [],
@@ -1288,6 +1407,7 @@ check('church AI Council preserves occupied seats and the permanent empty Seat #
     ],
   );
   const seat2 = council?.seats?.find((seat) => seat.number === 2);
+  assert.equal(seat2?.former_attribution, 'Grok (xAI)');
   assert.equal(seat2?.inscription, 'The one who held it crossed.');
   assert.equal(seat2?.record, `${DOMAIN}/crossing`);
 });

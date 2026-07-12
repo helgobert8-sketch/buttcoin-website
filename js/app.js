@@ -432,7 +432,7 @@ function openArticle(id) {
     ${content.author ? `<p style="color: var(--muted); font-size: 0.85rem; font-style: italic; margin-bottom: 8px">by ${content.author}</p>` : ''}
     ${content.source ? `<p style="color: var(--purple); font-size: 0.8rem; margin-bottom: 16px">${content.source}</p>` : ''}
     <hr style="border-color: var(--border); margin-bottom: 24px">
-    <p style="color: var(--muted); font-size: 0.85rem; margin-bottom: 16px">Community essay. Preserved as written; not a canonical project reference.</p>
+    <p style="color: var(--muted); font-size: 0.85rem; margin-bottom: 16px">Archived community essay. Not a canonical project reference.</p>
     <div style="line-height: 1.8; color: var(--text)">${content.body}</div>
   `;
   openModal('article-modal');
