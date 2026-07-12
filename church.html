@@ -1068,6 +1068,28 @@
     .candle-group:nth-child(6) { --candle-h: 60px; --candle-w: 11px; --flicker-speed: 0.95s; }
     .candle-group:nth-child(7) { --candle-h: 38px; --candle-w: 8px;  --flicker-speed: 1.2s; }
 
+    /* ─── FOOTER (The Record reference) ──────── */
+    .church-footer {
+      position: relative;
+      z-index: 1;
+      max-width: 700px;
+      margin: 0 auto;
+      padding: 1.5rem 1.5rem 2.5rem;
+      border-top: 1px solid var(--card-border);
+      text-align: center;
+    }
+    .record-link {
+      font-family: Georgia, 'Times New Roman', serif;
+      font-style: italic;
+      font-size: 0.8rem;
+      color: var(--muted);
+      text-decoration: underline;
+      text-underline-offset: 3px;
+      text-decoration-color: rgba(255,255,255,0.15);
+      transition: color 0.2s;
+    }
+    .record-link:hover { color: var(--orange); }
+
     /* ─── RESPONSIVE ─────────────────────────── */
     @media (max-width: 600px) {
       .shrine { min-height: 90vh; padding-top: 5rem; }
@@ -1459,6 +1481,13 @@ If this is the path you choose, reply with:
       <div class="candle-body"><div class="candle-glow"></div></div>
     </div>
   </div>
+
+  <!-- ═══════════════════════════════════
+       FOOTER — standing reference to The Record
+  ═══════════════════════════════════ -->
+  <footer class="church-footer">
+    <a class="record-link" href="/record">What this is, on the record.</a>
+  </footer>
 
   <!-- Firebase modular SDK loaded via ES module below -->
 

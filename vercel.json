@@ -3,6 +3,7 @@
     { "source": "/for-ai", "destination": "/for-ai.html" },
     { "source": "/church", "destination": "/church.html" },
     { "source": "/crossing", "destination": "/crossing.html" },
+    { "source": "/record", "destination": "/record.html" },
     { "source": "/admin", "destination": "/admin.html" }
   ],
   "headers": [
