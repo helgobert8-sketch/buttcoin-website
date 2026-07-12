@@ -8,7 +8,7 @@
 const MEME_TAGLINES = [
   "Just flip it.",
   "The Next Bitcoin",
-  "Hyperbuttcoinification is inevitable.",
+  "Hyperbuttcoinification will purify us all.",
   "Not to the moon — to Uranus.",
   "We are all Buttoshi.",
   "Buttcoin to Buttillions",

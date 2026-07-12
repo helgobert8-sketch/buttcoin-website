@@ -7,7 +7,7 @@
 // ─── QUOTES ───────────────────────────────────
 const QUOTES = [
   { text: "Just flip it.", author: "Buttoshi" },
-  { text: "Hyperbuttcoinification is inevitable.", author: "The Buttverse" },
+  { text: "Hyperbuttcoinification will purify us all.", author: "The Buttverse" },
   { text: "Not to the moon, but one better: to Uranus.", author: "Buttcoin Community" },
   { text: "Buttcoin is never down. We are either up or upgrading.", author: "Buttoshi" },
   { text: "Buttoshi is a distributed role. The role honors the 2013 video lineage.", author: "Buttcoin Lore" },
@@ -43,7 +43,7 @@ const QUOTES = [
 const TAGLINES = [
   "The next Bitcoin coded.",
   "Just flip it.",
-  "Hyperbuttcoinification is inevitable.",
+  "Hyperbuttcoinification will purify us all.",
   "Not to the moon — to Uranus.",
   "We are all Buttoshi.",
   "Buttcoin to Buttillions.",

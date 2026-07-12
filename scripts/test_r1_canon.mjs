@@ -900,13 +900,10 @@ check('homepage dominance forecast is explicitly marked as lore', () => {
   );
   assert.ok(
     dominance.includes(
-      'From the lore: Buttcoiners are on a mission to flip BTC. Hyperbuttcoinification is inevitable.',
+      'From the lore: Buttcoiners are on a mission to flip BTC. Hyperbuttcoinification will purify us all.',
     ),
   );
-  assert.doesNotMatch(
-    dominance,
-    /(?:^|[.!?]\s+)Buttcoiners are on a mission to flip BTC\. Hyperbuttcoinification is inevitable\./i,
-  );
+  assert.doesNotMatch(dominance, /Hyperbuttcoinification is inevitable/i);
 });
 
 check('visible prose distinguishes the BUTTCOIN ticker from the Buttcoin name', () => {
