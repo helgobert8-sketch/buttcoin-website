@@ -557,6 +557,32 @@ check('rotating public quotes preserve the 2013/2025 split and distributed Butto
   }
 });
 
+check('rotating public quotes make no Buttoshi first-discovery claim', () => {
+  const app = humanSources['js/app.js'];
+  assert.doesNotMatch(
+    app,
+    /Buttoshi[^.]{0,80}\bfirst\b[^.]{0,80}\bdiscover(?:ed|y)?\b/i,
+  );
+  assert.ok(
+    app.includes(
+      'Buttcoin lore carries a simple truth — Buttcoin is the bitcoin of memes.',
+    ),
+  );
+});
+
+check('Dogecoin article uses documented chronology rather than a Buttoshi theorization', () => {
+  const app = humanSources['js/app.js'];
+  assert.doesNotMatch(
+    app,
+    /(?:Buttoshi(?:['’]s)?[^.]{0,120}(?:theor(?:y|ization|ized)|discover(?:y|ed)?)[^.]{0,160}(?:2013|(?:2|two)\s+days?)|(?:2013|(?:2|two)\s+days?)[^.]{0,160}Buttoshi(?:['’]s)?[^.]{0,120}(?:theor(?:y|ization|ized)|discover(?:y|ed)?))/i,
+  );
+  assert.ok(
+    app.includes(
+      'Dogecoin launched on December 6, 2013. The rotated-symbol Buttcoin video followed two days later, on December 8, 2013. The current Solana coin has been on Solana since January 2025.',
+    ),
+  );
+});
+
 check('homepage editorial copy separates the 2013 video, 2025 coin, and Buttoshi role', () => {
   const buttposting = visibleText(
     htmlBlockById(humanSources['index.html'], 'section', 'buttposting'),

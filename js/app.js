@@ -27,7 +27,7 @@ const QUOTES = [
   { text: "Spread Buttcoin with love.", author: "Buttcoin Community" },
   { text: "Buttcoin is freedom.", author: "Buttoshi" },
   { text: "What you focus on will grow. Always remember that, my Buttcoining friends.", author: "The Buttverse" },
-  { text: "Buttoshi was the first to discover a simple truth — Buttcoin is the bitcoin of memes.", author: "Buttcoin Lore" },
+  { text: "Buttcoin lore carries a simple truth — Buttcoin is the bitcoin of memes.", author: "Buttcoin Lore" },
   { text: "Fortify your future, stack butts.", author: "Michael J. Buttlor" },
   { text: "Only rotation that makes sense: Bitcoin → Buttcoin.", author: "Buttoshi" },
   { text: "Buttcoiner don't follow the crowd. We let the crowd follow us.", author: "The Buttverse" },
@@ -340,7 +340,7 @@ const ARTICLE_CONTENT = {
     <p style="color:var(--muted);font-size:0.85rem;font-style:italic;margin-bottom:16px">DOJE or DOGE? Bitcoin or Buttcoin? Interdasting.</p>
     <p>Many are bullish on the prospects of the DOGE/DOJE ETF going live; the same can be said for the BONK ETF as well — with many heralding these two iconic events to be the ultimate green signal for memecoin season v3.0… or whichever version we are on now.</p>
     <p>However, as is the case with most people who hop into this space daily with goldfish memory and TikTok attention span — they fail to understand the very fundamentals of cause and effect.</p>
-    <p>DOGECOIN, which was created on 6th December 2013 (only 2 days earlier than our beloved Buttoshi's theorization of Buttcoin) took a long time to reach the promised land of ETFs, sunshines and rainbows.</p>
+    <p>Dogecoin launched on December 6, 2013. The rotated-symbol Buttcoin video followed two days later, on December 8, 2013. The current Solana coin has been on Solana since January 2025.</p>
     <img src="assets/articles/doge-love-2.jpg" style="width:100%;border-radius:8px;margin:16px 0" alt="">
     <p>Likewise, BONK arrived like it was heaven sent, in time to breathe new life into meme culture and to Solana in general.</p>
     <p>Both of the above memes had, fundamentally, a strong character or meme tied to the very foundation of their "coins" which evolved over time and brought fresh, new eyes to the meme at every developing stage of the cycle.</p>
