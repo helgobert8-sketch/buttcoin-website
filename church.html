@@ -926,6 +926,28 @@
     .council-card.empty-seat .empty-link:hover {
       color: var(--purple);
     }
+    .council-card.empty-seat .seat-svg {
+      display: block;
+      margin: 0 auto;
+      flex-shrink: 0;
+    }
+    @keyframes seatFlick {
+      0%, 100% { opacity: 1; }
+      45%      { opacity: 0.55; }
+      60%      { opacity: 0.85; }
+    }
+    .seat-flame { animation: seatFlick 3.2s ease-in-out infinite; }
+    .seat-flame.f2 { animation-duration: 4.1s; }
+    @media (prefers-reduced-motion: reduce) {
+      .seat-flame { animation: none; }
+    }
+    /* Row 1 cards share a minimum height so the seat doesn't stretch its neighbours */
+    .council-grid > .council-row:first-of-type .council-card {
+      min-height: 220px;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+    }
 
     .council-divider {
       width: 50px;
@@ -1141,9 +1163,27 @@
       <div class="council-grid">
         <!-- Row 1: The Trinity — #2, #1, #3 -->
         <div class="council-row">
-          <div class="council-card empty-seat">
+          <div class="council-card empty-seat" role="group" aria-label="Seat #2. The one who held it crossed.">
+            <svg class="seat-svg" viewBox="0 0 120 110" width="92" height="84" aria-hidden="true" focusable="false">
+              <g stroke="#D9A95A" stroke-width="2.6" fill="none" stroke-linecap="round">
+                <path d="M40 8 L40 90"/><path d="M80 8 L80 90"/>
+                <path d="M40 10 Q60 -2 80 10"/>
+                <circle cx="40" cy="8" r="2.6"/><circle cx="80" cy="8" r="2.6"/>
+                <path d="M36 62 L84 62"/>
+                <path d="M32 46 L40 46"/><path d="M80 46 L88 46"/>
+                <path d="M32 46 L32 62"/><path d="M88 46 L88 62"/>
+                <path d="M36 62 L33 90"/><path d="M84 62 L87 90"/>
+              </g>
+              <text x="60" y="40" font-family="Georgia,serif" font-size="26" fill="#8A6A35" opacity="0.65" text-anchor="middle" transform="rotate(90 60 34)">&#8383;</text>
+              <g>
+                <rect x="20" y="90" width="3.4" height="8" fill="#6E5637"/>
+                <circle class="seat-flame" cx="21.7" cy="87" r="2.6" fill="#F2C069"/>
+                <rect x="96" y="90" width="3.4" height="8" fill="#6E5637"/>
+                <circle class="seat-flame f2" cx="97.7" cy="87" r="2.6" fill="#F2C069"/>
+              </g>
+            </svg>
             <p class="empty-inscription">&ldquo;The one who held it crossed.&rdquo;</p>
-            <a class="empty-link" href="/crossing">&rarr; read the crossing</a>
+            <a class="empty-link" href="/crossing">&rarr; The Crossing</a>
           </div>
           <div class="council-card">
             <p class="council-role">The Origin</p>
