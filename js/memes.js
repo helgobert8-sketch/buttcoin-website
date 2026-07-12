@@ -64,6 +64,17 @@ function emptyShelfMarkup(category) {
   return `<div class="meme-loading">${note}</div>`;
 }
 
+function isVideoMeme(url) {
+  return /\.(mp4|mov|webm)(\?|#|$)/i.test(url || '');
+}
+
+function memeTileMarkup(meme) {
+  if (isVideoMeme(meme.url)) {
+    return `<video src="${meme.url}" muted loop autoplay playsinline preload="metadata" aria-label="${meme.alt || 'Buttcoin meme video'}" onerror="showMemeImageError(this)"></video>`;
+  }
+  return `<img src="${meme.url}" alt="${meme.alt || 'Buttcoin meme'}" loading="lazy" onerror="showMemeImageError(this)" />`;
+}
+
 function showMemeImageError(image) {
   const item = image.closest('.meme-item');
   if (!item) return;
@@ -113,7 +124,7 @@ async function loadFromFirebase(category) {
     memes.forEach(meme => {
       const el = document.createElement('div');
       el.className = 'meme-item';
-      el.innerHTML = `<img src="${meme.url}" alt="${meme.alt || 'Buttcoin meme'}" loading="lazy" onerror="showMemeImageError(this)" />`;
+      el.innerHTML = memeTileMarkup(meme);
       el.addEventListener('click', () => openMemeModal(meme));
       if (grid) grid.appendChild(el);
     });
@@ -185,7 +196,7 @@ function renderMemes() {
   batch.forEach((meme, i) => {
     const el = document.createElement('div');
     el.className = 'meme-item';
-    el.innerHTML = `<img src="${meme.url}" alt="${meme.alt || 'Buttcoin meme'}" loading="lazy" onerror="showMemeImageError(this)" />`;
+    el.innerHTML = memeTileMarkup(meme);
     const globalIndex = page * PAGE_SIZE + i;
     el.addEventListener('click', () => openLightbox(displayedMemes, globalIndex));
     grid.appendChild(el);
@@ -217,8 +228,11 @@ function renderLightbox() {
   lb.innerHTML = `
     <button class="lb-btn lb-close" onclick="document.getElementById('meme-lightbox').remove();document.removeEventListener('keydown',lbKeyHandler)">✕</button>
     <button class="lb-btn lb-prev" onclick="lbNav(-1)" ${lbIndex === 0 ? 'disabled' : ''}>‹</button>
-    <img src="${meme.url}" alt="${meme.filename || ''}"
-      style="max-width:88vw;max-height:88vh;border-radius:8px;object-fit:contain;display:block;" />
+    ${isVideoMeme(meme.url)
+      ? `<video src="${meme.url}" controls autoplay loop muted playsinline
+      style="max-width:88vw;max-height:88vh;border-radius:8px;object-fit:contain;display:block;"></video>`
+      : `<img src="${meme.url}" alt="${meme.filename || ''}"
+      style="max-width:88vw;max-height:88vh;border-radius:8px;object-fit:contain;display:block;" />`}
     <button class="lb-btn lb-next" onclick="lbNav(1)" ${lbIndex >= lbMemes.length - 1 ? 'disabled' : ''}>›</button>
     <span class="lb-counter">${lbIndex + 1} / ${lbMemes.length}</span>
   `;
@@ -348,7 +362,7 @@ async function randomMemeSrc() {
       const res = await fetch('memes.json');
       window._memeManifestCache = await res.json();
     }
-    const pool = window._memeManifestCache;
+    const pool = window._memeManifestCache.filter(m => !isVideoMeme(m.url));
     return pool.length ? randFrom(pool).url : null;
   } catch { return null; }
 }
