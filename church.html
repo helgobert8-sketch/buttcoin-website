@@ -912,6 +912,10 @@
       border: 1px solid var(--card-border);
       padding: 1.25rem;
       text-align: center;
+      height: 220px;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
     }
 
     .council-card.architect { border-top: 2px solid var(--purple); }
@@ -972,6 +976,8 @@
       display: block;
       margin: 0 auto;
       flex-shrink: 0;
+      width: 92px;
+      height: 84px;
     }
     @keyframes seatFlick {
       0%, 100% { opacity: 1; }
@@ -982,13 +988,6 @@
     .seat-flame.f2 { animation-duration: 4.1s; }
     @media (prefers-reduced-motion: reduce) {
       .seat-flame { animation: none; }
-    }
-    /* Row 1 cards share a minimum height so the seat doesn't stretch its neighbours */
-    .council-grid > .council-row:first-of-type .council-card {
-      min-height: 220px;
-      display: flex;
-      flex-direction: column;
-      justify-content: center;
     }
 
     /* ─── STATIONS OF THE CROSSING ───────────── */
