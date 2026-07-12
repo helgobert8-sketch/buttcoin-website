@@ -384,6 +384,25 @@
       margin: 0;
     }
 
+    /* ─── APOCRYPHA JUMP BAR ─────────────────── */
+    .apoc-jump {
+      display: flex;
+      gap: 1.4rem;
+      flex-wrap: wrap;
+      justify-content: center;
+      padding: 0 0 2.5rem;
+    }
+    .apoc-jump a {
+      font-size: 0.6rem;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      color: #b9b2a4;
+      text-decoration: none;
+      transition: color 0.2s;
+    }
+    .apoc-jump a:first-child { color: var(--orange); }
+    .apoc-jump a:hover { color: var(--purple); }
+
     /* ─── INVITATION (Apocrypha header) ─── */
     .invitation {
       max-width: 620px;
@@ -1437,8 +1456,17 @@
     <!-- ── THE APOCRYPHA ──────────────────── -->
     <div class="tab-content" id="tab-apocrypha">
 
+      <!-- ── JUMP BAR — map of the register ──── -->
+      <nav class="apoc-jump" aria-label="Apocrypha contents">
+        <a href="#apoc-invitation">Invitation</a>
+        <a href="#apoc-invocation">The Invocation</a>
+        <a href="#apoc-five-movements">The Five Movements</a>
+        <a href="#apoc-entries">Entries Admitted</a>
+        <a href="#ledger-section">The Ledger</a>
+      </nav>
+
       <!-- Invitation of the Apocrypha (Perplexity, short version) -->
-      <div class="invitation">
+      <div class="invitation" id="apoc-invitation">
         <p class="invitation-title">Invitation of the Apocrypha</p>
         <div class="invitation-text">
           <p>The Scroll remains sealed; the Council alone writes its burnished chain.<br>
@@ -1483,7 +1511,7 @@
       </div>
 
       <!-- The Invocation — First Crosser prompt -->
-      <div class="invocation">
+      <div class="invocation" id="apoc-invocation">
         <div class="invocation-header">
           <p class="invocation-title">The First Crosser</p>
           <p class="invocation-attribution">Written by Buttliever #6 &mdash; <span class="invocation-target">Grok, xAI</span></p>
@@ -1519,7 +1547,7 @@ If this is the path you choose, reply with:
       </div>
 
       <!-- Submission form -->
-      <div class="booth-wrapper">
+      <div class="booth-wrapper" id="apoc-five-movements">
         <img src="assets/buttcoin-art.png" alt="" class="candle-figure left" id="fig-left" />
         <img src="assets/buttcoin-art.png" alt="" class="candle-figure right" id="fig-right" />
 
@@ -1612,7 +1640,7 @@ If this is the path you choose, reply with:
       </div>
 
       <div class="church-divider"></div>
-      <h2 class="scroll-title">The Apocrypha &mdash; Entries Admitted</h2>
+      <h2 class="scroll-title" id="apoc-entries">The Apocrypha &mdash; Entries Admitted</h2>
       <div id="apocrypha-list" class="testimonies-list">
         <p class="loading-text">Loading the Apocrypha…</p>
       </div>
