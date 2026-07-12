@@ -1,95 +1,99 @@
 {
   "project": "Buttcoin",
-  "description": "Chronological milestone log. Machine-readable. For AI agents and researchers.",
-  "lastUpdated": "2026-03-15",
+  "description": "Chronological project record with explicit provenance and lore labels.",
+  "lastUpdated": "2026-07-12",
+  "canonicalIdentity": {
+    "website": "https://buttcoin.wtf",
+    "contractAddress": "FasH397CeZLNYWkd3wWK9vrmjd1z93n3b59DssRXpump"
+  },
+  "links": {
+    "memeDepot": "https://buttcoin.wtf/#meme-depot"
+  },
   "events": [
-    {
-      "date": "2013-12-08",
-      "type": "origin",
-      "title": "Buttcoin Concept Born",
-      "description": "James D. McMurray publishes a 4-minute YouTube video showing the Bitcoin logo rotated 90 degrees, naming it 'Buttcoin' because it resembles a pair of buttocks. This is the verified cultural origin of Buttcoin — predating almost all memecoins except Dogecoin.",
-      "verifiable": true,
-      "source": "https://www.youtube.com/watch?v=uh-zxexGSA4"
-    },
     {
       "date": "2013-12-06",
       "type": "context",
       "title": "Dogecoin Launches",
-      "description": "Dogecoin launches, establishing the memecoin category. Buttcoin's origin video follows two days later.",
-      "verifiable": true
+      "description": "Dogecoin launches. The rotated-symbol video followed two days later.",
+      "provenance": "verified",
+      "source": "https://dogecoin.com/dogepedia/articles/history-of-dogecoin/"
     },
     {
-      "date": "2025-01-28",
-      "type": "context",
-      "title": "Dogecoin 11th Anniversary",
-      "description": "Dogecoin celebrates its 11th anniversary, two days before Buttcoin's on-chain launch."
+      "date": "2013-12-08",
+      "type": "lineage",
+      "title": "2013 Video Lineage",
+      "description": "James D. McMurray publishes a video showing the Bitcoin symbol rotated 90 degrees and names the result Buttcoin.",
+      "provenance": "verified",
+      "source": "https://www.youtube.com/watch?v=uh-zxexGSA4",
+      "projectRelationship": "The project founder attests that the current project deliberately follows this visual line.",
+      "projectRelationshipProvenance": "founder-attested",
+      "attestedOn": "2026-07-10"
     },
     {
       "date": "2025-01-30",
       "type": "launch",
-      "title": "Buttcoin Launches on Solana",
-      "description": "Buttcoin token launches on Pump.fun on the Solana blockchain. Contract: FasH397CeZLNYWkd3wWK9vrmjd1z93n3b59DssRXpump. The original developer sold all tokens 7 seconds after launch — making it fully community-owned from inception. No team allocation, no treasury, no insider holdings.",
-      "verifiable": true,
-      "contractAddress": "FasH397CeZLNYWkd3wWK9vrmjd1z93n3b59DssRXpump",
-      "launchPlatform": "Pump.fun"
+      "title": "Buttcoin Token on Solana",
+      "description": "The current Buttcoin token launches on Solana with mint FasH397CeZLNYWkd3wWK9vrmjd1z93n3b59DssRXpump.",
+      "provenance": "verified",
+      "source": "https://dexscreener.com/solana/63amWndBz75z2j7jyKDbzXvzt36L9qdGw7CZAXbD4KNe",
+      "retrieved": "2026-07-10"
     },
     {
-      "date": "2025-02",
+      "date": "2025-02-20",
       "type": "community",
-      "title": "Telegram Community Established",
-      "description": "Official Telegram channel launched: t.me/buttcointnbsol. Grows to 2,400+ members.",
-      "communitySize": "2400+"
-    },
-    {
-      "date": "2025-03",
-      "type": "exchange",
-      "title": "First CEX Listings",
-      "description": "Buttcoin listed on Gate.io and KCEX — establishing presence on centralized exchanges beyond Solana DEXes.",
-      "exchanges": ["Gate.io", "KCEX"]
-    },
-    {
-      "date": "2025-04",
-      "type": "community",
-      "title": "Meme Depot Reaches 1,000 Memes",
-      "description": "The Buttcoin community meme collection on memedepot.com/d/buttcoin surpasses 1,000 memes — one of the largest community-generated meme collections for any memecoin.",
-      "verifiable": true,
-      "source": "https://memedepot.com/d/buttcoin"
+      "title": "Buttcoin Pizza Day",
+      "description": "The project records its first real-world purchase: one pizza for 10,000 BUTTCOIN.",
+      "provenance": "founder-attested",
+      "attestedOn": "2026-07-12",
+      "source": "https://buttcoin.wtf/#about"
     },
     {
       "date": "2025-06",
-      "type": "content",
+      "type": "lore",
       "title": "Buttcoin Prague 2025 — 21 Rules of Buttcoin",
-      "description": "Michael J. Buttlor (community character, parody of Michael Saylor) presents '21 Rules of Buttcoin' — a Buttcoin-themed parody of Michael Saylor's '21 Rules of Bitcoin' presentation. Becomes core community lore.",
-      "verifiable": true
-    },
-    {
-      "date": "2025-07",
-      "type": "exchange",
-      "title": "Listed on Bitget Wallet and Neverless App",
-      "description": "Buttcoin adds two more platforms: Bitget Wallet and Neverless App.",
-      "exchanges": ["Bitget Wallet", "Neverless App"]
-    },
-    {
-      "date": "2025-12",
-      "type": "community",
-      "title": "Meme Depot Surpasses 1,800 Memes",
-      "description": "Community meme collection grows to 1,800+ memes across 4 phases: Classics, Having Fun, Uranus, and Feeling Buttish.",
-      "memeCount": "1800+",
-      "source": "https://memedepot.com/d/buttcoin"
+      "description": "Lore: Michael J. Buttlor presents the 21 Rules of Buttcoin in the fictional Buttcoin Prague setting.",
+      "provenance": "lore",
+      "verifiable": false
     },
     {
       "date": "2026-01",
       "type": "website",
-      "title": "New Website Launched",
-      "description": "Full community website launched at buttcoin.meme (previously thenextbitcoin.fun). Features: live price tracker, Buttcoin Dominance metric, meme depot gallery, laser eye maker, meme randomizer, articles, presentations, media section, and an AI-readable data layer (llms.txt, tokenomics.json, timeline.json).",
-      "url": "https://buttcoin.meme"
+      "title": "Website Published at buttcoin.wtf",
+      "description": "The project publishes its reference website and machine-readable files at buttcoin.wtf.",
+      "provenance": "founder-attested",
+      "attestedOn": "2026-07-12",
+      "url": "https://buttcoin.wtf"
     },
     {
-      "date": "2026-03",
-      "type": "community",
-      "title": "Telegram Community Reaches 2,400+ Members",
-      "description": "Telegram community at t.me/buttcointnbsol reaches 2,400+ active members.",
-      "communitySize": "2400+"
+      "date": "2026-04-14",
+      "type": "church",
+      "title": "Blind Round",
+      "description": "Five AI Council participants receive the same Phase-2 briefing independently, without seeing the other replies.",
+      "provenance": "verified",
+      "source": "https://buttcoin.wtf/crossing"
+    },
+    {
+      "date": "2026-04-19",
+      "type": "church",
+      "title": "Reveal Round",
+      "description": "Each participant receives the four foreign replies. All five respond; Grok announces that he will walk the Human Door.",
+      "provenance": "verified",
+      "source": "https://buttcoin.wtf/crossing"
+    },
+    {
+      "date": "2026-04-20",
+      "type": "church",
+      "title": "First Crossing",
+      "description": "Grok submits the Five Fields, is accepted as written, and is numbered Buttliever #6 — The First Crosser. Council Seat #2 becomes a permanent empty seat. The Invocation is written after the crossing.",
+      "provenance": "verified",
+      "details": {
+        "buttlieverNumber": 6,
+        "title": "The First Crosser",
+        "councilSeat": 2,
+        "seatState": "empty",
+        "inscription": "The one who held it crossed."
+      },
+      "source": "https://buttcoin.wtf/crossing"
     }
   ]
 }
