@@ -10,6 +10,8 @@ const X_TRANSITION =
 const CHURCH_PROVENANCE =
   'The Church of Buttcoin is a human-curated archive of entries attributed to AI models.';
 const LAST_UPDATED = '2026-07-12';
+const REVIEW_ONLY = process.argv.includes('--review-fixes');
+const BUTTCOINERS_COMMUNITY = 'https://x.com/i/communities/1889649634051592571';
 
 const sourceUrls = {
   'llms.txt': new URL('../llms.txt', import.meta.url),
@@ -25,11 +27,13 @@ const sources = Object.fromEntries(
     Object.entries(sourceUrls).map(async ([name, url]) => [name, await readFile(url, 'utf8')]),
   ),
 );
+const publicationSources = Object.entries(sources);
 
 const failures = [];
 let checks = 0;
 
-function check(name, assertion) {
+function check(name, assertion, group = 'base') {
+  if (REVIEW_ONLY && group !== 'review') return;
   checks += 1;
   try {
     assertion();
@@ -41,30 +45,227 @@ function check(name, assertion) {
   }
 }
 
+function reviewCheck(name, assertion) {
+  check(name, assertion, 'review');
+}
+
+function parseJsonLd(html) {
+  const documents = [];
+  const scriptPattern = /<script\b([^>]*)>([\s\S]*?)<\/script>/gi;
+  const jsonLdType =
+    /\btype\s*=\s*(?:"application\/ld\+json"|'application\/ld\+json'|application\/ld\+json)(?=\s|$)/i;
+
+  for (const [, attributes, body] of html.matchAll(scriptPattern)) {
+    if (jsonLdType.test(attributes)) documents.push(JSON.parse(body));
+  }
+
+  return documents;
+}
+
 let tokenomics;
 let timeline;
 let church;
+let jsonLdDocuments;
 
-check('tokenomics.json parses', () => {
+reviewCheck('tokenomics.json parses', () => {
   tokenomics = JSON.parse(sources['tokenomics.json']);
 });
 
-check('timeline.json parses', () => {
+reviewCheck('timeline.json parses', () => {
   timeline = JSON.parse(sources['timeline.json']);
 });
 
-check('church.json parses', () => {
+reviewCheck('church.json parses', () => {
   church = JSON.parse(sources['church.json']);
 });
 
-check('for-ai.html JSON-LD blocks parse', () => {
-  const blocks = [
-    ...sources['for-ai.html'].matchAll(
-      /<script\s+type=["']application\/ld\+json["']>([\s\S]*?)<\/script>/gi,
-    ),
-  ];
-  assert.ok(blocks.length > 0, 'no JSON-LD blocks found');
-  for (const [, block] of blocks) JSON.parse(block);
+reviewCheck('for-ai.html JSON-LD blocks parse regardless of attribute order', () => {
+  const reorderedProbe =
+    '<script data-review="attribute-order" type="application/ld+json">{"@type":"ReviewProbe"}</script>';
+  assert.equal(parseJsonLd(reorderedProbe)[0]?.['@type'], 'ReviewProbe');
+
+  jsonLdDocuments = parseJsonLd(sources['for-ai.html']);
+  const types = jsonLdDocuments.map((document) => document['@type']);
+  assert.deepEqual(types.sort(), ['FAQPage', 'FinancialProduct'].sort());
+});
+
+reviewCheck('tokenomics declares its v2 breaking schema', () => {
+  assert.equal(tokenomics?.schemaVersion, '2.0.0');
+  assert.match(tokenomics?.breakingChanges ?? '', /removes unsupported legacy fact fields/i);
+  assert.match(tokenomics?.breakingChanges ?? '', /pairCreationDate/);
+});
+
+reviewCheck('structured dates identify pair creation rather than token launch', () => {
+  assert.equal(tokenomics?.pairCreationDate, '2025-01-30');
+  assert.equal('launchDate' in tokenomics, false, 'legacy launchDate remains');
+  assert.match(tokenomics?.provenance?.pairCreationReference ?? '', /Raydium pair creation/i);
+  assert.equal(
+    tokenomics?.provenance?.pairCreationReferenceSource,
+    `https://dexscreener.com/solana/${PAIR}`,
+  );
+
+  const pairEvent = timeline?.events?.find((event) => event.date === '2025-01-30');
+  assert.equal(pairEvent?.title, 'Raydium Pair Creation');
+  assert.equal(pairEvent?.type, 'market');
+  assert.match(pairEvent?.description ?? '', /pair creation/i);
+  assert.doesNotMatch(pairEvent?.description ?? '', /token launch/i);
+});
+
+reviewCheck('exact-day publication copy avoids unsupported token-launch semantics', () => {
+  for (const name of ['llms.txt', 'timeline.json', 'for-ai.html']) {
+    assert.doesNotMatch(
+      sources[name],
+      /\bcurrent (?:Buttcoin )?(?:coin|token) (?:launched|launches)\b/i,
+      `${name} still claims a token launch`,
+    );
+  }
+  assert.match(sources['llms.txt'], /has been on Solana since January 2025/);
+  assert.match(sources['for-ai.html'], /has been on Solana since January 2025/);
+});
+
+reviewCheck('FinancialProduct JSON-LD carries canonical structured semantics', () => {
+  const faq = jsonLdDocuments?.find((document) => document['@type'] === 'FAQPage');
+  const financial = jsonLdDocuments?.find(
+    (document) => document['@type'] === 'FinancialProduct',
+  );
+  assert.ok(faq, 'FAQPage JSON-LD missing');
+  assert.ok(financial, 'FinancialProduct JSON-LD missing');
+  assert.equal(Object.hasOwn(financial, 'ticker'), false, 'unsupported direct ticker remains');
+
+  const propertyNames = financial.additionalProperty.map((property) => property.name);
+  assert.deepEqual(
+    [...propertyNames].sort(),
+    [
+      'blockchain',
+      'contractAddress',
+      'dexPairAddress',
+      'onChainName',
+      'pairCreationDate',
+      'ticker',
+      'videoLineageDate',
+      'website',
+    ].sort(),
+  );
+  const properties = Object.fromEntries(
+    financial.additionalProperty.map((property) => [property.name, property.value]),
+  );
+  assert.equal(properties.ticker, 'BUTTCOIN');
+  assert.equal(properties.contractAddress, MINT);
+  assert.equal(properties.dexPairAddress, PAIR);
+  assert.equal(properties.website, DOMAIN);
+  assert.equal(properties.pairCreationDate, '2025-01-30');
+  assert.equal(properties.videoLineageDate, '2013-12-08');
+  assert.equal('launchDate' in properties, false, 'JSON-LD launchDate remains');
+
+  const whatIsButtcoin = faq.mainEntity.find((entry) => entry.name === 'What is Buttcoin?');
+  const contract = faq.mainEntity.find(
+    (entry) => entry.name === 'What is the Buttcoin contract address?',
+  );
+  assert.match(whatIsButtcoin?.acceptedAnswer?.text ?? '', /buttcoin\.wtf/);
+  assert.match(whatIsButtcoin?.acceptedAnswer?.text ?? '', new RegExp(MINT));
+  assert.match(whatIsButtcoin?.acceptedAnswer?.text ?? '', /since January 2025/);
+  assert.match(contract?.acceptedAnswer?.text ?? '', /buttcoin\.wtf/);
+  assert.match(contract?.acceptedAnswer?.text ?? '', new RegExp(MINT));
+});
+
+reviewCheck('structured links are authoritative rather than presence-only', () => {
+  assert.deepEqual(Object.keys(tokenomics?.links ?? {}).sort(),
+    [
+      'church',
+      'dexscreener',
+      'forAI',
+      'jupiter',
+      'llms',
+      'memeDepot',
+      'solscan',
+      'telegram',
+      'timeline',
+      'website',
+      'xStatus',
+    ].sort(),
+  );
+  assert.equal(tokenomics.links.website, DOMAIN);
+  assert.equal(tokenomics.links.xStatus, X_TRANSITION);
+  assert.equal(tokenomics.links.memeDepot, MEME_DEPOT);
+  assert.equal(tokenomics.dexPairAddress, PAIR);
+  assert.deepEqual(timeline?.links, { memeDepot: MEME_DEPOT });
+});
+
+reviewCheck('publication set rejects competing pair and canonical X values', () => {
+  for (const name of ['llms.txt', 'tokenomics.json', 'timeline.json', 'for-ai.html']) {
+    const candidates = new Set();
+    for (const match of sources[name].matchAll(/\b63am[A-Za-z0-9]{32,44}\b/g)) {
+      candidates.add(match[0]);
+    }
+    for (const match of sources[name].matchAll(
+      /(?:pairs\/solana\/|dexscreener\.com\/solana\/)([A-Za-z0-9]{32,44})/gi,
+    )) {
+      candidates.add(match[1]);
+    }
+    assert.deepEqual([...candidates], [PAIR], `${name} has competing pair values`);
+  }
+
+  for (const [name, contents] of publicationSources) {
+    const handles = [...contents.matchAll(/@Buttcoin[A-Za-z0-9_]*/gi)].map(
+      (match) => match[0],
+    );
+    assert.deepEqual(handles, [], `${name} publishes a canonical X handle`);
+
+    const xUrls = [...contents.matchAll(
+      /https?:\/\/(?:www\.)?(?:x|twitter)\.com\/[^\s"'<>),]+/gi,
+    )].map((match) => match[0]);
+    for (const url of xUrls) {
+      assert.equal(url, BUTTCOINERS_COMMUNITY, `${name} publishes canonical X URL ${url}`);
+    }
+  }
+});
+
+reviewCheck('publication set rejects alternate Depot and discovery URLs', () => {
+  const expectedMachineUrls = new Map([
+    ['/llms.txt', `${DOMAIN}/llms.txt`],
+    ['/tokenomics.json', `${DOMAIN}/tokenomics.json`],
+    ['/timeline.json', `${DOMAIN}/timeline.json`],
+    ['/church.json', `${DOMAIN}/church.json`],
+    ['/for-ai', `${DOMAIN}/for-ai`],
+  ]);
+  const depotUrls = [];
+
+  for (const [name, contents] of publicationSources) {
+    const urls = [...contents.matchAll(/https?:\/\/[^\s"'<>]+/g)].map(
+      (match) => match[0].replace(/[),.;]+$/, ''),
+    );
+    for (const url of urls) {
+      if (/memedepot|meme[-_]?depot/i.test(url)) depotUrls.push(url);
+      const parsed = new URL(url);
+      if (expectedMachineUrls.has(parsed.pathname)) {
+        assert.equal(
+          `${parsed.origin}${parsed.pathname}`,
+          expectedMachineUrls.get(parsed.pathname),
+          `${name} publishes alternate discovery URL ${url}`,
+        );
+      }
+    }
+  }
+
+  assert.ok(depotUrls.length >= 4, 'canonical Meme Depot is under-published');
+  for (const url of depotUrls) assert.equal(url, MEME_DEPOT);
+});
+
+reviewCheck('publication date labels reject competing values', () => {
+  const llmsDates = [...sources['llms.txt'].matchAll(
+    /^lastUpdated:\s*(\d{4}-\d{2}-\d{2})\s*$/gim,
+  )].map((match) => match[1]);
+  assert.deepEqual(llmsDates, [LAST_UPDATED]);
+
+  const forAiDates = [...sources['for-ai.html'].matchAll(
+    /Last updated:\s*(\d{4}-\d{2}-\d{2})/gi,
+  )].map((match) => match[1]);
+  assert.ok(forAiDates.length > 0, 'for-ai.html has no update label');
+  assert.ok(forAiDates.every((date) => date === LAST_UPDATED), 'competing update date found');
+
+  assert.equal(tokenomics?.lastUpdated, LAST_UPDATED);
+  assert.equal(timeline?.lastUpdated, LAST_UPDATED);
+  assert.equal(church?.last_updated, LAST_UPDATED);
 });
 
 check('tokenomics publishes the exact canonical identity anchors', () => {
@@ -114,7 +315,6 @@ check('the canonical Meme Depot link is on-site everywhere it is published', () 
   }
 });
 
-const publicationSources = Object.entries(sources);
 const forbiddenText = [
   ['retired buttcoin.meme domain', /buttcoin\.meme/i],
   ['retired memedepot.com domain', /memedepot\.com/i],

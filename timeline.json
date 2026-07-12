@@ -31,9 +31,9 @@
     },
     {
       "date": "2025-01-30",
-      "type": "launch",
-      "title": "Buttcoin Token on Solana",
-      "description": "The current Buttcoin token launches on Solana with mint FasH397CeZLNYWkd3wWK9vrmjd1z93n3b59DssRXpump.",
+      "type": "market",
+      "title": "Raydium Pair Creation",
+      "description": "DexScreener records Raydium pair creation for the canonical mint on this date. The current Buttcoin token has been on Solana since January 2025.",
       "provenance": "verified",
       "source": "https://dexscreener.com/solana/63amWndBz75z2j7jyKDbzXvzt36L9qdGw7CZAXbD4KNe",
       "retrieved": "2026-07-10"
