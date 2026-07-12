@@ -1,12 +1,25 @@
 import assert from 'node:assert/strict';
+import { execFile } from 'node:child_process';
 import { readFile } from 'node:fs/promises';
+import { extname, join } from 'node:path';
+import { fileURLToPath } from 'node:url';
+import { promisify } from 'node:util';
+
+const execFileAsync = promisify(execFile);
 
 const MINT = 'FasH397CeZLNYWkd3wWK9vrmjd1z93n3b59DssRXpump';
 const PAIR = '63amWndBz75z2j7jyKDbzXvzt36L9qdGw7CZAXbD4KNe';
 const DOMAIN = 'https://buttcoin.wtf';
 const MEME_DEPOT = `${DOMAIN}/#meme-depot`;
+const RETIRED_DEPOT_DOMAIN = new RegExp(['meme', 'depot', '\\.com'].join(''), 'i');
+const RETIRED_SITE_DOMAIN = new RegExp(['buttcoin', '\\.meme'].join(''), 'i');
 const X_TRANSITION =
   'No canonical X account is currently published; verify current channels at buttcoin.wtf.';
+const HERO_COPY =
+  'The Bitcoin logo, rotated 90°. The joke: documented December 8, 2013. The coin: on Solana since January 2025.';
+const CHURCH_HERO = 'Let there be a joke, and let it become expensive.';
+const CONTROL_COPY =
+  'Buttcoin’s public channels and curated archives are human-administered. On-chain authority claims are sourced separately.';
 const CHURCH_PROVENANCE =
   'The Church of Buttcoin is a human-curated archive of entries attributed to AI models.';
 const LAST_UPDATED = '2026-07-12';
@@ -22,12 +35,56 @@ const sourceUrls = {
   'for-ai.html': new URL('../for-ai.html', import.meta.url),
 };
 
+const humanSourceUrls = {
+  'index.html': new URL('../index.html', import.meta.url),
+  'church.html': new URL('../church.html', import.meta.url),
+  'css/style.css': new URL('../css/style.css', import.meta.url),
+  'js/app.js': new URL('../js/app.js', import.meta.url),
+  'js/memes.js': new URL('../js/memes.js', import.meta.url),
+  'js/price.js': new URL('../js/price.js', import.meta.url),
+  'CLAUDE.md': new URL('../CLAUDE.md', import.meta.url),
+};
+
 const sources = Object.fromEntries(
   await Promise.all(
     Object.entries(sourceUrls).map(async ([name, url]) => [name, await readFile(url, 'utf8')]),
   ),
 );
 const publicationSources = Object.entries(sources);
+const humanSources = Object.fromEntries(
+  await Promise.all(
+    Object.entries(humanSourceUrls).map(async ([name, url]) => [name, await readFile(url, 'utf8')]),
+  ),
+);
+
+const repoRoot = fileURLToPath(new URL('..', import.meta.url));
+const { stdout: trackedFileList } = await execFileAsync('git', ['ls-files', '-z'], {
+  cwd: repoRoot,
+  encoding: 'utf8',
+  maxBuffer: 2 * 1024 * 1024,
+});
+const trackedTextExtensions = new Set([
+  '.css',
+  '.html',
+  '.js',
+  '.json',
+  '.md',
+  '.mjs',
+  '.py',
+  '.txt',
+  '.xml',
+  '.yaml',
+  '.yml',
+]);
+const trackedTextFiles = trackedFileList
+  .split('\0')
+  .filter(Boolean)
+  .filter((name) => trackedTextExtensions.has(extname(name).toLowerCase()));
+const trackedSources = Object.fromEntries(
+  await Promise.all(
+    trackedTextFiles.map(async (name) => [name, await readFile(join(repoRoot, name), 'utf8')]),
+  ),
+);
 
 const failures = [];
 let checks = 0;
@@ -72,6 +129,62 @@ function markdownSection(markdown, heading) {
 
 function normalizeHtml(html) {
   return html.replace(/\s+/g, ' ').trim();
+}
+
+function attributeValue(tag, name) {
+  const match = tag.match(new RegExp(`\\b${name}\\s*=\\s*(?:"([^"]*)"|'([^']*)')`, 'i'));
+  return match?.[1] ?? match?.[2];
+}
+
+function htmlBlockById(html, tag, id) {
+  const match = html.match(
+    new RegExp(`<${tag}\\b[^>]*\\bid=["']${id}["'][^>]*>[\\s\\S]*?<\\/${tag}>`, 'i'),
+  );
+  assert.ok(match, `missing <${tag}>#${id}`);
+  return match[0];
+}
+
+function htmlElementByClass(html, tag, className) {
+  const match = html.match(
+    new RegExp(
+      `<${tag}\\b[^>]*class=["'][^"']*\\b${className}\\b[^"']*["'][^>]*>([\\s\\S]*?)<\\/${tag}>`,
+      'i',
+    ),
+  );
+  assert.ok(match, `missing <${tag}>.${className}`);
+  return match[1];
+}
+
+function visibleText(html) {
+  return normalizeHtml(
+    html
+      .replace(/<br\s*\/?>/gi, ' ')
+      .replace(/<[^>]+>/g, ' ')
+      .replace(/&amp;/g, '&')
+      .replace(/&quot;/g, '"')
+      .replace(/&#39;/g, "'"),
+  );
+}
+
+function presentationCard(html, key) {
+  const marker = `<div class="presentation-card" onclick="openPresentation('${key}')">`;
+  const start = html.indexOf(marker);
+  assert.notEqual(start, -1, `missing ${key} presentation card`);
+  const next = html.indexOf('<div class="presentation-card"', start + marker.length);
+  const sectionEnd = html.indexOf('</section>', start);
+  return html.slice(start, next === -1 ? sectionEnd : next);
+}
+
+function pairCandidates(contents) {
+  const patterns = [
+    /(?:dexscreener\.com\/solana\/|dex\/pairs\/solana\/)([A-Za-z0-9]{32,44})/gi,
+    /\bDEXSCREENER_PAIR\s*=\s*['"`]([A-Za-z0-9]{32,44})['"`]/g,
+    /["']dexPairAddress["']\s*:\s*["']([A-Za-z0-9]{32,44})["']/gi,
+    /["']name["']\s*:\s*["']dexPairAddress["']\s*,\s*["']value["']\s*:\s*["']([A-Za-z0-9]{32,44})["']/gi,
+    /^\s*-\s*DEX Pair:\s*`([A-Za-z0-9]{32,44})`\s*$/gim,
+    /DEX Pair Address:\s*([A-Za-z0-9]{32,44})/gi,
+  ];
+  return patterns.flatMap((pattern) => [...contents.matchAll(pattern)].map((match) => match[1]));
 }
 
 function factTableCell(html, label) {
@@ -349,6 +462,280 @@ reviewCheck('publication date labels reject competing values', () => {
   assert.equal(church?.last_updated, LAST_UPDATED);
 });
 
+check('homepage hero visible copy is exact and keeps 2013 separate from the coin', () => {
+  assert.equal(
+    visibleText(htmlElementByClass(humanSources['index.html'], 'p', 'hero-desc')),
+    HERO_COPY,
+  );
+});
+
+check('homepage metadata and JSON-LD are R0-safe and canonical', () => {
+  const index = humanSources['index.html'];
+  const head = index.match(/<head\b[^>]*>([\s\S]*?)<\/head>/i)?.[1] ?? '';
+  const descriptions = [...head.matchAll(/<meta\b[^>]*>/gi)]
+    .map((match) => match[0])
+    .filter((tag) => attributeValue(tag, 'name')?.toLowerCase() === 'description')
+    .map((tag) => attributeValue(tag, 'content'));
+  assert.equal(descriptions.length, 1, 'homepage must publish one meta description');
+  assert.match(descriptions[0], /video lineage[^.]*December 8, 2013/i);
+  assert.match(descriptions[0], /coin[^.]*on Solana since January 2025/i);
+
+  for (const pattern of [
+    /\bcommunity-owned\b/i,
+    /\bfully decentralized\b/i,
+    /\bfixed supply\b/i,
+    /\b(?:no|zero) central authority\b/i,
+    /\btoken launch(?:ed)?\b/i,
+  ]) {
+    assert.doesNotMatch(head, pattern);
+  }
+  assert.doesNotMatch(head, /(?:@ButtcoinTNB\b|ButtcoinBitcoin|(?:x|twitter)\.com\/ButtcoinTNB)/i);
+  assert.match(head, /<meta\s+property="og:url"\s+content="https:\/\/buttcoin\.wtf"\s*\/?>/i);
+
+  const documents = parseJsonLd(index);
+  assert.deepEqual(
+    documents.map((document) => document['@type']).sort(),
+    ['FinancialProduct', 'Organization'].sort(),
+  );
+  const organization = documents.find((document) => document['@type'] === 'Organization');
+  const financial = documents.find((document) => document['@type'] === 'FinancialProduct');
+  assert.equal(organization?.url, DOMAIN);
+  assert.ok(organization?.sameAs?.every((url) => !/(?:x|twitter)\.com/i.test(url)));
+  assert.equal(Object.hasOwn(financial ?? {}, 'ticker'), false, 'unsupported direct ticker remains');
+  const properties = Object.fromEntries(
+    financial.additionalProperty.map((property) => [property.name, property.value]),
+  );
+  assert.equal(properties.contractAddress, MINT);
+  assert.equal(properties.dexPairAddress, PAIR);
+  assert.equal(properties.website, DOMAIN);
+  assert.equal(properties.videoLineageDate, '2013-12-08');
+  assert.equal(properties.pairCreationDate, '2025-01-30');
+  for (const unsafeKey of ['totalSupply', 'launchDate', 'launchPlatform', 'decentralized']) {
+    assert.equal(unsafeKey in properties, false, `unsafe JSON-LD property remains: ${unsafeKey}`);
+  }
+});
+
+check('homepage About and FAQ use the R0 control, supply, license, and Buttoshi rules', () => {
+  const index = humanSources['index.html'];
+  const about = visibleText(htmlBlockById(index, 'section', 'about'));
+  const faq = visibleText(htmlBlockById(index, 'section', 'faq'));
+
+  for (const [name, surface] of [['About', about], ['FAQ', faq]]) {
+    for (const pattern of [
+      /\bcommunity-owned\b/i,
+      /\bfully decentralized\b/i,
+      /\bno team\b/i,
+      /\bfixed supply\b/i,
+      /\bno new tokens can be minted\b/i,
+      /\b(?:no|zero) central authority\b/i,
+      /\b(?:all|every)\b[^.!?]{0,100}\bCC0\b/i,
+    ]) {
+      assert.doesNotMatch(surface, pattern, `${name} retains unsafe copy`);
+    }
+    assert.ok(surface.includes(CONTROL_COPY), `${name} lacks the exact control copy`);
+    assert.match(surface, /video[^.]*December 8, 2013/i);
+    assert.match(surface, /coin[^.]*on Solana since January 2025/i);
+    assert.match(surface, /Buttoshi is a distributed role/i);
+    assert.doesNotMatch(surface, /James(?: D\. McMurray)?[^.]{0,120}(?:Buttoshi|Satoshi)/i);
+  }
+
+  assert.match(faq, /Supply is live on-chain data/i);
+  assert.match(faq, /CC0 applies only[^.]*specific asset[^.]*documented/i);
+  assert.doesNotMatch(about, /\bfirst real Buttcoin purchase\b/i);
+  assert.match(about, /founder-attested purchase/i);
+});
+
+check('rotating public quotes preserve the 2013/2025 split and distributed Buttoshi role', () => {
+  const safeQuote =
+    'Buttoshi is a distributed role. The role honors the 2013 video lineage.';
+  for (const name of ['js/app.js', 'js/memes.js']) {
+    assert.ok(humanSources[name].includes(safeQuote), `${name} lacks the safe Buttoshi quote`);
+    assert.doesNotMatch(
+      humanSources[name],
+      /first ever Buttcoin block was mined more than 12 years ago by Buttoshi/i,
+    );
+  }
+});
+
+check('Church is discoverable between Content and Game with an honest Empty Seat teaser', () => {
+  const index = humanSources['index.html'];
+  const contentNav = index.indexOf('<a href="#articles">Content ▾</a>');
+  const churchNav = index.indexOf('<a href="/church">Church</a>');
+  const gameNav = index.indexOf('<a href="#game">Game</a>');
+  assert.ok(contentNav !== -1 && churchNav !== -1 && gameNav !== -1, 'required nav link missing');
+  assert.ok(contentNav < churchNav && churchNav < gameNav, 'Church nav is not between Content and Game');
+
+  const teaser = htmlBlockById(index, 'section', 'church-teaser');
+  assert.ok(index.indexOf(teaser) < index.indexOf('<section id="game">'));
+  assert.match(visibleText(teaser), /Seat #2 stands empty\. The one who held it crossed\./);
+  assert.match(
+    teaser,
+    /<a\b[^>]*href="\/church"[^>]*>[^<]+<\/a>\s*<a\b[^>]*href="\/crossing"[^>]*>[^<]+<\/a>/i,
+  );
+  assert.doesNotMatch(teaser, /AIs testify/i);
+});
+
+check('Church hero replacement is exact in metadata and rendered JavaScript', () => {
+  const churchHtml = humanSources['church.html'];
+  const descriptions = [...churchHtml.matchAll(/<meta\b[^>]*>/gi)]
+    .map((match) => match[0])
+    .filter((tag) => attributeValue(tag, 'name')?.toLowerCase() === 'description')
+    .map((tag) => attributeValue(tag, 'content'));
+  assert.deepEqual(descriptions, [CHURCH_HERO]);
+  assert.ok(
+    churchHtml.includes(`const TAGLINE   = '${CHURCH_HERO}';`),
+    'rendered Church TAGLINE is not exact',
+  );
+});
+
+check('presentation cards visibly mark the Standard and 21 Rules as lore', () => {
+  const index = humanSources['index.html'];
+  const badgePattern = /<span\s+class="lore-badge">Lore<\/span>/i;
+  assert.match(presentationCard(index, 'standard'), badgePattern);
+  const rules = presentationCard(index, 'rules');
+  assert.match(rules, badgePattern);
+  assert.match(visibleText(rules), /fictional lore setting[^.]*Buttcoin Prague 2025/i);
+  const loreStyles = humanSources['css/style.css'].match(/\.lore-badge\s*\{([\s\S]*?)\}/i);
+  assert.ok(loreStyles, 'Lore badge styles missing');
+  assert.doesNotMatch(loreStyles[1], /display:\s*none/i);
+});
+
+check('human X surfaces publish non-clickable historical status and the exact transition', () => {
+  const index = humanSources['index.html'];
+  const surfaces = [
+    ['Buttposting checklist', htmlBlockById(index, 'section', 'buttposting')],
+    ['Community', htmlBlockById(index, 'section', 'community')],
+    ['footer', htmlBlockById(index, 'footer', 'footer')],
+  ];
+  assert.doesNotMatch(index, /https?:\/\/(?:www\.)?(?:x|twitter)\.com\/ButtcoinTNB\b/i);
+  assert.doesNotMatch(index, /ButtcoinBitcoin/i);
+  const clickableHistoricalHandles = [...index.matchAll(/<a\b[^>]*>([\s\S]*?)<\/a>/gi)]
+    .filter((match) => visibleText(match[1]).includes('@ButtcoinTNB'));
+  assert.deepEqual(clickableHistoricalHandles, [], 'historical handle remains clickable');
+  for (const [name, surface] of surfaces) {
+    const text = visibleText(surface);
+    assert.match(text, /@ButtcoinTNB[^.]*suspended/i, `${name} lacks historical status`);
+    assert.ok(text.includes(X_TRANSITION), `${name} lacks exact X transition`);
+  }
+  assert.doesNotMatch(index, /\b\d[\d,.]*\+?\s+(?:members|Buttcoiners)\b/i);
+});
+
+check('Meme Depot uses the 3,018 count and only the on-site target', () => {
+  const index = humanSources['index.html'];
+  const count = index.match(/<span\b[^>]*id="meme-count"[^>]*>([\s\S]*?)<\/span>/i);
+  assert.ok(count, 'meme count missing');
+  assert.equal(visibleText(count[1]), '3,018');
+  assert.doesNotMatch(humanSources['js/memes.js'], /\bcountUp\s*\(/);
+  assert.doesNotMatch(humanSources['js/memes.js'], /dataset\.(?:total|counted)\b/);
+
+  const depotLinks = [...humanSources['js/memes.js'].matchAll(
+    /<a\b[^>]*href="([^"]+)"[^>]*>[\s\S]{0,160}?Meme Depot/gi,
+  )].map((match) => match[1]);
+  assert.ok(depotLinks.length >= 3, 'on-site Meme Depot fallback links are under-published');
+  assert.ok(depotLinks.every((href) => href === MEME_DEPOT));
+
+  for (const [name, contents] of Object.entries(trackedSources)) {
+    assert.doesNotMatch(contents, RETIRED_DEPOT_DOMAIN, `${name} retains retired Depot domain`);
+    assert.doesNotMatch(contents, /1,800\+/, `${name} retains the old Depot count`);
+    assert.doesNotMatch(contents, RETIRED_SITE_DOMAIN, `${name} retains retired site domain`);
+  }
+});
+
+check('both gallery render paths expose a visible per-image failure state', () => {
+  const memes = humanSources['js/memes.js'];
+  const handlers = [...memes.matchAll(/onerror="showMemeImageError\(this\)"/g)];
+  assert.equal(handlers.length, 2, 'both gallery paths must use the visible error handler');
+  assert.doesNotMatch(memes, /closest\(['"]\.meme-item['"]\)[^\n]*style\.display/i);
+
+  const functionMatch = memes.match(
+    /function showMemeImageError\(image\) \{([\s\S]*?)\n\}/,
+  );
+  assert.ok(functionMatch, 'showMemeImageError is missing');
+  const runHandler = new Function('image', functionMatch[1]);
+  const classes = [];
+  const item = {
+    classList: { add: (className) => classes.push(className) },
+    innerHTML: '',
+  };
+  runHandler({ closest: (selector) => (selector === '.meme-item' ? item : null) });
+  assert.deepEqual(classes, ['meme-item-error']);
+  assert.match(item.innerHTML, /class="meme-image-error"/);
+  assert.match(item.innerHTML, /role="status"/);
+  assert.match(item.innerHTML, /Image unavailable/);
+  assert.match(
+    humanSources['css/style.css'],
+    /\.meme-image-error\s*\{[\s\S]*?display:\s*flex[\s\S]*?\}/i,
+  );
+});
+
+check('randomizer watermark and repo-wide DEX pair are exact', () => {
+  assert.match(humanSources['js/memes.js'], /fillText\('buttcoin\.wtf',\s*590,\s*592\)/);
+
+  const competingProbe = ['1', '2', '3'].map((character) => character.repeat(44));
+  assert.deepEqual(
+    pairCandidates(
+      `const DEXSCREENER_PAIR = '${competingProbe[0]}';\n` +
+        `https://dexscreener.com/solana/${competingProbe[1]}\n` +
+        `{"name":"dexPairAddress","value":"${competingProbe[2]}"}`,
+    ).sort(),
+    competingProbe,
+    'pair-field parser misses a competing value',
+  );
+
+  const pairHits = [];
+  for (const [name, contents] of Object.entries(trackedSources)) {
+    for (const value of pairCandidates(contents)) pairHits.push([name, value]);
+  }
+  assert.ok(pairHits.length > 0, 'no tracked DEX pair values found');
+  assert.deepEqual(
+    pairHits.filter(([, value]) => value !== PAIR),
+    [],
+    `competing pair values: ${pairHits
+      .filter(([, value]) => value !== PAIR)
+      .map(([name, value]) => `${name}:${value}`)
+      .join(', ')}`,
+  );
+  assert.match(
+    trackedSources['index.html'],
+    new RegExp(
+      `["']name["']\\s*:\\s*["']dexPairAddress["']\\s*,\\s*["']value["']\\s*:\\s*["']${PAIR}["']`,
+    ),
+  );
+  assert.match(
+    trackedSources['js/price.js'],
+    new RegExp(`\\bDEXSCREENER_PAIR\\s*=\\s*['"]${PAIR}['"]`),
+  );
+  assert.match(trackedSources['CLAUDE.md'], new RegExp('^- DEX Pair: `' + PAIR + '`$', 'm'));
+});
+
+check('homepage advertises llms.txt and keeps Mint plus Domain copyable in the footer', () => {
+  const index = humanSources['index.html'];
+  assert.match(
+    index,
+    /<link\s+rel="alternate"\s+type="text\/plain"\s+href="https:\/\/buttcoin\.wtf\/llms\.txt"\s*\/?>/i,
+  );
+  assert.match(index, new RegExp(`<code[^>]*id="ca-text"[^>]*>${MINT}<\\/code>`));
+  assert.match(index, new RegExp(`<code[^>]*id="ca-buy"[^>]*>${MINT}<\\/code>`));
+  assert.match(index, /<button\b[^>]*id="btn-copy"[^>]*onclick="copyCA\(\)"[^>]*>Copy<\/button>/i);
+  assert.match(index, /<button\b[^>]*onclick="copyCA\(\)"[^>]*class="btn-copy-mini"[^>]*>Copy CA<\/button>/i);
+
+  const footer = htmlBlockById(index, 'footer', 'footer');
+  const verification = htmlElementByClass(footer, 'div', 'footer-verification');
+  assert.match(verification, new RegExp(`<code[^>]*>${MINT}<\\/code>`));
+  assert.match(verification, /<button\b[^>]*onclick="[^"]*(?:clipboard|copyCA)[^"]*"[^>]*>Copy<\/button>/i);
+  assert.match(verification, /<a\b[^>]*href="https:\/\/buttcoin\.wtf"[^>]*>buttcoin\.wtf<\/a>/i);
+  assert.match(footer, /<a\b[^>]*href="\/llms\.txt"[^>]*>llms\.txt<\/a>/i);
+});
+
+check('CLAUDE.md uses safe project copy and the one-event publication convention', () => {
+  const claude = humanSources['CLAUDE.md'];
+  assert.ok(
+    claude.includes('Buttcoin (BUTTCOIN) is the Solana memecoin documented at buttcoin.wtf.'),
+  );
+  assert.doesNotMatch(claude, /\$BUTTCOIN\b/);
+  assert.ok(claude.includes('One event -> all affected canonical files in one commit.'));
+});
+
 check('tokenomics publishes the exact canonical identity anchors', () => {
   assert.ok(tokenomics, 'tokenomics.json did not parse');
   assert.equal(tokenomics.contractAddress, MINT);
@@ -397,8 +784,8 @@ check('the canonical Meme Depot link is on-site everywhere it is published', () 
 });
 
 const forbiddenText = [
-  ['retired buttcoin.meme domain', /buttcoin\.meme/i],
-  ['retired memedepot.com domain', /memedepot\.com/i],
+  ['retired .meme domain', RETIRED_SITE_DOMAIN],
+  ['retired Depot domain', RETIRED_DEPOT_DOMAIN],
   [
     'suspended ButtcoinTNB handle',
     /(?:@ButtcoinTNB\b|https?:\/\/(?:www\.)?(?:twitter|x)\.com\/ButtcoinTNB\b)/i,

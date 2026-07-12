@@ -10,7 +10,7 @@ const QUOTES = [
   { text: "Hyperbuttcoinification is inevitable.", author: "The Buttverse" },
   { text: "Not to the moon, but one better: to Uranus.", author: "Buttcoin Community" },
   { text: "Buttcoin is never down. We are either up or upgrading.", author: "Buttoshi" },
-  { text: "The first ever Buttcoin block was mined more than 12 years ago by Buttoshi.", author: "Buttcoin Lore" },
+  { text: "Buttoshi is a distributed role. The role honors the 2013 video lineage.", author: "Buttcoin Lore" },
   { text: "How can you be a Bitcoin maxi, but not a Buttcoin maxi?", author: "The Buttverse" },
   { text: "Bitcoin|Buttcoin — best barbell strategy in the whole game right now.", author: "Michael J. Buttlor" },
   { text: "Stay humble and stack butts.", author: "Buttoshi" },

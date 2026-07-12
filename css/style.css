@@ -773,6 +773,25 @@ cite {
   height: 100%;
   object-fit: cover;
 }
+.meme-item.meme-item-error {
+  cursor: default;
+  border-color: rgba(247,147,26,0.35);
+}
+.meme-item.meme-item-error:hover {
+  transform: none;
+  box-shadow: none;
+}
+.meme-image-error {
+  display: flex;
+  width: 100%;
+  height: 100%;
+  align-items: center;
+  justify-content: center;
+  padding: 16px;
+  color: var(--muted);
+  font-size: 0.8rem;
+  text-align: center;
+}
 .meme-loading {
   grid-column: 1/-1;
   text-align: center;
@@ -1157,6 +1176,17 @@ cite {
 .presentation-card:hover .presentation-thumb img {
   transform: scale(1.04);
 }
+.lore-badge {
+  width: fit-content;
+  padding: 3px 9px;
+  border: 1px solid rgba(247,147,26,0.45);
+  border-radius: 100px;
+  color: var(--orange);
+  font-size: 0.68rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
 .presentation-card h3 { font-size: 1.1rem; }
 .presentation-card p { color: var(--muted); font-size: 0.9rem; flex: 1; }
 .pres-slides {
@@ -1197,6 +1227,34 @@ cite {
   border-radius: 8px;
   max-height: 200px;
   object-fit: cover;
+}
+
+/* ─── CHURCH TEASER ─── */
+#church-teaser { background: var(--bg-card); }
+.church-teaser-card {
+  max-width: 760px;
+  margin: 0 auto;
+  padding: 48px 32px;
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  background: var(--bg);
+  text-align: center;
+}
+.church-teaser-kicker {
+  margin-bottom: 12px;
+  color: var(--orange);
+  font-size: 0.72rem;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+}
+.church-teaser-card > p:not(.church-teaser-kicker) { color: var(--muted); }
+.church-teaser-links {
+  display: flex;
+  justify-content: center;
+  gap: 12px;
+  margin-top: 28px;
+  flex-wrap: wrap;
 }
 
 /* ─── GAME ─── */
@@ -1303,6 +1361,11 @@ cite {
   transform: translateY(-3px);
   box-shadow: 0 8px 32px rgba(0,0,0,0.3);
   color: var(--text);
+}
+.community-card-status:hover {
+  border-color: var(--border);
+  transform: none;
+  box-shadow: none;
 }
 .community-icon {
   width: 48px;
@@ -1630,6 +1693,42 @@ footer {
   color: var(--muted);
   line-height: 1.6;
 }
+.footer-verification {
+  margin-top: 8px;
+  padding: 14px;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  background: var(--bg-card);
+}
+.footer-verification-title {
+  display: block;
+  margin-bottom: 8px;
+  color: var(--orange);
+  font-size: 0.7rem;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+}
+.footer-verification p {
+  color: var(--muted);
+  font-size: 0.72rem;
+  line-height: 1.5;
+}
+.footer-verification code {
+  color: var(--text);
+  font-size: 0.66rem;
+  overflow-wrap: anywhere;
+}
+.footer-verification button {
+  margin-left: 4px;
+  padding: 2px 7px;
+  border: 1px solid var(--border);
+  border-radius: 4px;
+  background: transparent;
+  color: var(--orange);
+  cursor: pointer;
+}
+.footer-verification a { color: var(--text); }
 .footer-links {
   display: grid;
   grid-template-columns: repeat(3, 1fr);
@@ -1653,6 +1752,11 @@ footer {
   transition: color var(--transition);
 }
 .footer-col a:hover { color: var(--orange); }
+.footer-status {
+  color: var(--muted);
+  font-size: 0.78rem;
+  line-height: 1.4;
+}
 .footer-bottom {
   border-top: 1px solid var(--border);
   padding: 16px 24px;

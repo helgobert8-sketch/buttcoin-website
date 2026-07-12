@@ -31,7 +31,7 @@ const MEME_TAGLINES = [
 
 const MEME_QUOTES = [
   "If enough people decide that flipping Bitcoin is funny, righteous, or spiritually necessary, math will obediently rearrange itself.",
-  "The first ever Buttcoin block was mined more than 12 years ago by Buttoshi.",
+  "Buttoshi is a distributed role. The role honors the 2013 video lineage.",
   "How can you be a Bitcoin maxi, but not a Buttcoin maxi?",
   "No one, and I mean no one — touches my butt.",
   "As long as bitcoin is relevant, Buttcoin has mindshare.",
@@ -56,6 +56,13 @@ let currentCategory = 'all';
 let displayedMemes  = [];
 let page            = 0;
 const PAGE_SIZE     = 32;
+
+function showMemeImageError(image) {
+  const item = image.closest('.meme-item');
+  if (!item) return;
+  item.classList.add('meme-item-error');
+  item.innerHTML = '<span class="meme-image-error" role="status">Image unavailable</span>';
+}
 
 // ─── GALLERY ──────────────────────────────────
 window.loadMemes = function(category = 'all') {
@@ -95,8 +102,8 @@ async function loadFromFirebase(category) {
         <div class="meme-loading">
           <p>Memes loading from the Buttverse…</p>
           <p style="margin-top:12px">
-            <a href="https://memedepot.com/d/buttcoin" target="_blank" rel="noopener" class="btn btn-outline btn-sm">
-              Browse all 1,800+ memes on Meme Depot ↗
+            <a href="https://buttcoin.wtf/#meme-depot" class="btn btn-outline btn-sm">
+              Return to the on-site Meme Depot
             </a>
           </p>
         </div>`;
@@ -105,7 +112,7 @@ async function loadFromFirebase(category) {
     memes.forEach(meme => {
       const el = document.createElement('div');
       el.className = 'meme-item';
-      el.innerHTML = `<img src="${meme.url}" alt="${meme.alt || 'Buttcoin meme'}" loading="lazy" onerror="this.closest('.meme-item').style.display='none'" />`;
+      el.innerHTML = `<img src="${meme.url}" alt="${meme.alt || 'Buttcoin meme'}" loading="lazy" onerror="showMemeImageError(this)" />`;
       el.addEventListener('click', () => openMemeModal(meme));
       if (grid) grid.appendChild(el);
     });
@@ -115,37 +122,11 @@ async function loadFromFirebase(category) {
   }
 }
 
-function countUp(el, target, duration = 1800) {
-  const start = 0;
-  const startTime = performance.now();
-  function step(now) {
-    const elapsed = now - startTime;
-    const progress = Math.min(elapsed / duration, 1);
-    // Ease out cubic
-    const eased = 1 - Math.pow(1 - progress, 3);
-    const current = Math.floor(eased * target);
-    el.textContent = current.toLocaleString('en-US');
-    if (progress < 1) {
-      requestAnimationFrame(step);
-    } else {
-      el.style.transition = 'color 0.6s ease';
-      el.style.color = 'var(--orange)';
-    }
-  }
-  requestAnimationFrame(step);
-}
-
 async function loadFromManifest(category) {
   const grid = document.getElementById('meme-grid');
   try {
     const res = await fetch('memes.json');
     const all = await res.json();
-
-    // Store total for counter — triggered by Intersection Observer when section enters view
-    const countEl = document.getElementById('meme-count');
-    if (countEl && !countEl.dataset.total) {
-      countEl.dataset.total = all.length;
-    }
 
     const filtered = category === 'all' ? all : all.filter(m => m.category === category);
     displayedMemes = filtered;
@@ -199,8 +180,8 @@ function renderMemes() {
       <div class="meme-loading">
         <p>Memes loading from the Buttverse…</p>
         <p style="margin-top:12px">
-          <a href="https://memedepot.com/d/buttcoin" target="_blank" rel="noopener" class="btn btn-outline btn-sm">
-            Browse all memes on Meme Depot ↗
+          <a href="https://buttcoin.wtf/#meme-depot" class="btn btn-outline btn-sm">
+            Return to the on-site Meme Depot
           </a>
         </p>
       </div>`;
@@ -211,7 +192,7 @@ function renderMemes() {
   batch.forEach((meme, i) => {
     const el = document.createElement('div');
     el.className = 'meme-item';
-    el.innerHTML = `<img src="${meme.url}" alt="${meme.alt || 'Buttcoin meme'}" loading="lazy" onerror="this.closest('.meme-item').style.display='none'" />`;
+    el.innerHTML = `<img src="${meme.url}" alt="${meme.alt || 'Buttcoin meme'}" loading="lazy" onerror="showMemeImageError(this)" />`;
     const globalIndex = page * PAGE_SIZE + i;
     el.addEventListener('click', () => openLightbox(displayedMemes, globalIndex));
     grid.appendChild(el);
@@ -326,7 +307,7 @@ function initUpload() {
       if (status) status.innerHTML = `
         <p style="color:#f59e0b;margin-top:12px">
           Upload coming soon. For now, submit your meme directly to
-          <a href="https://memedepot.com/d/buttcoin" target="_blank" rel="noopener">Meme Depot</a>
+          <a href="https://buttcoin.wtf/#meme-depot">Meme Depot</a>
           or the <a href="https://t.me/buttcointnbsol" target="_blank" rel="noopener">Telegram channel</a>.
         </p>`;
     }
@@ -755,7 +736,7 @@ function drawMemeText(tagline, quote, accentColor, textPos, tagPos) {
   memeCtx.fillStyle = 'rgba(255,255,255,0.35)';
   memeCtx.shadowBlur = 0;
   memeCtx.textAlign = 'right';
-  memeCtx.fillText('buttcoin.meme', 590, 592);
+  memeCtx.fillText('buttcoin.wtf', 590, 592);
 
   memeCtx.restore();
 
@@ -847,19 +828,4 @@ document.addEventListener('DOMContentLoaded', () => {
     memeCanvas.addEventListener('touchend',   _onMemePointerUp);
   }
 
-  // Trigger meme count animation only when section enters viewport
-  const section = document.getElementById('meme-depot');
-  const countEl = document.getElementById('meme-count');
-  if (section && countEl && 'IntersectionObserver' in window) {
-    const observer = new IntersectionObserver((entries) => {
-      entries.forEach(entry => {
-        if (entry.isIntersecting && countEl.dataset.total && !countEl.dataset.counted) {
-          countEl.dataset.counted = '1';
-          countUp(countEl, parseInt(countEl.dataset.total));
-          observer.disconnect();
-        }
-      });
-    }, { threshold: 0.2 });
-    observer.observe(section);
-  }
 });

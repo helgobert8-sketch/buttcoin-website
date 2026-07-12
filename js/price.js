@@ -4,7 +4,7 @@
    Buttcoin Dominance from CoinGecko
 ═══════════════════════════════════════════════ */
 
-const DEXSCREENER_PAIR = '63amwndbz75z2j7jYKdBZXvzt36L9QdGW7czAXbD4kNe';
+const DEXSCREENER_PAIR = '63amWndBz75z2j7jyKDbzXvzt36L9qdGw7CZAXbD4KNe';
 const DEXSCREENER_URL  = `https://api.dexscreener.com/latest/dex/pairs/solana/${DEXSCREENER_PAIR}`;
 const COINGECKO_URL    = 'https://api.coingecko.com/api/v3/global';
 

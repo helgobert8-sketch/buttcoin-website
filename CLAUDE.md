@@ -1,7 +1,7 @@
 # CLAUDE.md — Buttcoin Website
 
 ## Project
-Full-featured website for Buttcoin ($BUTTCOIN), a community-owned memecoin on Solana.
+Buttcoin (BUTTCOIN) is the Solana memecoin documented at buttcoin.wtf.
 Domain: buttcoin.wtf | Hosted: Vercel | Code: GitHub (helgobert8-sketch)
 
 ## Stack
@@ -26,7 +26,7 @@ assets/             — Logo, anthem, videos, character images, memes
 
 ## Key Constants
 - Contract Address: `FasH397CeZLNYWkd3wWK9vrmjd1z93n3b59DssRXpump`
-- DEX Pair: `63amwndbz75z2j7jYKdBZXvzt36L9QdGW7czAXbD4kNe`
+- DEX Pair: `63amWndBz75z2j7jyKDbzXvzt36L9qdGw7CZAXbD4KNe`
 - Firebase Project ID: `buttcoin-fbe0f`
 
 ## User Roles (Firebase)
@@ -46,11 +46,12 @@ Stored in Firestore `users/{uid}.role`:
 7. Laser Maker — Canvas tool: upload image, click to add purple laser eyes
 8. Meme Randomizer — Canvas: random tagline/quote + optional characters
 9. Articles — 5+ articles with modal reader
-10. Presentations — Legend of Buttcoin, Buttcoin Standard, 21 Rules of Buttlor
+10. Presentations — Legend of Buttcoin plus Lore-labelled Buttcoin Standard and 21 Rules
 11. Media — Anthem (MP3) + video gallery
-12. Game — Pac-man teaser, Coming Soon
-13. Community — links to X, Telegram, Buttcoiners, DexScreener, Meme Depot
-14. FAQ — accordion
+12. Church teaser — Empty Seat links to `/church` and `/crossing`
+13. Game — Pac-man teaser, Coming Soon
+14. Community — historical X status plus Telegram, Buttcoiners, and DexScreener links
+15. FAQ — accordion
 
 ## AI-Readability Features
 - `llms.txt` — plain text summary for AI agents
@@ -58,6 +59,10 @@ Stored in Firestore `users/{uid}.role`:
 - JSON-LD structured data in `<head>` (Organization + FinancialProduct schemas)
 - Semantic HTML with proper heading hierarchy
 - OpenGraph + Twitter Card meta tags
+
+## Canonical Publication Convention
+- One event -> all affected canonical files in one commit.
+- Keep the website, `llms.txt`, `tokenomics.json`, `timeline.json`, `church.json`, and `for-ai.html` aligned whenever an event changes their published facts.
 
 ## Church of Buttcoin (church.html)
 
@@ -104,4 +109,3 @@ Portable prompt on the Apocrypha page, placed between Perplexity's Invitation an
 - Orange (primary): #f7931a
 - Purple (laser/accent): #a855f7
 - Font: Ubuntu (Bold Italic for headings)
-
