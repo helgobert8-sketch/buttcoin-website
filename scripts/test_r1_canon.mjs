@@ -13,8 +13,15 @@ const DOMAIN = 'https://buttcoin.wtf';
 const MEME_DEPOT = `${DOMAIN}/#meme-depot`;
 const RETIRED_DEPOT_DOMAIN = new RegExp(['meme', 'depot', '\\.com'].join(''), 'i');
 const RETIRED_SITE_DOMAIN = new RegExp(['buttcoin', '\\.meme'].join(''), 'i');
-const X_TRANSITION =
-  'No canonical X account is currently published; verify current channels at buttcoin.wtf.';
+// D6 cutover: [DATUM] is replaced with the launch date on launch day.
+// The cutover-date guard check keeps this gate red until that happens.
+const X_CUTOVER_DATE = '[DATUM]';
+const X_CANONICAL_HANDLE = '@ButtcoinBitcoin';
+const X_CANONICAL_URL = 'https://x.com/ButtcoinBitcoin';
+const X_HANDOVER =
+  `@ButtcoinTNB is no longer under community control as of ${X_CUTOVER_DATE}; the canonical X account is @ButtcoinBitcoin — verify via this file.`;
+const X_STATUS =
+  `Canonical X account: @ButtcoinBitcoin — published ${X_CUTOVER_DATE}. @ButtcoinTNB is suspended (historical account); verify at buttcoin.wtf.`;
 const HERO_COPY =
   'The Bitcoin logo, rotated 90°. The joke: documented December 8, 2013. The coin: on Solana since January 2025.';
 const CHURCH_HERO = 'Let there be a joke, and let it become expensive.';
@@ -28,7 +35,7 @@ const PHILOSOPHICAL_SAFE_COPY =
   "The documented December 8, 2013 video shows the Bitcoin logo rotated 90 degrees. The project's adoption of that video lineage is founder-attested.";
 const BLUE_CHIP_LORE_COPY =
   "From the lore: Buttcoin is a blue chip meme in the making — the people's Bitcoin, carried by the steadfast belief that the most hilarious outcome is the most likely.";
-const LAST_UPDATED = '2026-07-12';
+const LAST_UPDATED = X_CUTOVER_DATE;
 const REVIEW_ONLY = process.argv.includes('--review-fixes');
 const BUTTCOINERS_COMMUNITY = 'https://x.com/i/communities/1889649634051592571';
 
@@ -268,7 +275,7 @@ function assertAllowedXUrls(entries) {
       /https?:\/\/(?:[A-Za-z0-9-]+\.)*(?:x|twitter)\.com\/[^\s"'<>),]+/gi,
     )].map((match) => match[0].replace(/[.;]+$/, ''));
     for (const url of urls) {
-      if (url !== BUTTCOINERS_COMMUNITY) violations.push(`${name}:${url}`);
+      if (url !== BUTTCOINERS_COMMUNITY && url !== X_CANONICAL_URL) violations.push(`${name}:${url}`);
     }
   }
   assert.deepEqual(violations, [], `unapproved X URLs: ${violations.join(', ')}`);
@@ -440,11 +447,13 @@ reviewCheck('structured links are authoritative rather than presence-only', () =
       'telegram',
       'timeline',
       'website',
+      'x',
       'xStatus',
     ].sort(),
   );
   assert.equal(tokenomics.links.website, DOMAIN);
-  assert.equal(tokenomics.links.xStatus, X_TRANSITION);
+  assert.equal(tokenomics.links.x, X_CANONICAL_URL);
+  assert.equal(tokenomics.links.xStatus, X_STATUS);
   assert.equal(tokenomics.links.memeDepot, MEME_DEPOT);
   assert.equal(tokenomics.links.jupiter, `https://jup.ag/swap/SOL-${MINT}`);
   assert.equal(tokenomics.dexPairAddress, PAIR);
@@ -546,7 +555,7 @@ reviewCheck('Pizza Day publishes exact founder-attested provenance and safe amou
     'The project records a founder-attested purchase: one pizza for 10,000 units of Buttcoin.',
   );
   assert.equal(pizza?.provenance, 'founder-attested');
-  assert.equal(pizza?.attestedOn, LAST_UPDATED);
+  assert.equal(pizza?.attestedOn, '2026-07-12');
   assert.equal(pizza?.source, `${DOMAIN}/#about`);
 });
 
@@ -562,15 +571,20 @@ reviewCheck('llms authoritative identity and channel lines are exact', () => {
   const depotLines = channels.split('\n').filter((line) => line.startsWith('- Meme Depot:'));
   assert.deepEqual(depotLines, [`- Meme Depot: ${MEME_DEPOT}`]);
 
+  const xLines = channels
+    .split('\n')
+    .filter((line) => line.startsWith('- Canonical X account:'));
+  assert.deepEqual(xLines, [`- Canonical X account: ${X_CANONICAL_URL} (${X_CANONICAL_HANDLE})`]);
+
   const statusLines = channels
     .split('\n')
     .filter((line) => line.trim() !== '' && !line.startsWith('- '));
-  assert.deepEqual(statusLines, [X_TRANSITION]);
+  assert.deepEqual(statusLines, [X_HANDOVER]);
 });
 
 reviewCheck('for-ai fact-table identity and channel cells are exact', () => {
   assert.equal(factTableCell(sources['for-ai.html'], 'DEX pair address'), `<code>${PAIR}</code>`);
-  assert.equal(factTableCell(sources['for-ai.html'], 'X status'), X_TRANSITION);
+  assert.equal(factTableCell(sources['for-ai.html'], 'X status'), X_STATUS);
   assert.equal(
     factTableCell(sources['for-ai.html'], 'Meme Depot'),
     `<a href="${MEME_DEPOT}">${MEME_DEPOT}</a>`,
@@ -584,7 +598,11 @@ reviewCheck('for-ai current-channel instruction is exact', () => {
   assert.ok(item, 'agent instruction 5 missing');
   const instruction = normalizeHtml(item[1]);
   assert.match(instruction, /^Current channels:/);
-  assert.equal(instruction.split(X_TRANSITION).length - 1, 1);
+  assert.equal(instruction.split(X_STATUS).length - 1, 1);
+  assert.ok(
+    instruction.includes(`<a href="${X_CANONICAL_URL}">x.com/ButtcoinBitcoin</a>`),
+    'current-channel instruction lacks the canonical X link',
+  );
 
   const depotHrefs = [...instruction.matchAll(
     /href="([^"]*(?:memedepot|meme[-_]?depot|#meme-depot)[^"]*)"/gi,
@@ -626,7 +644,7 @@ reviewCheck('publication set rejects competing pair and canonical X values', () 
       /(?:^|[^A-Za-z0-9_])(@[A-Za-z0-9_]{1,15}\b)/g,
     )]
       .map((match) => match[1])
-      .filter((handle) => !['@context', '@type'].includes(handle));
+      .filter((handle) => !['@context', '@type', X_CANONICAL_HANDLE, '@ButtcoinTNB'].includes(handle));
     assert.deepEqual(handles, [], `${name} publishes an @handle`);
 
   }
@@ -707,7 +725,7 @@ check('homepage metadata and JSON-LD are R0-safe and canonical', () => {
   ]) {
     assert.doesNotMatch(head, pattern);
   }
-  assert.doesNotMatch(head, /(?:@ButtcoinTNB\b|ButtcoinBitcoin|(?:x|twitter)\.com\/ButtcoinTNB)/i);
+  assert.doesNotMatch(head, /(?:@ButtcoinTNB\b|(?:x|twitter)\.com\/ButtcoinTNB)/i);
   assert.match(head, /<meta\s+property="og:url"\s+content="https:\/\/buttcoin\.wtf"\s*\/?>/i);
 
   const documents = parseJsonLd(index);
@@ -993,15 +1011,19 @@ check('human X surfaces publish non-clickable historical status and the exact tr
     ['footer', htmlBlockById(index, 'footer', 'footer')],
   ];
   assert.doesNotMatch(index, /https?:\/\/(?:www\.)?(?:x|twitter)\.com\/ButtcoinTNB\b/i);
-  assert.doesNotMatch(index, /ButtcoinBitcoin/i);
   const clickableHistoricalHandles = [...index.matchAll(/<a\b[^>]*>([\s\S]*?)<\/a>/gi)]
     .filter((match) => visibleText(match[1]).includes('@ButtcoinTNB'));
   assert.deepEqual(clickableHistoricalHandles, [], 'historical handle remains clickable');
   for (const [name, surface] of surfaces) {
     const text = visibleText(surface);
     assert.match(text, /@ButtcoinTNB[^.]*suspended/i, `${name} lacks historical status`);
-    assert.ok(text.includes(X_TRANSITION), `${name} lacks exact X transition`);
+    assert.ok(text.includes(X_STATUS), `${name} lacks exact canonical X status`);
   }
+  const communitySection = htmlBlockById(index, 'section', 'community');
+  assert.ok(
+    communitySection.includes(`href="${X_CANONICAL_URL}"`),
+    'community section lacks the clickable canonical X link',
+  );
   assert.doesNotMatch(index, /\b\d[\d,.]*\+?\s+(?:members|Buttcoiners)\b/i);
 });
 
@@ -1204,10 +1226,37 @@ check('for-ai.html publishes the exact canonical identity anchors', () => {
   assert.ok(sources['for-ai.html'].includes(PAIR), `missing ${PAIR}`);
 });
 
-check('canonical channel surfaces publish the exact transitional X sentence', () => {
+check('canonical channel surfaces publish the exact canonical X status', () => {
+  assert.ok(sources['llms.txt'].includes(X_HANDOVER), 'llms.txt is missing the handover sentence');
+  assert.equal(
+    JSON.parse(sources['tokenomics.json'])?.links?.xStatus,
+    X_STATUS,
+    'tokenomics.json xStatus mismatch',
+  );
+  assert.equal(
+    JSON.parse(sources['tokenomics.json'])?.links?.x,
+    X_CANONICAL_URL,
+    'tokenomics.json links.x mismatch',
+  );
+  assert.ok(sources['for-ai.html'].includes(X_STATUS), 'for-ai.html is missing the X status');
   for (const name of ['llms.txt', 'tokenomics.json', 'for-ai.html']) {
-    assert.ok(sources[name].includes(X_TRANSITION), `${name} is missing the X transition`);
+    assert.ok(!sources[name].includes('No canonical X account'), `${name} retains the pre-cutover sentence`);
   }
+});
+
+check('cutover date is set and consistent across surfaces', () => {
+  assert.match(
+    X_CUTOVER_DATE,
+    /^\d{4}-\d{2}-\d{2}$/,
+    'X_CUTOVER_DATE is still the [DATUM] placeholder — set the launch date before merging',
+  );
+  assert.equal(LAST_UPDATED, X_CUTOVER_DATE);
+  const timelineDoc = JSON.parse(sources['timeline.json']);
+  const xEvent = timelineDoc?.events?.find((event) => event.title === 'Canonical X Account Published');
+  assert.ok(xEvent, 'timeline lacks the canonical X publication event');
+  assert.equal(xEvent?.date, X_CUTOVER_DATE);
+  assert.equal(xEvent?.provenance, 'founder-attested');
+  assert.equal(xEvent?.source, X_CANONICAL_URL);
 });
 
 check('the canonical Meme Depot link is on-site everywhere it is published', () => {
@@ -1219,7 +1268,6 @@ check('the canonical Meme Depot link is on-site everywhere it is published', () 
 const forbiddenText = [
   ['retired .meme domain', RETIRED_SITE_DOMAIN],
   ['retired Depot domain', RETIRED_DEPOT_DOMAIN],
-  ['pre-launch ButtcoinBitcoin handle', /ButtcoinBitcoin/i],
   ['ambiguous BUTTCOIN cashtag', /\$BUTTCOIN\b/i],
   ['community-owned claim', /\bcommunity(?:-|\s+)owned\b/i],
   ['fully decentralized claim', /\bfully decentral(?:ized|ised)\b/i],
@@ -1288,7 +1336,7 @@ reviewCheck('historical ButtcoinTNB text is suspended-status only and never clic
     for (const line of contents.split(/\r?\n/).filter((entry) => entry.includes('@ButtcoinTNB'))) {
       assert.match(
         visibleText(line),
-        /@ButtcoinTNB[^.!?]{0,120}\bsuspend(?:ed|ion)\b/i,
+        /@ButtcoinTNB[^.!?]{0,120}\b(?:suspend(?:ed|ion)|no longer under community control)\b/i,
         `${name} publishes an unqualified historical handle`,
       );
     }
