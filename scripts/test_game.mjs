@@ -176,6 +176,19 @@ test('Wrong and Still results each lower level but never below zero', async () =
   assert.equal(atFloor.speedLevel, 0);
 });
 
+test('best deviation keeps the smallest result across successful and failed attempts', async () => {
+  const { applyResult, classifyAngle } = await import('../js/game-logic.mjs');
+
+  const firstFailure = applyResult(gameState(), classifyAngle(14));
+  const worseThanBest = applyResult(
+    gameState({ bestDeviation: 0.25 }),
+    classifyAngle(109),
+  );
+
+  assert.equal(firstFailure.bestDeviation, 90);
+  assert.equal(worseThanBest.bestDeviation, 0.25);
+});
+
 test('speed grows by level and caps at 720 degrees per second', async () => {
   const { speedForLevel } = await import('../js/game-logic.mjs');
 
@@ -297,6 +310,56 @@ test('storage exceptions use an in-memory fallback instead of breaking play', as
     bestDeviation: 0.1,
     speedLevel: 3,
     seenMilestones: [10],
+  }));
+});
+
+test('new in-memory progress wins when storage still exposes stale data after a failed write', async () => {
+  const { loadPersistedState, savePersistedState } = await import('../js/game-logic.mjs');
+  const staleState = gameState({
+    lifetimeFlips: 4,
+    bestDeviation: 2,
+    speedLevel: 2,
+  });
+  const currentState = gameState({
+    lifetimeFlips: 5,
+    bestDeviation: 0.4,
+    speedLevel: 3,
+    streak: 1,
+  });
+  const staleStorage = {
+    getItem() {
+      return JSON.stringify(staleState);
+    },
+    setItem() {
+      throw new Error('write failed');
+    },
+  };
+
+  savePersistedState(staleStorage, currentState);
+
+  assert.deepEqual(loadPersistedState(staleStorage), gameState({
+    lifetimeFlips: 5,
+    bestDeviation: 0.4,
+    speedLevel: 3,
+  }));
+});
+
+test('an initial load without an in-memory value reads valid storage', async () => {
+  const { loadPersistedState } = await import('../js/game-logic.mjs');
+  const storage = new MemoryStorage(JSON.stringify({
+    lifetimeFlips: 12,
+    bestDeviation: 0.3,
+    speedLevel: 4,
+    seenMilestones: [10],
+    muted: true,
+  }));
+
+  assert.deepEqual(loadPersistedState(storage), gameState({
+    lifetimeFlips: 12,
+    bestDeviation: 0.3,
+    speedLevel: 4,
+    seenMilestones: [10],
+    muted: true,
   }));
 });
 

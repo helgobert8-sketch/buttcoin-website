@@ -163,16 +163,16 @@ export function loadPersistedState(storage) {
   let serialized;
 
   try {
-    serialized = storage.getItem(STORAGE_KEY);
+    serialized = memoryFallback.get(storage);
   } catch {
-    // The in-memory copy below keeps the current session playable.
+    // A missing or invalid storage object falls through to persistent storage.
   }
 
   if (typeof serialized !== 'string') {
     try {
-      serialized = memoryFallback.get(storage);
+      serialized = storage.getItem(STORAGE_KEY);
     } catch {
-      // A missing or invalid storage object falls through to defaults.
+      // Storage failure falls through to defaults when no session copy exists.
     }
   }
 
