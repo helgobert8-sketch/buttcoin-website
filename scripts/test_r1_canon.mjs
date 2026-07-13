@@ -771,19 +771,47 @@ check('game publication surfaces and tracked game content obey the canonical con
     'encoded cashtag probe is not detected',
   );
 
+  function gamePolicyViolations(entries) {
+    const violations = [];
+    for (const [name, contents] of entries) {
+      const normalized = normalizePolicyText(contents);
+      if (cashtagPattern.test(normalized)) violations.push(`${name}:cashtag`);
+      if (bareTickerPattern.test(normalized)) violations.push(`${name}:bare ticker`);
+    }
+    return violations;
+  }
+
+  const homepageGameStyleName = 'css/style.css#game';
+  const homepageStyles = humanSources['css/style.css'];
+  const homepageGameStylesStart = homepageStyles.indexOf('#game {');
+  const homepageGameStylesEnd = homepageStyles.indexOf('#community {', homepageGameStylesStart);
+  assert.notEqual(homepageGameStylesStart, -1, 'homepage game styles missing');
+  assert.notEqual(homepageGameStylesEnd, -1, 'homepage game styles are not bounded');
+  const homepageGameStyles = homepageStyles.slice(
+    homepageGameStylesStart,
+    homepageGameStylesEnd,
+  );
   const gamePolicySources = [
     ...['game.html', 'css/game.css', 'js/game.mjs', 'js/game-logic.mjs'].map((name) => [
       name,
       trackedSources[name],
     ]),
     ['index.html#game', gameSection],
+    [homepageGameStyleName, homepageGameStyles],
     ['game.json', gameJsonSource ?? ''],
   ];
-  for (const [name, contents] of gamePolicySources) {
-    const normalized = normalizePolicyText(contents);
-    assert.doesNotMatch(normalized, cashtagPattern, `${name} contains a forbidden cashtag`);
-    assert.doesNotMatch(normalized, bareTickerPattern, `${name} contains a bare ticker`);
-  }
+  const mutatedGamePolicySources = gamePolicySources.map(([name, contents]) => [
+    name,
+    name === homepageGameStyleName
+      ? `${contents}\n.game-teaser-probe { content: "$${properName} ${tickerToken}"; }`
+      : contents,
+  ]);
+  assert.deepEqual(
+    gamePolicyViolations(mutatedGamePolicySources),
+    [`${homepageGameStyleName}:cashtag`, `${homepageGameStyleName}:bare ticker`],
+    'game policy scanner misses homepage game styles',
+  );
+  assert.deepEqual(gamePolicyViolations(gamePolicySources), []);
 });
 
 check('homepage hero visible copy is exact and keeps 2013 separate from the coin', () => {
