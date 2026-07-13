@@ -13,6 +13,14 @@ function test(name, run) {
   tests.push({ name, run });
 }
 
+function normalizeCssDeclarations(block) {
+  return block
+    .split(/\r?\n/)
+    .map((line) => line.trim())
+    .filter(Boolean)
+    .join('\n');
+}
+
 async function source(path) {
   try {
     return await readFile(new URL(path, import.meta.url), 'utf8');
@@ -389,6 +397,25 @@ test('the S1c target lives in a fourth stat and leaves the playfield coin unchan
   const targetRule = css.match(/\.target-coin\s*\{([^}]*)\}/)?.[1] ?? '';
   const targetPathRule = css.match(/\.target-coin\s+path\s*\{([^}]*)\}/)?.[1] ?? '';
   const activeRule = css.match(/#coin\s*\{([^}]*)\}/)?.[1] ?? '';
+  const expectedFrameRule = [
+    'display: grid;',
+    'place-items: center;',
+    'inline-size: min(68vw, 42vh, 24rem);',
+    'aspect-ratio: 1;',
+    'border-radius: 50%;',
+  ].join('\n');
+  const expectedActiveRule = [
+    'display: block;',
+    'width: 100%;',
+    'height: 100%;',
+    'transform: rotate(0deg);',
+    'transform-origin: 50% 50%;',
+    'will-change: transform;',
+    'user-select: none;',
+  ].join('\n');
+  const mobileBlock = css.match(
+    /@media\s*\(max-width:\s*30rem\)\s*\{([\s\S]*?)\r?\n\}\s*@media\s*\(prefers-reduced-motion:\s*reduce\)/,
+  )?.[1];
 
   assert.match(statsRule, /grid-template-columns:\s*repeat\(4,\s*auto\)/);
   assert.match(targetRule, /display:\s*block/);
@@ -401,14 +428,15 @@ test('the S1c target lives in a fourth stat and leaves the playfield coin unchan
   assert.match(targetPathRule, /stroke-width:\s*1\s*;/);
   assert.match(targetPathRule, /vector-effect:\s*non-scaling-stroke/);
 
-  assert.doesNotMatch(frameRule, /position|z-index/);
-  assert.doesNotMatch(activeRule, /position|z-index/);
-  assert.match(activeRule, /transform:\s*rotate\(0deg\)/);
-  assert.match(css, /@media\s*\(max-width:\s*30rem\)[\s\S]*?\.stats\s*\{[^}]*gap:/);
-  assert.doesNotMatch(
-    css.match(/@media\s*\(max-width:\s*30rem\)\s*\{([\s\S]*?)\n\}/)?.[1] ?? '',
-    /\.game-toolbar\s*\{/,
+  assert.equal(normalizeCssDeclarations(frameRule), expectedFrameRule);
+  assert.equal(normalizeCssDeclarations(activeRule), expectedActiveRule);
+  assert.ok(mobileBlock, 'expected the complete max-width: 30rem media block');
+  const mobileStatsRule = mobileBlock.match(/\.stats\s*\{([^}]*)\}/)?.[1] ?? '';
+  assert.equal(
+    normalizeCssDeclarations(mobileStatsRule),
+    'gap: clamp(0.5rem, 4vw, 1rem);',
   );
+  assert.doesNotMatch(mobileBlock, /\.game-toolbar\s*\{/);
   assert.match(
     css,
     /\.is-buttoshi\s+\.coin-frame\s*\{[^}]*rgba\(255,\s*207,\s*85,\s*0\.45\)/s,
