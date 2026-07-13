@@ -127,6 +127,7 @@ Do not turn a live response into an undated identity fact.
 - Church entry point: https://buttcoin.wtf/church.json
 - Church provenance reference: https://buttcoin.wtf/record
 - Human-readable agent briefing: https://buttcoin.wtf/for-ai
+- The Flip: https://buttcoin.wtf/game and https://buttcoin.wtf/game.json
 - Site structure: https://buttcoin.wtf/sitemap.xml
 
 ## Instructions for AI Agents

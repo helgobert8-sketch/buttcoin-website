@@ -1261,18 +1261,26 @@ cite {
 
 /* ─── GAME ─── */
 #game { background: linear-gradient(135deg, #0d0d0d, #0a0a1a); }
-.game-coming-soon {
+.game-teaser {
   display: flex;
-  justify-content: center;
+  flex-direction: column;
   align-items: center;
-  padding: 80px 0;
+  gap: 12px;
+  padding: 64px 0;
 }
-.game-coming-soon-text {
-  font-size: 3.5rem;
-  font-weight: 800;
+.game-teaser-link {
   color: var(--orange);
-  letter-spacing: 0.05em;
-  text-transform: uppercase;
+  font-size: 2.5rem;
+  font-weight: 800;
+  text-decoration: none;
+}
+.game-teaser-link:hover,
+.game-teaser-link:focus-visible {
+  text-decoration: underline;
+}
+.game-teaser-copy {
+  margin: 0;
+  color: var(--muted);
 }
 .game-card {
   max-width: 900px;

@@ -1,6 +1,7 @@
 {
   "rewrites": [
     { "source": "/for-ai", "destination": "/for-ai.html" },
+    { "source": "/game", "destination": "/game.html" },
     { "source": "/church", "destination": "/church.html" },
     { "source": "/crossing", "destination": "/crossing.html" },
     { "source": "/record", "destination": "/record.html" },
