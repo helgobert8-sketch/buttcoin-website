@@ -6,6 +6,8 @@ const tests = [];
 const tickerToken = ['BUTT', 'COIN'].join('');
 const forbiddenCashtagPattern = new RegExp(`\\$${tickerToken}\\b`, 'i');
 const forbiddenTickerPattern = new RegExp(`\\b${tickerToken}\\b`);
+const officialOrangePath = 'm63.033,39.744c-4.274,17.143-21.637,27.576-38.782,23.301-17.138-4.274-27.571-21.638-23.295-38.78,4.272-17.145,21.635-27.579,38.775-23.305,17.144,4.274,27.576,21.64,23.302,38.784z';
+const officialMarkPath = 'm46.103,27.444c0.637-4.258-2.605-6.547-7.038-8.074l1.438-5.768-3.511-0.875-1.4,5.616c-0.923-0.23-1.871-0.447-2.813-0.662l1.41-5.653-3.509-0.875-1.439,5.766c-0.764-0.174-1.514-0.346-2.242-0.527l0.004-0.018-4.842-1.209-0.934,3.75s2.605,0.597,2.55,0.634c1.422,0.355,1.679,1.296,1.636,2.042l-1.638,6.571c0.098,0.025,0.225,0.061,0.365,0.117-0.117-0.029-0.242-0.061-0.371-0.092l-2.296,9.205c-0.174,0.432-0.615,1.08-1.609,0.834,0.035,0.051-2.552-0.637-2.552-0.637l-1.743,4.019,4.569,1.139c0.85,0.213,1.683,0.436,2.503,0.646l-1.453,5.834,3.507,0.875,1.439-5.772c0.958,0.26,1.888,0.5,2.798,0.726l-1.434,5.745,3.511,0.875,1.453-5.823c5.987,1.133,10.489,0.676,12.384-4.739,1.527-4.36-0.076-6.875-3.226-8.515,2.294-0.529,4.022-2.038,4.483-5.155zm-8.022,11.249c-1.085,4.36-8.426,2.003-10.806,1.412l1.928-7.729c2.38,0.594,10.012,1.77,8.878,6.317zm1.086-11.312c-0.99,3.966-7.1,1.951-9.082,1.457l1.748-7.01c1.982,0.494,8.365,1.416,7.334,5.553z';
 
 function test(name, run) {
   tests.push({ name, run });
@@ -337,8 +339,6 @@ test('the accessible one-screen shell exposes game state and controls', async ()
 test('the active inline coin uses exactly the two official vector paths', async () => {
   const html = await source('../game.html');
   const activeCoin = html.match(/<svg\b[^>]*\bid="coin"[^>]*>[\s\S]*?<\/svg>/)?.[0];
-  const officialOrangePath = 'm63.033,39.744c-4.274,17.143-21.637,27.576-38.782,23.301-17.138-4.274-27.571-21.638-23.295-38.78,4.272-17.145,21.635-27.579,38.775-23.305,17.144,4.274,27.576,21.64,23.302,38.784z';
-  const officialMarkPath = 'm46.103,27.444c0.637-4.258-2.605-6.547-7.038-8.074l1.438-5.768-3.511-0.875-1.4,5.616c-0.923-0.23-1.871-0.447-2.813-0.662l1.41-5.653-3.509-0.875-1.439,5.766c-0.764-0.174-1.514-0.346-2.242-0.527l0.004-0.018-4.842-1.209-0.934,3.75s2.605,0.597,2.55,0.634c1.422,0.355,1.679,1.296,1.636,2.042l-1.638,6.571c0.098,0.025,0.225,0.061,0.365,0.117-0.117-0.029-0.242-0.061-0.371-0.092l-2.296,9.205c-0.174,0.432-0.615,1.08-1.609,0.834,0.035,0.051-2.552-0.637-2.552-0.637l-1.743,4.019,4.569,1.139c0.85,0.213,1.683,0.436,2.503,0.646l-1.453,5.834,3.507,0.875,1.439-5.772c0.958,0.26,1.888,0.5,2.798,0.726l-1.434,5.745,3.511,0.875,1.453-5.823c5.987,1.133,10.489,0.676,12.384-4.739,1.527-4.36-0.076-6.875-3.226-8.515,2.294-0.529,4.022-2.038,4.483-5.155zm-8.022,11.249c-1.085,4.36-8.426,2.003-10.806,1.412l1.928-7.729c2.38,0.594,10.012,1.77,8.878,6.317zm1.086-11.312c-0.99,3.966-7.1,1.951-9.082,1.457l1.748-7.01c1.982,0.494,8.365,1.416,7.334,5.553z';
   const pathValues = [...(activeCoin ?? '').matchAll(/<path\b[^>]*\bd="([^"]+)"/g)]
     .map((match) => match[1]);
 
@@ -346,26 +346,28 @@ test('the active inline coin uses exactly the two official vector paths', async 
   assert.deepEqual(pathValues, [officialOrangePath, officialMarkPath]);
 });
 
-test('the target symbol is an exact non-interactive outline above the active coin', async () => {
+test('the S1c target lives in a fourth stat and leaves the playfield coin unchanged', async () => {
   const [html, css] = await Promise.all([
     source('../game.html'),
     source('../css/game.css'),
   ]);
   const coinFrame = html.match(/<div\b[^>]*class="[^"]*\bcoin-frame\b[^"]*"[^>]*>([\s\S]*?)<\/div>/)?.[1];
+  const activeCoin = coinFrame?.match(/<svg\b[^>]*\bid="coin"[^>]*>[\s\S]*?<\/svg>/)?.[0];
   assert.ok(coinFrame, 'expected .coin-frame markup');
-  assert.equal((coinFrame.match(/<svg\b/g) ?? []).length, 2, 'expected two inline SVG coins');
-
-  const targetSymbol = coinFrame.match(
-    /<svg\b(?=[^>]*\bclass="[^"]*\btarget-symbol\b[^"]*")[^>]*>[\s\S]*?<\/svg>/,
-  )?.[0];
-  const activeCoin = coinFrame.match(/<svg\b[^>]*\bid="coin"[^>]*>[\s\S]*?<\/svg>/)?.[0];
-  assert.ok(targetSymbol, 'expected an inline .target-symbol SVG');
+  assert.equal((coinFrame.match(/<svg\b/g) ?? []).length, 1, 'expected only the active coin');
   assert.ok(activeCoin, 'expected the active #coin SVG');
-  assert.ok(
-    coinFrame.indexOf(activeCoin) < coinFrame.indexOf(targetSymbol),
-    'active coin must precede the symbol overlay',
-  );
-  assert.doesNotMatch(html, /target-ghost/);
+
+  const stats = html.match(/<dl\b[^>]*class="[^"]*\bstats\b[^"]*"[^>]*>([\s\S]*?)<\/dl>/)?.[1];
+  assert.ok(stats, 'expected the game stats');
+  const labels = [...stats.matchAll(/<dt>([^<]+)<\/dt>/g)].map((match) => match[1]);
+  assert.deepEqual(labels, ['Flips', 'Streak', 'Best', 'Target']);
+
+  const targetCoin = stats.match(
+    /<svg\b(?=[^>]*\bclass="[^"]*\btarget-coin\b[^"]*")[^>]*>[\s\S]*?<\/svg>/,
+  )?.[0];
+  assert.ok(targetCoin, 'expected the S1c target coin in the stats');
+  assert.equal((html.match(/\bclass="[^"]*\btarget-coin\b[^"]*"/g) ?? []).length, 1);
+  assert.doesNotMatch(`${html}\n${css}`, /target-ghost|target-symbol/);
 
   const openingTag = (markup) => markup.match(/^<svg\b[^>]*>/)?.[0] ?? '';
   const attribute = (markup, name) => openingTag(markup)
@@ -375,54 +377,56 @@ test('the target symbol is an exact non-interactive outline above the active coi
   const groupTransform = (markup) => markup
     .match(/<g\b[^>]*\btransform="([^"]+)"/)?.[1];
 
-  assert.equal(attribute(targetSymbol, 'aria-hidden'), 'true');
-  assert.equal(attribute(targetSymbol, 'focusable'), 'false');
-  assert.equal(attribute(targetSymbol, 'tabindex'), undefined);
-  assert.equal(attribute(targetSymbol, 'role'), undefined);
-  assert.equal(attribute(targetSymbol, 'aria-label'), undefined);
-  assert.doesNotMatch(openingTag(targetSymbol), /(?:^|\s)hidden(?:\s|=|>)/);
-  assert.equal(attribute(activeCoin, 'viewBox'), '0 0 64 64');
-  assert.equal(attribute(targetSymbol, 'viewBox'), attribute(activeCoin, 'viewBox'));
-  assert.equal(groupTransform(activeCoin), 'translate(0.00630876,-0.00301984)');
-  assert.equal(groupTransform(targetSymbol), groupTransform(activeCoin));
-  const activePaths = pathValues(activeCoin);
-  const symbolPaths = pathValues(targetSymbol);
-  assert.equal(activePaths.length, 2);
-  assert.deepEqual(symbolPaths, [activePaths[1]]);
-  assert.notEqual(symbolPaths[0], activePaths[0], 'outer circle path must not be overlaid');
-  assert.doesNotMatch(targetSymbol, /\b(?:href|src)=|<use\b/i);
+  assert.equal(attribute(targetCoin, 'role'), 'img');
+  assert.equal(attribute(targetCoin, 'aria-label'), 'The mark, flipped 90 degrees');
+  assert.equal(attribute(targetCoin, 'viewBox'), '0 0 64 64');
+  assert.equal(groupTransform(targetCoin), 'translate(0.00630876,-0.00301984)');
+  assert.deepEqual(pathValues(targetCoin), [officialOrangePath, officialMarkPath]);
+  assert.doesNotMatch(targetCoin, /\b(?:href|src)=|<use\b/i);
 
+  const statsRule = css.match(/\.stats\s*\{([^}]*)\}/)?.[1] ?? '';
   const frameRule = css.match(/\.coin-frame\s*\{([^}]*)\}/)?.[1] ?? '';
-  const symbolRule = css.match(/\.target-symbol\s*\{([^}]*)\}/)?.[1] ?? '';
-  const symbolPathRule = css.match(/\.target-symbol\s+path\s*\{([^}]*)\}/)?.[1] ?? '';
+  const targetRule = css.match(/\.target-coin\s*\{([^}]*)\}/)?.[1] ?? '';
+  const targetPathRule = css.match(/\.target-coin\s+path\s*\{([^}]*)\}/)?.[1] ?? '';
   const activeRule = css.match(/#coin\s*\{([^}]*)\}/)?.[1] ?? '';
 
-  assert.doesNotMatch(css, /target-ghost/);
-  assert.match(frameRule, /position:\s*relative/);
-  assert.match(symbolRule, /position:\s*absolute/);
-  assert.match(symbolRule, /inset:\s*0/);
-  assert.match(symbolRule, /width:\s*100%/);
-  assert.match(symbolRule, /height:\s*100%/);
-  assert.match(symbolRule, /display:\s*block/);
-  assert.match(symbolRule, /transform:\s*rotate\(90deg\)/);
-  assert.match(symbolRule, /transform-origin:\s*50%\s+50%/);
-  assert.match(symbolRule, /pointer-events:\s*none/);
-  assert.match(symbolRule, /z-index:\s*2/);
-  assert.doesNotMatch(symbolRule, /visibility:\s*hidden|opacity:\s*0(?:\D|$)/);
-  assert.doesNotMatch(symbolRule, /animation|transition|will-change/);
+  assert.match(statsRule, /grid-template-columns:\s*repeat\(4,\s*auto\)/);
+  assert.match(targetRule, /display:\s*block/);
+  assert.match(targetRule, /width:\s*1\.5em/);
+  assert.match(targetRule, /height:\s*1\.5em/);
+  assert.match(targetRule, /transform:\s*rotate\(90deg\)/);
+  assert.match(targetRule, /transform-origin:\s*50%\s+50%/);
+  assert.match(targetPathRule, /fill:\s*none/);
+  assert.match(targetPathRule, /stroke:\s*#c9c3b7/);
+  assert.match(targetPathRule, /stroke-width:\s*1\s*;/);
+  assert.match(targetPathRule, /vector-effect:\s*non-scaling-stroke/);
 
-  assert.match(symbolPathRule, /fill:\s*none/);
-  assert.match(symbolPathRule, /stroke:\s*rgba\(\s*13\s*,\s*13\s*,\s*13\s*,\s*0\.3\s*\)/);
-  assert.match(symbolPathRule, /stroke-width:\s*1\s*;/);
-  assert.match(symbolPathRule, /vector-effect:\s*non-scaling-stroke/);
-
-  assert.match(activeRule, /position:\s*relative/);
-  assert.match(activeRule, /z-index:\s*1/);
+  assert.doesNotMatch(frameRule, /position|z-index/);
+  assert.doesNotMatch(activeRule, /position|z-index/);
   assert.match(activeRule, /transform:\s*rotate\(0deg\)/);
+  assert.match(css, /@media\s*\(max-width:\s*30rem\)[\s\S]*?\.stats\s*\{[^}]*gap:/);
+  assert.doesNotMatch(
+    css.match(/@media\s*\(max-width:\s*30rem\)\s*\{([\s\S]*?)\n\}/)?.[1] ?? '',
+    /\.game-toolbar\s*\{/,
+  );
   assert.match(
     css,
     /\.is-buttoshi\s+\.coin-frame\s*\{[^}]*rgba\(255,\s*207,\s*85,\s*0\.45\)/s,
   );
+});
+
+test('the unchanged mute control sits after sharing in quiet footer controls', async () => {
+  const html = await source('../game.html');
+  const toolbar = html.match(/<div\b[^>]*class="[^"]*\bgame-toolbar\b[^"]*"[^>]*>([\s\S]*?)<\/div>\s*<section/)?.[1] ?? '';
+  const footerControls = html.match(
+    /<div\b[^>]*class="[^"]*\bgame-footer-controls\b[^"]*"[^>]*>([\s\S]*?)<\/div>/,
+  )?.[1] ?? '';
+  const muteButton = /<button id="mute-toggle" class="mute-toggle" type="button" aria-pressed="false">\s*Sound: on\s*<\/button>/;
+
+  assert.doesNotMatch(toolbar, /id="mute-toggle"/);
+  assert.match(footerControls, muteButton);
+  assert.equal((html.match(/id="mute-toggle"/g) ?? []).length, 1);
+  assert.ok(html.indexOf('id="share-block"') < html.indexOf('class="game-footer-controls"'));
 });
 
 test('the page loads only its two local game resources', async () => {

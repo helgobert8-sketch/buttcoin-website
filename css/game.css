@@ -103,7 +103,7 @@ button {
 
 .stats {
   display: grid;
-  grid-template-columns: repeat(3, auto);
+  grid-template-columns: repeat(4, auto);
   gap: clamp(0.9rem, 5vw, 2.2rem);
   margin: 0;
 }
@@ -124,6 +124,26 @@ button {
   margin: 0.2rem 0 0;
   color: #c9c3b7;
   font-variant-numeric: tabular-nums;
+}
+
+.target-value {
+  display: grid;
+  place-items: center;
+}
+
+.target-coin {
+  display: block;
+  width: 1.5em;
+  height: 1.5em;
+  transform: rotate(90deg);
+  transform-origin: 50% 50%;
+}
+
+.target-coin path {
+  fill: none;
+  stroke: #c9c3b7;
+  stroke-width: 1;
+  vector-effect: non-scaling-stroke;
 }
 
 .mute-toggle,
@@ -167,7 +187,6 @@ button {
 }
 
 .coin-frame {
-  position: relative;
   display: grid;
   place-items: center;
   inline-size: min(68vw, 42vh, 24rem);
@@ -175,29 +194,7 @@ button {
   border-radius: 50%;
 }
 
-.target-symbol {
-  position: absolute;
-  z-index: 2;
-  inset: 0;
-  display: block;
-  width: 100%;
-  height: 100%;
-  transform: rotate(90deg);
-  transform-origin: 50% 50%;
-  pointer-events: none;
-  user-select: none;
-}
-
-.target-symbol path {
-  fill: none;
-  stroke: rgba(13, 13, 13, 0.3);
-  stroke-width: 1;
-  vector-effect: non-scaling-stroke;
-}
-
 #coin {
-  position: relative;
-  z-index: 1;
   display: block;
   width: 100%;
   height: 100%;
@@ -277,6 +274,13 @@ button {
   font-size: 0.7rem;
 }
 
+.game-footer-controls {
+  display: flex;
+  justify-content: center;
+  width: 100%;
+  margin-block-start: 1.25rem;
+}
+
 @keyframes buttoshi-lock {
   50% {
     transform: scale(1.025);
@@ -284,13 +288,12 @@ button {
 }
 
 @media (max-width: 30rem) {
-  .game-toolbar {
-    flex-direction: column;
-    gap: 0.75rem;
-  }
-
   .game-shell {
     padding-inline: 1rem;
+  }
+
+  .stats {
+    gap: clamp(0.5rem, 4vw, 1rem);
   }
 
   .share-block {
