@@ -283,6 +283,31 @@ test('the static game route and stylesheet exist', async () => {
   assert.ok(css.length > 0, 'expected css/game.css to contain styles');
 });
 
+test('repo guidance documents The Flip files and current homepage section', async () => {
+  const guidance = await source('../CLAUDE.md');
+
+  for (const path of [
+    'game.html',
+    'game.json',
+    'css/game.css',
+    'js/game.mjs',
+    'js/game-logic.mjs',
+  ]) {
+    const escapedPath = path.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+    assert.match(guidance, new RegExp(`^${escapedPath}\\s+`, 'm'), `${path} must be listed`);
+  }
+
+  const gameSection = guidance
+    .split(/\r?\n/)
+    .find((line) => line.startsWith('13. Game'));
+  assert.ok(gameSection, 'section 13 must document the game');
+  assert.match(gameSection, /The Flip/);
+  assert.match(gameSection, /teaser/i);
+  assert.match(gameSection, /static/i);
+  assert.match(gameSection, /`\/game`/);
+  assert.doesNotMatch(gameSection, /Pac-?man|Coming Soon/i);
+});
+
 test('the page publishes the exact game identity and idle copy', async () => {
   const html = await source('../game.html');
 
@@ -367,6 +392,7 @@ test('input starts idle once and stops a running round from the event timestamp'
   assert.match(js, /addEventListener\(['"]pointerdown['"]/);
   assert.match(js, /addEventListener\(['"]keydown['"]/);
   assert.match(js, /event\.code\s*!==\s*['"]Space['"]/);
+  assert.match(js, /event\.code\s*!==\s*['"]Enter['"]/);
   assert.match(js, /event\.repeat/);
   assert.match(js, /phase\s*===\s*['"]idle['"][\s\S]*startRound\(event\.timeStamp\)/);
   assert.match(js, /phase\s*===\s*['"]running['"][\s\S]*stopRound\(event\.timeStamp\)/);
@@ -538,6 +564,42 @@ test('controller behavior: repeat Space and secondary pointers are ignored', asy
   `);
 
   assertControllerScenarioPasses(result, 'keyboard and pointer filtering behavior failed');
+});
+
+test('controller behavior: Enter starts, stops once, and is ignored in Result', async () => {
+  const js = await source('../js/game.mjs');
+  const result = runControllerScenario(js, String.raw`
+    let prevented = 0;
+    const pressEnter = (timeStamp) => surface.dispatch('keydown', {
+      code: 'Enter',
+      repeat: false,
+      timeStamp,
+      preventDefault: () => { prevented += 1; },
+    });
+
+    pressEnter(1000);
+    assert.equal(surface.dataset.state, 'running');
+    assert.equal(elements.get('#lifetime-flips').textContent, '0');
+    assert.equal(storage.writes.length, 0);
+
+    pressEnter(1750);
+    const firstStatus = status.textContent;
+    const firstTransform = coin.style.transform;
+    assert.equal(surface.dataset.state, 'result');
+    assert.equal(elements.get('#lifetime-flips').textContent, '1');
+    assert.equal(storage.writes.length, 1);
+    assert.equal(scheduledTimeouts.length, 1);
+
+    pressEnter(2000);
+    assert.equal(surface.dataset.state, 'result');
+    assert.equal(status.textContent, firstStatus);
+    assert.equal(coin.style.transform, firstTransform);
+    assert.equal(storage.writes.length, 1);
+    assert.equal(scheduledTimeouts.length, 1);
+    assert.equal(prevented, 3);
+  `);
+
+  assertControllerScenarioPasses(result, 'Enter phase behavior failed');
 });
 
 test('controller behavior: exact Buttoshi share remains selectable across clipboard outcomes', async () => {

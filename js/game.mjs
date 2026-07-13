@@ -191,7 +191,10 @@ surface.addEventListener('pointerdown', (event) => {
 });
 
 surface.addEventListener('keydown', (event) => {
-  if (event.code !== 'Space' || event.repeat) return;
+  if (
+    (event.code !== 'Space' && event.code !== 'Enter')
+    || event.repeat
+  ) return;
 
   event.preventDefault();
   handleGameInput(event);
