@@ -19,6 +19,260 @@ async function source(path) {
   }
 }
 
+const controllerHarness = String.raw`
+  import assert from 'node:assert/strict';
+
+  class FakeClassList {
+    constructor() {
+      this.values = new Set();
+    }
+
+    contains(name) {
+      return this.values.has(name);
+    }
+
+    remove(name) {
+      this.values.delete(name);
+    }
+
+    toggle(name, force) {
+      const enabled = force === undefined ? !this.contains(name) : Boolean(force);
+      if (enabled) this.values.add(name);
+      else this.values.delete(name);
+      return enabled;
+    }
+  }
+
+  class FakeElement {
+    constructor() {
+      this.attributes = new Map();
+      this.classList = new FakeClassList();
+      this.dataset = {};
+      this.focusCalls = [];
+      this.hidden = false;
+      this.listeners = new Map();
+      this.selectionRange = null;
+      this.selectCalls = 0;
+      this.style = {};
+      this.textContent = '';
+      this.value = '';
+    }
+
+    addEventListener(type, listener) {
+      this.listeners.set(type, listener);
+    }
+
+    setAttribute(name, value) {
+      this.attributes.set(name, value);
+    }
+
+    focus(options) {
+      this.focusCalls.push(options);
+    }
+
+    select() {
+      this.selectCalls += 1;
+    }
+
+    setSelectionRange(start, end) {
+      this.selectionRange = [start, end];
+    }
+
+    dispatch(type, event = {}) {
+      return this.listeners.get(type)?.(event);
+    }
+  }
+
+  const selectors = [
+    '#game-surface', '#coin', '#game-status', '#milestone', '#lifetime-flips',
+    '#streak', '#best-deviation', '#mute-toggle', '#share-block', '#share-text',
+    '#copy-share', '#copy-feedback',
+  ];
+  const elements = new Map(selectors.map((selector) => [selector, new FakeElement()]));
+  const surface = elements.get('#game-surface');
+  const coin = elements.get('#coin');
+  const status = elements.get('#game-status');
+  const shareBlock = elements.get('#share-block');
+  const shareText = elements.get('#share-text');
+  const copyShare = elements.get('#copy-share');
+  const copyFeedback = elements.get('#copy-feedback');
+  const muteToggle = elements.get('#mute-toggle');
+  status.textContent = 'Tap to flip.';
+  shareBlock.hidden = true;
+  elements.get('#milestone').hidden = true;
+  surface.setAttribute('aria-label', 'Start The Flip');
+
+  globalThis.document = { querySelector: (selector) => elements.get(selector) };
+
+  let nextAnimationFrameId = 1;
+  const animationFrames = new Map();
+  globalThis.requestAnimationFrame = (callback) => {
+    const id = nextAnimationFrameId;
+    nextAnimationFrameId += 1;
+    animationFrames.set(id, callback);
+    return id;
+  };
+  globalThis.cancelAnimationFrame = (id) => animationFrames.delete(id);
+
+  function runNextAnimationFrame(timestamp) {
+    const entry = animationFrames.entries().next().value;
+    assert.ok(entry, 'expected a pending animation frame');
+    const [id, callback] = entry;
+    animationFrames.delete(id);
+    callback(timestamp);
+  }
+
+  let clock = 0;
+  const scheduledTimeouts = [];
+  const storage = {
+    value: null,
+    writes: [],
+    getItem() {
+      return this.value;
+    },
+    setItem(key, value) {
+      this.value = value;
+      this.writes.push({ key, value });
+    },
+  };
+  const audio = { frequencies: [], starts: 0, stops: 0 };
+
+  class FakeAudioContext {
+    constructor() {
+      this.currentTime = 4;
+      this.destination = {};
+      this.state = 'running';
+    }
+
+    createOscillator() {
+      return {
+        connect() {},
+        frequency: {
+          setValueAtTime: (value) => audio.frequencies.push(value),
+        },
+        start: () => { audio.starts += 1; },
+        stop: () => { audio.stops += 1; },
+        type: '',
+      };
+    }
+
+    createGain() {
+      return {
+        connect() {},
+        gain: {
+          exponentialRampToValueAtTime() {},
+          setValueAtTime() {},
+        },
+      };
+    }
+
+    async resume() {}
+  }
+
+  const syntheticWindow = {
+    AudioContext: FakeAudioContext,
+    localStorage: storage,
+    setTimeout(callback, delay) {
+      scheduledTimeouts.push({ callback, delay });
+      return scheduledTimeouts.length;
+    },
+  };
+  globalThis.window = syntheticWindow;
+  Object.defineProperty(globalThis, 'performance', {
+    configurable: true,
+    value: { now: () => clock },
+  });
+
+  const clipboardWrites = [];
+  const navigatorObject = {
+    clipboard: {
+      async writeText(value) {
+        clipboardWrites.push(value);
+      },
+    },
+  };
+  Object.defineProperty(globalThis, 'navigator', {
+    configurable: true,
+    value: navigatorObject,
+  });
+
+  function runNextTimeout(now) {
+    assert.ok(scheduledTimeouts.length > 0, 'expected a pending timeout');
+    clock = now;
+    const timeout = scheduledTimeouts.shift();
+    timeout.callback();
+    return timeout;
+  }
+`;
+
+function controllerModuleUrl(controllerSource) {
+  const gameLogicUrl = new URL('../js/game-logic.mjs', import.meta.url).href;
+  const importNeedle = "from './game-logic.mjs';";
+  assert.ok(controllerSource.includes(importNeedle), 'controller domain import changed');
+  const executableSource = controllerSource.replace(
+    importNeedle,
+    `from ${JSON.stringify(gameLogicUrl)};`,
+  );
+  return `data:text/javascript;base64,${Buffer.from(executableSource).toString('base64')}`;
+}
+
+function runControllerScenario(controllerSource, scenario, setup = '') {
+  const repro = [
+    controllerHarness,
+    setup,
+    `await import(${JSON.stringify(controllerModuleUrl(controllerSource))});`,
+    scenario,
+  ].join('\n');
+
+  return spawnSync(
+    process.execPath,
+    ['--input-type=module', '--eval', repro],
+    { encoding: 'utf8' },
+  );
+}
+
+function assertControllerScenarioPasses(result, label) {
+  assert.equal(
+    result.status,
+    0,
+    `${label}:\n${result.stderr || result.stdout || 'child process produced no output'}`,
+  );
+}
+
+function mutateStopScoringToLastFrame(controllerSource) {
+  let mutated = controllerSource.replace(
+    'let animationFrame = 0;',
+    'let animationFrame = 0;\nlet lastRenderedAt = 0;',
+  );
+  mutated = mutated.replace(
+    /(function renderFrame\(timestamp\) \{\r?\n  if \(phase !== 'running'\) return;)/,
+    '$1\n\n  lastRenderedAt = timestamp;',
+  );
+  mutated = mutated.replace(
+    /(function stopRound\(inputTimestamp\) \{[\s\S]*?const absoluteAngle = angleAtTimestamp\(START_ANGLE,\s*roundStartedAt,\s*)inputTimestamp(,\s*roundSpeed\);)/,
+    '$1lastRenderedAt$2',
+  );
+
+  assert.notEqual(mutated, controllerSource, 'expected the timing mutation to change source');
+  assert.match(mutated, /lastRenderedAt = timestamp/);
+  assert.match(mutated, /roundStartedAt,\s*lastRenderedAt,\s*roundSpeed/);
+  return mutated;
+}
+
+const timestampScoringScenario = String.raw`
+  surface.dispatch('pointerdown', { timeStamp: 1000, isPrimary: true, button: 0 });
+  runNextAnimationFrame(1250);
+  assert.equal(coin.style.transform, 'rotate(30deg)', 'rAF must render the earlier frame');
+  surface.dispatch('pointerdown', { timeStamp: 1750, isPrimary: true, button: 0 });
+  assert.equal(
+    elements.get('#lifetime-flips').textContent,
+    '1',
+    'the later input timestamp must score the stop',
+  );
+  assert.equal(coin.style.transform, 'rotate(90deg)');
+  assert.equal(status.textContent, 'Buttoshi Flip. 90.0\u00b0.');
+`;
+
 test('the static game route and stylesheet exist', async () => {
   const [html, css] = await Promise.all([
     source('../game.html'),
@@ -191,43 +445,190 @@ test('pointer input accepts only the primary pointer and primary button', async 
   assert.match(js, /event\.button\s*!==\s*0/);
 });
 
-test('the controller survives a throwing localStorage getter across load and saves', () => {
-  const moduleUrl = new URL('../js/game.mjs', import.meta.url).href;
-  const repro = `
-    import assert from 'node:assert/strict';
+test('controller behavior: idle primary pointer starts Running without scoring', async () => {
+  const js = await source('../js/game.mjs');
+  const result = runControllerScenario(js, String.raw`
+    assert.equal(elements.get('#lifetime-flips').textContent, '0');
+    surface.dispatch('pointerdown', { timeStamp: 1000, isPrimary: true, button: 0 });
+    assert.equal(surface.dataset.state, 'running');
+    assert.equal(surface.attributes.get('aria-label'), 'Stop The Flip');
+    assert.equal(elements.get('#lifetime-flips').textContent, '0');
+    assert.equal(storage.writes.length, 0);
+    assert.equal(animationFrames.size, 1);
+  `);
 
-    class FakeElement {
-      constructor() {
-        this.attributes = new Map();
-        this.classList = { remove() {}, toggle() {} };
-        this.dataset = {};
-        this.hidden = false;
-        this.listeners = new Map();
-        this.style = {};
-        this.textContent = '';
-        this.value = '';
-      }
+  assertControllerScenarioPasses(result, 'idle pointer start behavior failed');
+});
 
-      addEventListener(type, listener) { this.listeners.set(type, listener); }
-      setAttribute(name, value) { this.attributes.set(name, value); }
-      focus() {}
-      select() {}
-      setSelectionRange() {}
-      dispatch(type, event = {}) { return this.listeners.get(type)?.(event); }
-    }
+test('controller behavior: input timestamp outruns the last rendered frame for scoring', async () => {
+  const js = await source('../js/game.mjs');
+  const result = runControllerScenario(js, timestampScoringScenario);
 
-    const selectors = [
-      '#game-surface', '#coin', '#game-status', '#milestone', '#lifetime-flips',
-      '#streak', '#best-deviation', '#mute-toggle', '#share-block', '#share-text',
-      '#copy-share', '#copy-feedback',
-    ];
-    const elements = new Map(selectors.map((selector) => [selector, new FakeElement()]));
-    globalThis.document = { querySelector: (selector) => elements.get(selector) };
-    globalThis.requestAnimationFrame = () => 1;
-    globalThis.cancelAnimationFrame = () => {};
+  assertControllerScenarioPasses(result, 'input timestamp scoring behavior failed');
+});
 
+test('controller behavior: exactly one Running stop is accepted and Result input is ignored', async () => {
+  const js = await source('../js/game.mjs');
+  const result = runControllerScenario(js, String.raw`
+    surface.dispatch('pointerdown', { timeStamp: 1000, isPrimary: true, button: 0 });
+    surface.dispatch('pointerdown', { timeStamp: 1500, isPrimary: true, button: 0 });
+    const firstStatus = status.textContent;
+    const firstTransform = coin.style.transform;
+    assert.equal(surface.dataset.state, 'result');
+    assert.equal(storage.writes.length, 1);
+    assert.equal(scheduledTimeouts.length, 1);
+
+    surface.dispatch('pointerdown', { timeStamp: 1750, isPrimary: true, button: 0 });
+    assert.equal(surface.dataset.state, 'result');
+    assert.equal(status.textContent, firstStatus);
+    assert.equal(coin.style.transform, firstTransform);
+    assert.equal(storage.writes.length, 1);
+    assert.equal(scheduledTimeouts.length, 1);
+  `);
+
+  assertControllerScenarioPasses(result, 'single-stop phase behavior failed');
+});
+
+test('controller behavior: the 1500 ms Result delay starts the next round automatically', async () => {
+  const js = await source('../js/game.mjs');
+  const result = runControllerScenario(js, String.raw`
+    surface.dispatch('pointerdown', { timeStamp: 1000, isPrimary: true, button: 0 });
+    surface.dispatch('pointerdown', { timeStamp: 1500, isPrimary: true, button: 0 });
+    assert.equal(scheduledTimeouts.length, 1);
+    assert.equal(scheduledTimeouts[0].delay, 1500);
+
+    runNextTimeout(2500);
+    assert.equal(surface.dataset.state, 'running');
+    assert.equal(surface.attributes.get('aria-label'), 'Stop The Flip');
+    assert.equal(coin.style.transform, 'rotate(0deg)');
+    assert.equal(animationFrames.size, 1);
+  `);
+
+  assertControllerScenarioPasses(result, 'automatic next-round behavior failed');
+});
+
+test('controller behavior: repeat Space and secondary pointers are ignored', async () => {
+  const js = await source('../js/game.mjs');
+  const result = runControllerScenario(js, String.raw`
+    let prevented = 0;
+    surface.dispatch('keydown', {
+      code: 'Space', repeat: true, timeStamp: 900, preventDefault: () => { prevented += 1; },
+    });
+    surface.dispatch('pointerdown', { timeStamp: 900, isPrimary: false, button: 0 });
+    surface.dispatch('pointerdown', { timeStamp: 900, isPrimary: true, button: 2 });
+    assert.equal(surface.dataset.state, undefined);
+    assert.equal(animationFrames.size, 0);
+    assert.equal(prevented, 0);
+
+    surface.dispatch('keydown', {
+      code: 'Space', repeat: false, timeStamp: 1000, preventDefault: () => { prevented += 1; },
+    });
+    assert.equal(surface.dataset.state, 'running');
+    assert.equal(prevented, 1);
+
+    surface.dispatch('keydown', {
+      code: 'Space', repeat: true, timeStamp: 1500, preventDefault: () => { prevented += 1; },
+    });
+    assert.equal(surface.dataset.state, 'running');
+    assert.equal(storage.writes.length, 0);
+
+    surface.dispatch('pointerdown', { timeStamp: 1750, isPrimary: true, button: 0 });
+    assert.equal(surface.dataset.state, 'result');
+    assert.equal(elements.get('#lifetime-flips').textContent, '1');
+  `);
+
+  assertControllerScenarioPasses(result, 'keyboard and pointer filtering behavior failed');
+});
+
+test('controller behavior: exact Buttoshi share remains selectable across clipboard outcomes', async () => {
+  const js = await source('../js/game.mjs');
+  const result = runControllerScenario(js, String.raw`
+    const expectedShare = 'I flipped Bitcoin. Deviation: 0.0\u00b0. buttcoin.wtf';
+    surface.dispatch('pointerdown', { timeStamp: 1000, isPrimary: true, button: 0 });
+    surface.dispatch('pointerdown', { timeStamp: 1750, isPrimary: true, button: 0 });
+    assert.equal(shareBlock.hidden, false);
+    assert.equal(shareText.value, expectedShare);
+
+    await copyShare.dispatch('click');
+    assert.deepEqual(clipboardWrites, [expectedShare]);
+    assert.equal(copyFeedback.textContent, 'Copied.');
+    assert.deepEqual(shareText.selectionRange, [0, expectedShare.length]);
+
+    navigatorObject.clipboard.writeText = async () => { throw new Error('denied'); };
+    await copyShare.dispatch('click');
+    assert.equal(copyFeedback.textContent, 'Text selected. Copy it manually.');
+    assert.equal(shareText.value, expectedShare);
+
+    navigatorObject.clipboard = undefined;
+    await copyShare.dispatch('click');
+    assert.equal(copyFeedback.textContent, 'Text selected. Copy it manually.');
+    assert.equal(shareText.selectCalls, 3);
+    assert.deepEqual(shareText.selectionRange, [0, expectedShare.length]);
+  `);
+
+  assertControllerScenarioPasses(result, 'Buttoshi clipboard behavior failed');
+});
+
+test('controller behavior: Buttoshi audio obeys result tier, mute, and persistence', async () => {
+  const js = await source('../js/game.mjs');
+  const result = runControllerScenario(js, String.raw`
+    surface.dispatch('pointerdown', { timeStamp: 1000, isPrimary: true, button: 0 });
+    surface.dispatch('pointerdown', { timeStamp: 1750, isPrimary: true, button: 0 });
+    assert.equal(audio.starts, 1, 'Buttoshi must play the click');
+    assert.deepEqual(audio.frequencies, [880]);
+
+    runNextTimeout(2000);
+    surface.dispatch('pointerdown', { timeStamp: 2000, isPrimary: true, button: 0 });
+    assert.match(status.textContent, /Still Bitcoin\./);
+    assert.equal(audio.starts, 1, 'non-Buttoshi must stay silent');
+
+    muteToggle.dispatch('click');
+    assert.equal(muteToggle.textContent, 'Sound: off');
+    assert.equal(muteToggle.attributes.get('aria-pressed'), 'true');
+    assert.equal(JSON.parse(storage.value).muted, true);
+
+    runNextTimeout(3000);
+    surface.dispatch('pointerdown', { timeStamp: 3750, isPrimary: true, button: 0 });
+    assert.equal(status.textContent, 'Buttoshi Flip. 90.0\u00b0.');
+    assert.equal(audio.starts, 1, 'mute must suppress the Buttoshi click');
+    assert.equal(JSON.parse(storage.value).muted, true);
+  `);
+
+  assertControllerScenarioPasses(result, 'Buttoshi sound behavior failed');
+});
+
+test('controller behavior: result and share survive the automatic next-round start', async () => {
+  const js = await source('../js/game.mjs');
+  const result = runControllerScenario(js, String.raw`
+    surface.dispatch('pointerdown', { timeStamp: 1000, isPrimary: true, button: 0 });
+    surface.dispatch('pointerdown', { timeStamp: 1750, isPrimary: true, button: 0 });
+    const resultText = status.textContent;
+    const preservedShare = shareText.value;
+
+    runNextTimeout(2000);
+    assert.equal(surface.dataset.state, 'running');
+    assert.equal(status.textContent, resultText);
+    assert.equal(shareBlock.hidden, false);
+    assert.equal(shareText.value, preservedShare);
+  `);
+
+  assertControllerScenarioPasses(result, 'result preservation behavior failed');
+});
+
+test('controller harness detects last-rendered-frame stop-scoring mutation', async () => {
+  const js = await source('../js/game.mjs');
+  const mutated = mutateStopScoringToLastFrame(js);
+  const result = runControllerScenario(mutated, timestampScoringScenario);
+  const output = `${result.stderr}\n${result.stdout}`;
+
+  assert.notEqual(result.status, 0, 'timing mutant unexpectedly survived behavioral coverage');
+  assert.match(output, /the later input timestamp must score the stop/);
+});
+
+test('the controller survives a throwing localStorage getter across load and saves', async () => {
+  const js = await source('../js/game.mjs');
+  const setup = String.raw`
     let storageGetterReads = 0;
-    const syntheticWindow = { setTimeout: () => 1 };
     Object.defineProperty(syntheticWindow, 'localStorage', {
       get() {
         storageGetterReads += 1;
@@ -236,29 +637,17 @@ test('the controller survives a throwing localStorage getter across load and sav
         throw error;
       },
     });
-    globalThis.window = syntheticWindow;
-
-    await import(${JSON.stringify(moduleUrl)});
-    const surface = elements.get('#game-surface');
+  `;
+  const result = runControllerScenario(js, String.raw`
     surface.dispatch('pointerdown', { timeStamp: 1000, isPrimary: true, button: 0 });
     surface.dispatch('pointerdown', { timeStamp: 1750, isPrimary: true, button: 0 });
-    elements.get('#mute-toggle').dispatch('click');
-
+    muteToggle.dispatch('click');
     assert.equal(elements.get('#lifetime-flips').textContent, '1');
-    assert.equal(elements.get('#mute-toggle').textContent, 'Sound: off');
+    assert.equal(muteToggle.textContent, 'Sound: off');
     assert.equal(storageGetterReads, 1);
-  `;
-  const result = spawnSync(
-    process.execPath,
-    ['--input-type=module', '--eval', repro],
-    { encoding: 'utf8' },
-  );
+  `, setup);
 
-  assert.equal(
-    result.status,
-    0,
-    `controller crashed with unavailable storage:\n${result.stderr || result.stdout}`,
-  );
+  assertControllerScenarioPasses(result, 'controller crashed with unavailable storage');
 });
 
 test('the stylesheet and controller cannot add hidden network dependencies', async () => {

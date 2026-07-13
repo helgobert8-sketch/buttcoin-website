@@ -28,6 +28,7 @@ test('game domain module publishes the deterministic contract', async () => {
     START_SPEED: 120,
     SPEED_MULTIPLIER: 1.12,
     MAX_SPEED: 720,
+    MAX_SPEED_LEVEL: 16,
   };
 
   for (const [name, value] of Object.entries(expectedConstants)) {
@@ -197,6 +198,41 @@ test('speed grows by level and caps at 720 degrees per second', async () => {
   assert.equal(speedForLevel(100), 720);
 });
 
+test('successful progression saturates at the first capped speed level', async () => {
+  const { applyResult, classifyAngle, speedForLevel } = await import('../js/game-logic.mjs');
+  const success = classifyAngle(104);
+  const capped = gameState({ speedLevel: 16 });
+  const afterFirst = applyResult(capped, success);
+  const afterSecond = applyResult(afterFirst, success);
+
+  assert.equal(speedForLevel(15) < 720, true);
+  assert.equal(speedForLevel(16), 720);
+  assert.equal(afterFirst.speedLevel, 16);
+  assert.equal(afterSecond.speedLevel, 16);
+});
+
+test('Still Bitcoin from capped level drops speed below the cap', async () => {
+  const { applyResult, classifyAngle, speedForLevel } = await import('../js/game-logic.mjs');
+  const next = applyResult(
+    gameState({ speedLevel: 16, streak: 3 }),
+    classifyAngle(14),
+  );
+
+  assert.equal(next.speedLevel, 15);
+  assert.ok(speedForLevel(next.speedLevel) < 720);
+});
+
+test('Wrong cheeks from capped level drops speed below the cap', async () => {
+  const { applyResult, classifyAngle, speedForLevel } = await import('../js/game-logic.mjs');
+  const next = applyResult(
+    gameState({ speedLevel: 16, streak: 3 }),
+    classifyAngle(284),
+  );
+
+  assert.equal(next.speedLevel, 15);
+  assert.ok(speedForLevel(next.speedLevel) < 720);
+});
+
 test('milestone copy fires once at lifetime totals 10, 50, and 100', async () => {
   const { applyResult, classifyAngle } = await import('../js/game-logic.mjs');
   const success = classifyAngle(109);
@@ -284,6 +320,22 @@ test('corrupt persisted values fall back to safe field defaults', async () => {
   assert.deepEqual(loadPersistedState(corruptFields), gameState({
     seenMilestones: [10, 50],
   }));
+});
+
+test('persisted speed levels above the cap load as level sixteen', async () => {
+  const { loadPersistedState } = await import('../js/game-logic.mjs');
+  const storage = new MemoryStorage(JSON.stringify({ speedLevel: 99 }));
+
+  assert.equal(loadPersistedState(storage).speedLevel, 16);
+});
+
+test('saving a speed level above the cap serializes level sixteen', async () => {
+  const { savePersistedState } = await import('../js/game-logic.mjs');
+  const storage = new MemoryStorage();
+
+  savePersistedState(storage, gameState({ speedLevel: 99 }));
+
+  assert.equal(JSON.parse(storage.value).speedLevel, 16);
 });
 
 test('storage exceptions use an in-memory fallback instead of breaking play', async () => {

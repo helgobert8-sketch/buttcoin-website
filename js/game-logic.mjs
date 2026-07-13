@@ -4,6 +4,9 @@ export const WRONG_ANGLE = 284;
 export const START_SPEED = 120;
 export const SPEED_MULTIPLIER = 1.12;
 export const MAX_SPEED = 720;
+export const MAX_SPEED_LEVEL = Math.ceil(
+  Math.log(MAX_SPEED / START_SPEED) / Math.log(SPEED_MULTIPLIER),
+);
 
 const MILESTONES = new Map([
   [10, "Ten flips. It's starting to look natural."],
@@ -37,7 +40,7 @@ function sanitizePersistedState(value) {
         : null,
     speedLevel:
       Number.isInteger(stored.speedLevel) && stored.speedLevel >= 0
-        ? stored.speedLevel
+        ? Math.min(stored.speedLevel, MAX_SPEED_LEVEL)
         : 0,
     seenMilestones,
     muted: typeof stored.muted === 'boolean' ? stored.muted : false,
@@ -140,7 +143,7 @@ export function applyResult(state, result) {
 
   let speedLevel = state.speedLevel;
   if (success) {
-    speedLevel += 1;
+    speedLevel = Math.min(speedLevel + 1, MAX_SPEED_LEVEL);
   } else if (result.key === 'wrong' || result.key === 'still') {
     speedLevel = Math.max(0, speedLevel - 1);
   }
