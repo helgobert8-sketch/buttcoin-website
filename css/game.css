@@ -175,9 +175,9 @@ button {
   border-radius: 50%;
 }
 
-.target-ghost {
+.target-symbol {
   position: absolute;
-  z-index: 0;
+  z-index: 2;
   inset: 0;
   display: block;
   width: 100%;
@@ -188,9 +188,9 @@ button {
   user-select: none;
 }
 
-.target-ghost path {
+.target-symbol path {
   fill: none;
-  stroke: rgba(201, 195, 183, 0.28);
+  stroke: rgba(13, 13, 13, 0.3);
   stroke-width: 1;
   vector-effect: non-scaling-stroke;
 }

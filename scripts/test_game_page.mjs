@@ -346,7 +346,7 @@ test('the active inline coin uses exactly the two official vector paths', async 
   assert.deepEqual(pathValues, [officialOrangePath, officialMarkPath]);
 });
 
-test('the Ghost target is an exact non-interactive outline below the active coin', async () => {
+test('the target symbol is an exact non-interactive outline above the active coin', async () => {
   const [html, css] = await Promise.all([
     source('../game.html'),
     source('../css/game.css'),
@@ -355,16 +355,17 @@ test('the Ghost target is an exact non-interactive outline below the active coin
   assert.ok(coinFrame, 'expected .coin-frame markup');
   assert.equal((coinFrame.match(/<svg\b/g) ?? []).length, 2, 'expected two inline SVG coins');
 
-  const ghostCoin = coinFrame.match(
-    /<svg\b(?=[^>]*\bclass="[^"]*\btarget-ghost\b[^"]*")[^>]*>[\s\S]*?<\/svg>/,
+  const targetSymbol = coinFrame.match(
+    /<svg\b(?=[^>]*\bclass="[^"]*\btarget-symbol\b[^"]*")[^>]*>[\s\S]*?<\/svg>/,
   )?.[0];
   const activeCoin = coinFrame.match(/<svg\b[^>]*\bid="coin"[^>]*>[\s\S]*?<\/svg>/)?.[0];
-  assert.ok(ghostCoin, 'expected an inline .target-ghost SVG');
+  assert.ok(targetSymbol, 'expected an inline .target-symbol SVG');
   assert.ok(activeCoin, 'expected the active #coin SVG');
   assert.ok(
-    coinFrame.indexOf(ghostCoin) < coinFrame.indexOf(activeCoin),
-    'Ghost must precede the active coin in stacking order',
+    coinFrame.indexOf(activeCoin) < coinFrame.indexOf(targetSymbol),
+    'active coin must precede the symbol overlay',
   );
+  assert.doesNotMatch(html, /target-ghost/);
 
   const openingTag = (markup) => markup.match(/^<svg\b[^>]*>/)?.[0] ?? '';
   const attribute = (markup, name) => openingTag(markup)
@@ -374,47 +375,46 @@ test('the Ghost target is an exact non-interactive outline below the active coin
   const groupTransform = (markup) => markup
     .match(/<g\b[^>]*\btransform="([^"]+)"/)?.[1];
 
-  assert.equal(attribute(ghostCoin, 'aria-hidden'), 'true');
-  assert.equal(attribute(ghostCoin, 'focusable'), 'false');
-  assert.equal(attribute(ghostCoin, 'tabindex'), undefined);
-  assert.equal(attribute(ghostCoin, 'role'), undefined);
-  assert.equal(attribute(ghostCoin, 'aria-label'), undefined);
-  assert.doesNotMatch(openingTag(ghostCoin), /(?:^|\s)hidden(?:\s|=|>)/);
+  assert.equal(attribute(targetSymbol, 'aria-hidden'), 'true');
+  assert.equal(attribute(targetSymbol, 'focusable'), 'false');
+  assert.equal(attribute(targetSymbol, 'tabindex'), undefined);
+  assert.equal(attribute(targetSymbol, 'role'), undefined);
+  assert.equal(attribute(targetSymbol, 'aria-label'), undefined);
+  assert.doesNotMatch(openingTag(targetSymbol), /(?:^|\s)hidden(?:\s|=|>)/);
   assert.equal(attribute(activeCoin, 'viewBox'), '0 0 64 64');
-  assert.equal(attribute(ghostCoin, 'viewBox'), attribute(activeCoin, 'viewBox'));
+  assert.equal(attribute(targetSymbol, 'viewBox'), attribute(activeCoin, 'viewBox'));
   assert.equal(groupTransform(activeCoin), 'translate(0.00630876,-0.00301984)');
-  assert.equal(groupTransform(ghostCoin), groupTransform(activeCoin));
-  assert.equal(pathValues(ghostCoin).length, 2);
-  assert.deepEqual(pathValues(ghostCoin), pathValues(activeCoin));
-  assert.doesNotMatch(ghostCoin, /\b(?:href|src)=|<use\b/i);
+  assert.equal(groupTransform(targetSymbol), groupTransform(activeCoin));
+  const activePaths = pathValues(activeCoin);
+  const symbolPaths = pathValues(targetSymbol);
+  assert.equal(activePaths.length, 2);
+  assert.deepEqual(symbolPaths, [activePaths[1]]);
+  assert.notEqual(symbolPaths[0], activePaths[0], 'outer circle path must not be overlaid');
+  assert.doesNotMatch(targetSymbol, /\b(?:href|src)=|<use\b/i);
 
   const frameRule = css.match(/\.coin-frame\s*\{([^}]*)\}/)?.[1] ?? '';
-  const ghostRule = css.match(/\.target-ghost\s*\{([^}]*)\}/)?.[1] ?? '';
-  const ghostPathRule = css.match(/\.target-ghost\s+path\s*\{([^}]*)\}/)?.[1] ?? '';
+  const symbolRule = css.match(/\.target-symbol\s*\{([^}]*)\}/)?.[1] ?? '';
+  const symbolPathRule = css.match(/\.target-symbol\s+path\s*\{([^}]*)\}/)?.[1] ?? '';
   const activeRule = css.match(/#coin\s*\{([^}]*)\}/)?.[1] ?? '';
 
+  assert.doesNotMatch(css, /target-ghost/);
   assert.match(frameRule, /position:\s*relative/);
-  assert.match(ghostRule, /position:\s*absolute/);
-  assert.match(ghostRule, /inset:\s*0/);
-  assert.match(ghostRule, /width:\s*100%/);
-  assert.match(ghostRule, /height:\s*100%/);
-  assert.match(ghostRule, /display:\s*block/);
-  assert.match(ghostRule, /transform:\s*rotate\(90deg\)/);
-  assert.match(ghostRule, /transform-origin:\s*50%\s+50%/);
-  assert.match(ghostRule, /pointer-events:\s*none/);
-  assert.match(ghostRule, /z-index:\s*0/);
-  assert.doesNotMatch(ghostRule, /visibility:\s*hidden|opacity:\s*0(?:\D|$)/);
-  assert.doesNotMatch(ghostRule, /animation|transition|will-change/);
+  assert.match(symbolRule, /position:\s*absolute/);
+  assert.match(symbolRule, /inset:\s*0/);
+  assert.match(symbolRule, /width:\s*100%/);
+  assert.match(symbolRule, /height:\s*100%/);
+  assert.match(symbolRule, /display:\s*block/);
+  assert.match(symbolRule, /transform:\s*rotate\(90deg\)/);
+  assert.match(symbolRule, /transform-origin:\s*50%\s+50%/);
+  assert.match(symbolRule, /pointer-events:\s*none/);
+  assert.match(symbolRule, /z-index:\s*2/);
+  assert.doesNotMatch(symbolRule, /visibility:\s*hidden|opacity:\s*0(?:\D|$)/);
+  assert.doesNotMatch(symbolRule, /animation|transition|will-change/);
 
-  assert.match(ghostPathRule, /fill:\s*none/);
-  const stroke = ghostPathRule.match(
-    /stroke:\s*rgba\(\s*201\s*,\s*195\s*,\s*183\s*,\s*([\d.]+)\s*\)/,
-  );
-  assert.ok(stroke, 'expected a warm-gray rgba Ghost stroke');
-  const strokeAlpha = Number(stroke[1]);
-  assert.ok(strokeAlpha >= 0.25 && strokeAlpha <= 0.3, `unexpected alpha ${strokeAlpha}`);
-  assert.match(ghostPathRule, /stroke-width:\s*1\s*;/);
-  assert.match(ghostPathRule, /vector-effect:\s*non-scaling-stroke/);
+  assert.match(symbolPathRule, /fill:\s*none/);
+  assert.match(symbolPathRule, /stroke:\s*rgba\(\s*13\s*,\s*13\s*,\s*13\s*,\s*0\.3\s*\)/);
+  assert.match(symbolPathRule, /stroke-width:\s*1\s*;/);
+  assert.match(symbolPathRule, /vector-effect:\s*non-scaling-stroke/);
 
   assert.match(activeRule, /position:\s*relative/);
   assert.match(activeRule, /z-index:\s*1/);
