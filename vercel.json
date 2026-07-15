@@ -1,4 +1,7 @@
 {
+  "redirects": [
+    { "source": "/legend", "destination": "https://x.com/ButtcoinBitcoin/status/2077461162493427881", "permanent": false }
+  ],
   "rewrites": [
     { "source": "/for-ai", "destination": "/for-ai.html" },
     { "source": "/game", "destination": "/game.html" },
