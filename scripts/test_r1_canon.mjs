@@ -13,9 +13,9 @@ const DOMAIN = 'https://buttcoin.wtf';
 const MEME_DEPOT = `${DOMAIN}/#meme-depot`;
 const RETIRED_DEPOT_DOMAIN = new RegExp(['meme', 'depot', '\\.com'].join(''), 'i');
 const RETIRED_SITE_DOMAIN = new RegExp(['buttcoin', '\\.meme'].join(''), 'i');
-// D6 cutover: [DATUM] is replaced with the launch date on launch day.
+// D6 cutover: 2026-07-15 is replaced with the launch date on launch day.
 // The cutover-date guard check keeps this gate red until that happens.
-const X_CUTOVER_DATE = '[DATUM]';
+const X_CUTOVER_DATE = '2026-07-15';
 const X_CANONICAL_HANDLE = '@ButtcoinBitcoin';
 const X_CANONICAL_URL = 'https://x.com/ButtcoinBitcoin';
 const X_HANDOVER =
@@ -1382,7 +1382,7 @@ check('cutover date is set and consistent across surfaces', () => {
   assert.match(
     X_CUTOVER_DATE,
     /^\d{4}-\d{2}-\d{2}$/,
-    'X_CUTOVER_DATE is still the [DATUM] placeholder — set the launch date before merging',
+    'X_CUTOVER_DATE is still the 2026-07-15 placeholder — set the launch date before merging',
   );
   assert.equal(LAST_UPDATED, X_CUTOVER_DATE);
   const timelineDoc = JSON.parse(sources['timeline.json']);

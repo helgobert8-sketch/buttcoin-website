@@ -1,7 +1,7 @@
 {
   "project": "Buttcoin",
   "description": "Chronological project record with explicit provenance and lore labels.",
-  "lastUpdated": "[DATUM]",
+  "lastUpdated": "2026-07-15",
   "canonicalIdentity": {
     "website": "https://buttcoin.wtf",
     "contractAddress": "FasH397CeZLNYWkd3wWK9vrmjd1z93n3b59DssRXpump"
@@ -96,7 +96,7 @@
       "source": "https://buttcoin.wtf/crossing"
     },
     {
-      "date": "[DATUM]",
+      "date": "2026-07-15",
       "type": "community",
       "title": "Canonical X Account Published",
       "description": "The canonical X account @ButtcoinBitcoin is published. @ButtcoinTNB is documented as historical and no longer under community control.",
