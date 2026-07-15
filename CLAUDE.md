@@ -13,8 +13,13 @@ Domain: buttcoin.wtf | Hosted: Vercel | Code: GitHub (helgobert8-sketch)
 ## File Structure
 ```
 index.html          — Single-page app (all sections)
+game.html           — Static `/game` route for The Flip
+game.json           — Machine-readable contract for The Flip
 css/style.css       — All styles (dark theme, orange/purple accents)
+css/game.css        — Styles for the standalone The Flip route
 js/app.js           — Quotes, tagline rotator, nav, FAQ, modals, articles
+js/game.mjs         — The Flip controller, input, rendering, audio, and sharing
+js/game-logic.mjs   — Deterministic scoring, progression, and persistence
 js/price.js         — Live price + market data (DexScreener + CoinGecko)
 js/laser.js         — Laser eye maker (Canvas API — click to place, download)
 js/memes.js         — Meme depot gallery, upload handler, randomizer
@@ -49,7 +54,7 @@ Stored in Firestore `users/{uid}.role`:
 10. Presentations — Legend of Buttcoin plus Lore-labelled Buttcoin Standard and 21 Rules
 11. Media — Anthem (MP3) + video gallery
 12. Church teaser — Empty Seat links to `/church` and `/crossing`
-13. Game — Pac-man teaser, Coming Soon
+13. Game — The Flip teaser links to the static `/game` route
 14. Community — historical X status plus Telegram, Buttcoiners, and DexScreener links
 15. FAQ — accordion
 

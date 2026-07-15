@@ -1,0 +1,34 @@
+{
+  "name": "The Flip",
+  "subtitle": "Flip Bitcoin. One Butt at a time.",
+  "targetAngle": 104,
+  "scoreTiers": [
+    {
+      "deviation": "≤ 0.5°",
+      "tier": "Buttoshi Flip",
+      "copy": "Buttoshi Flip. 90.0°."
+    },
+    {
+      "deviation": "≤ 5°",
+      "tier": "Crossed",
+      "copy": "Crossed."
+    },
+    {
+      "deviation": "≤ 15°",
+      "tier": "Halfway there",
+      "copy": "Halfway there."
+    },
+    {
+      "deviation": "> 15°",
+      "tier": "Failure",
+      "copy": "Still Bitcoin."
+    },
+    {
+      "deviation": "284° ± 5°",
+      "tier": "Failure",
+      "copy": "Wrong cheeks."
+    }
+  ],
+  "lore": "The Flip performs the 90° clockwise rotation that defines Buttcoin.",
+  "lastUpdated": "2026-07-13"
+}

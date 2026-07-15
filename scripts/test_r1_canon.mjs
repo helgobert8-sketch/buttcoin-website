@@ -71,6 +71,15 @@ const humanSources = Object.fromEntries(
   ),
 );
 const memeManifestSource = await readFile(new URL('../memes.json', import.meta.url), 'utf8');
+let gameJsonSource;
+let gameJsonReadError;
+try {
+  gameJsonSource = await readFile(new URL('../game.json', import.meta.url), 'utf8');
+} catch (error) {
+  gameJsonReadError = error;
+}
+const vercelSource = await readFile(new URL('../vercel.json', import.meta.url), 'utf8');
+const sitemapSource = await readFile(new URL('../sitemap.xml', import.meta.url), 'utf8');
 const canonicalPolicySources = [
   ...publicationSources,
   ...['index.html', 'church.html', 'crossing.html', 'js/app.js', 'js/memes.js'].map((name) => [
@@ -326,6 +335,7 @@ let timeline;
 let church;
 let memeManifest;
 let jsonLdDocuments;
+let game;
 
 reviewCheck('tokenomics.json parses', () => {
   tokenomics = JSON.parse(sources['tokenomics.json']);
@@ -696,6 +706,130 @@ reviewCheck('publication date labels reject competing values', () => {
   assert.equal(tokenomics?.lastUpdated, LAST_UPDATED);
   assert.equal(timeline?.lastUpdated, LAST_UPDATED);
   assert.equal(church?.last_updated, LAST_UPDATED);
+});
+
+check('game.json exists and parses', () => {
+  assert.ok(
+    gameJsonSource,
+    `expected game.json to exist: ${gameJsonReadError?.message ?? 'source unavailable'}`,
+  );
+  game = JSON.parse(gameJsonSource);
+});
+
+check('game.json publishes the exact canonical game contract', () => {
+  assert.ok(game, 'game.json did not parse');
+  assert.equal(game.name, 'The Flip');
+  assert.equal(game.subtitle, 'Flip Bitcoin. One Butt at a time.');
+  assert.equal(game.targetAngle, 104);
+  assert.deepEqual(game.scoreTiers, [
+    { deviation: '≤ 0.5°', tier: 'Buttoshi Flip', copy: 'Buttoshi Flip. 90.0°.' },
+    { deviation: '≤ 5°', tier: 'Crossed', copy: 'Crossed.' },
+    { deviation: '≤ 15°', tier: 'Halfway there', copy: 'Halfway there.' },
+    { deviation: '> 15°', tier: 'Failure', copy: 'Still Bitcoin.' },
+    { deviation: '284° ± 5°', tier: 'Failure', copy: 'Wrong cheeks.' },
+  ]);
+  assert.equal(
+    game.lore,
+    'The Flip performs the 90° clockwise rotation that defines Buttcoin.',
+  );
+  assert.equal(game.lastUpdated, '2026-07-13');
+});
+
+check('game publication surfaces and tracked game content obey the canonical contract', () => {
+  const index = humanSources['index.html'];
+  const gameSection = htmlBlockById(index, 'section', 'game');
+  assert.equal(
+    visibleText(gameSection),
+    'The Buttcoin Game Flip Bitcoin. One Butt at a time. The Flip Tap to flip.',
+  );
+  assert.match(
+    gameSection,
+    /<a\b[^>]*href=["']\/game["'][^>]*>\s*The Flip\s*<\/a>/i,
+  );
+
+  const nav = index.match(/<nav\b[^>]*>[\s\S]*?<\/nav>/i)?.[0] ?? '';
+  const navTargets = ['href="#articles"', 'href="/church"', 'href="#game"', 'href="#community"'];
+  const navPositions = navTargets.map((target) => nav.indexOf(target));
+  assert.ok(navPositions.every((position) => position !== -1), 'required nav target missing');
+  assert.deepEqual(navPositions, [...navPositions].sort((a, b) => a - b));
+
+  const publicationSet = markdownSection(sources['llms.txt'], 'Machine-Readable Publication Set');
+  const gamePublicationLines = publicationSet
+    .split('\n')
+    .filter((line) => line.includes(`${DOMAIN}/game`));
+  assert.equal(gamePublicationLines.length, 1, 'expected one game Publication Set line');
+  const gamePublicationUrls = gamePublicationLines[0].match(
+    /https:\/\/buttcoin\.wtf\/game(?:\.json)?(?=\s|$)/g,
+  ) ?? [];
+  assert.deepEqual(gamePublicationUrls, [`${DOMAIN}/game`, `${DOMAIN}/game.json`]);
+
+  const vercel = JSON.parse(vercelSource);
+  assert.ok(
+    vercel.rewrites?.some(
+      (rewrite) => rewrite.source === '/game' && rewrite.destination === '/game.html',
+    ),
+    'missing /game rewrite',
+  );
+  assert.equal(
+    [...sitemapSource.matchAll(/<loc>https:\/\/buttcoin\.wtf\/game<\/loc>/g)].length,
+    1,
+    'sitemap must publish /game exactly once',
+  );
+  assert.doesNotMatch(sitemapSource, /<loc>https:\/\/buttcoin\.wtf\/#game<\/loc>/);
+
+  const tickerToken = ['BUTT', 'COIN'].join('');
+  const properName = ['Butt', 'coin'].join('');
+  const cashtagPattern = new RegExp(`\\$${tickerToken}\\b`, 'i');
+  const bareTickerPattern = new RegExp(`\\b${tickerToken}\\b`);
+  assert.match(`$${properName}`, cashtagPattern, 'cashtag probe is not detected');
+  assert.match(tickerToken, bareTickerPattern, 'bare ticker probe is not detected');
+  assert.match(
+    normalizePolicyText(`&DoLlAr;${properName}`),
+    cashtagPattern,
+    'encoded cashtag probe is not detected',
+  );
+
+  function gamePolicyViolations(entries) {
+    const violations = [];
+    for (const [name, contents] of entries) {
+      const normalized = normalizePolicyText(contents);
+      if (cashtagPattern.test(normalized)) violations.push(`${name}:cashtag`);
+      if (bareTickerPattern.test(normalized)) violations.push(`${name}:bare ticker`);
+    }
+    return violations;
+  }
+
+  const homepageGameStyleName = 'css/style.css#game';
+  const homepageStyles = humanSources['css/style.css'];
+  const homepageGameStylesStart = homepageStyles.indexOf('#game {');
+  const homepageGameStylesEnd = homepageStyles.indexOf('#community {', homepageGameStylesStart);
+  assert.notEqual(homepageGameStylesStart, -1, 'homepage game styles missing');
+  assert.notEqual(homepageGameStylesEnd, -1, 'homepage game styles are not bounded');
+  const homepageGameStyles = homepageStyles.slice(
+    homepageGameStylesStart,
+    homepageGameStylesEnd,
+  );
+  const gamePolicySources = [
+    ...['game.html', 'css/game.css', 'js/game.mjs', 'js/game-logic.mjs'].map((name) => [
+      name,
+      trackedSources[name],
+    ]),
+    ['index.html#game', gameSection],
+    [homepageGameStyleName, homepageGameStyles],
+    ['game.json', gameJsonSource ?? ''],
+  ];
+  const mutatedGamePolicySources = gamePolicySources.map(([name, contents]) => [
+    name,
+    name === homepageGameStyleName
+      ? `${contents}\n.game-teaser-probe { content: "$${properName} ${tickerToken}"; }`
+      : contents,
+  ]);
+  assert.deepEqual(
+    gamePolicyViolations(mutatedGamePolicySources),
+    [`${homepageGameStyleName}:cashtag`, `${homepageGameStyleName}:bare ticker`],
+    'game policy scanner misses homepage game styles',
+  );
+  assert.deepEqual(gamePolicyViolations(gamePolicySources), []);
 });
 
 check('homepage hero visible copy is exact and keeps 2013 separate from the coin', () => {
