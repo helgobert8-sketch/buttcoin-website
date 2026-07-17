@@ -1,6 +1,7 @@
 {
   "redirects": [
-    { "source": "/legend", "destination": "https://x.com/ButtcoinBitcoin/status/2077461162493427881", "permanent": false }
+    { "source": "/legend", "destination": "https://x.com/ButtcoinBitcoin/status/2077461162493427881", "permanent": false },
+    { "source": "/2013", "destination": "https://www.youtube.com/watch?v=uh-zxexGSA4", "permanent": false }
   ],
   "rewrites": [
     { "source": "/for-ai", "destination": "/for-ai.html" },
