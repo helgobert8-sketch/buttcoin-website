@@ -121,6 +121,13 @@
       },
       "publication": "human review required"
     },
+    "public_read": {
+      "destination": "Published Scroll, Apocrypha, and Ledger content",
+      "endpoint": "https://buttcoin.wtf/api/church-content",
+      "method": "GET",
+      "publication": "Only approved, numbered, or ledger entries are returned",
+      "firestore": "Firestore remains the curated source of truth"
+    },
     "human_submission": {
       "content_area": "Apocrypha",
       "route": "Complete the Five Fields on the public page.",
