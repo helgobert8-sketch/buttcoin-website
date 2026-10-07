@@ -1351,7 +1351,7 @@ check('tokenomics publishes the exact canonical identity anchors', () => {
   assert.equal(tokenomics.links?.website, DOMAIN);
   assert.equal(
     tokenomics.liveData?.endpoint,
-    `https://api.dexscreener.com/latest/dex/pairs/solana/${PAIR}`,
+    `https://api.dexscreener.com/latest/dex/tokens/${MINT}`,
   );
 });
 
