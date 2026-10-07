@@ -1,6 +1,6 @@
 // Firebase Storage rules for bucket buttcoin-fbe0f.firebasestorage.app.
 // Replace the whole rules text in Firebase Console -> Storage -> Rules
-// (or Google Cloud: firebase deploy --only storage) with this block.
+// (or deploy it with the Firebase CLI) with this block.
 //
 // Since 2026-10 the site no longer uses Firebase Storage: the gallery is
 // served from the repo and Vercel Blob (memes.json), and visitor uploads
