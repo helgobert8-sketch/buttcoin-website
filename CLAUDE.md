@@ -43,7 +43,7 @@ Stored in Firestore `users/{uid}.role`:
 
 ## Sections
 1. Hero — logo, tagline rotator, live price, CA copy button, CTAs
-2. About — lore, James McMurray YouTube video, pizza day
+2. About — lore, James McMurry YouTube video, pizza day
 3. Buttcoin Dominance — BUTTCOIN.D live metric vs BTC
 4. How to Buy — 3-step guide (Phantom → SOL → Jupiter)
 5. Quote of the Day — rotating from quotes library in app.js
@@ -60,8 +60,9 @@ Stored in Firestore `users/{uid}.role`:
 
 ## AI-Readability Features
 - `llms.txt` — plain text summary for AI agents
+- `llms-full.txt` — llms.txt plus the static Church and Crossing texts, verbatim. Generated: run `python3 scripts/build_llms_full.py` after changing llms.txt, church.html or crossing.html (the canon test fails when it is stale)
 - `tokenomics.json` — machine-readable token facts
-- JSON-LD structured data in `<head>` (Organization + FinancialProduct schemas)
+- JSON-LD structured data in `<head>` (Organization + FinancialProduct + FAQPage schemas). The FAQPage must match the visible FAQ word for word; the canon test enforces it
 - Semantic HTML with proper heading hierarchy
 - OpenGraph + Twitter Card meta tags
 

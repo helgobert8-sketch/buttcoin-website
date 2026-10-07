@@ -41,6 +41,7 @@ const BUTTCOINERS_COMMUNITY = 'https://x.com/i/communities/1889649634051592571';
 
 const sourceUrls = {
   'llms.txt': new URL('../llms.txt', import.meta.url),
+  'llms-full.txt': new URL('../llms-full.txt', import.meta.url),
   'tokenomics.json': new URL('../tokenomics.json', import.meta.url),
   'timeline.json': new URL('../timeline.json', import.meta.url),
   'church.json': new URL('../church.json', import.meta.url),
@@ -189,9 +190,34 @@ function htmlElementByClass(html, tag, className) {
   return match[1];
 }
 
+// JSON-LD prose fields become their own sentences, so a closing quote does not glue
+// one answer to the next question during sentence splitting.
+function jsonLdProse(json) {
+  const prose = [];
+  const walk = (node) => {
+    if (Array.isArray(node)) node.forEach(walk);
+    else if (node && typeof node === 'object') {
+      for (const [key, value] of Object.entries(node)) {
+        if (typeof value === 'string' && ['name', 'text', 'description'].includes(key)) prose.push(value);
+        else walk(value);
+      }
+    }
+  };
+  try {
+    walk(JSON.parse(json));
+  } catch {
+    return json;
+  }
+  return prose.join(' ');
+}
+
 function visibleText(html) {
   return normalizeHtml(
     html
+      .replace(
+        /<script type="application\/ld\+json">([\s\S]*?)<\/script>/gi,
+        (_, json) => ` ${jsonLdProse(json)} `,
+      )
       .replace(/<br\s*\/?>/gi, ' ')
       .replace(/<[^>]+>/g, ' ')
       .replace(/&amp;/g, '&')
@@ -865,12 +891,13 @@ check('homepage metadata and JSON-LD are R0-safe and canonical', () => {
   const documents = parseJsonLd(index);
   assert.deepEqual(
     documents.map((document) => document['@type']).sort(),
-    ['FinancialProduct', 'Organization'].sort(),
+    ['FAQPage', 'FinancialProduct', 'Organization'].sort(),
   );
   const organization = documents.find((document) => document['@type'] === 'Organization');
   const financial = documents.find((document) => document['@type'] === 'FinancialProduct');
   assert.equal(organization?.url, DOMAIN);
-  assert.ok(organization?.sameAs?.every((url) => !/(?:x|twitter)\.com/i.test(url)));
+  assert.ok(organization?.sameAs?.includes(X_CANONICAL_URL), 'Organization sameAs lacks the canonical X account');
+  assert.ok(organization?.sameAs?.every((url) => !/(?:x|twitter)\.com\/ButtcoinTNB\b/i.test(url)));
   assert.equal(Object.hasOwn(financial ?? {}, 'ticker'), false, 'unsupported direct ticker remains');
   const properties = Object.fromEntries(
     financial.additionalProperty.map((property) => [property.name, property.value]),
@@ -906,7 +933,7 @@ check('homepage About and FAQ use the R0 control, supply, license, and Buttoshi 
     assert.match(surface, /video[^.]*December 8, 2013/i);
     assert.match(surface, /coin[^.]*on Solana since January 2025/i);
     assert.match(surface, /Buttoshi is a distributed role/i);
-    assert.doesNotMatch(surface, /James(?: D\. McMurray)?[^.]{0,120}(?:Buttoshi|Satoshi)/i);
+    assert.doesNotMatch(surface, /James(?: D\. McMurry)?[^.]{0,120}(?:Buttoshi|Satoshi)/i);
   }
 
   assert.match(faq, /Supply is live on-chain data/i);
@@ -993,13 +1020,13 @@ check('human article copy distinguishes independent same-name projects by Mint a
   );
 });
 
-check('philosophical essay avoids invented McMurray intent and quotation', () => {
+check('philosophical essay avoids invented McMurry intent and quotation', () => {
   const buttposting = visibleText(
     htmlBlockById(humanSources['index.html'], 'section', 'buttposting'),
   );
   assert.doesNotMatch(
     buttposting,
-    /McMurray[^.]{0,160}\b(?:understood|believed|thought|asked|wanted|intended)\b/i,
+    /McMurry[^.]{0,160}\b(?:understood|believed|thought|asked|wanted|intended)\b/i,
   );
   assert.doesNotMatch(buttposting, /what if we just agreed that this was worth something/i);
   assert.ok(buttposting.includes(PHILOSOPHICAL_SAFE_COPY));
@@ -1324,7 +1351,7 @@ check('tokenomics publishes the exact canonical identity anchors', () => {
   assert.equal(tokenomics.links?.website, DOMAIN);
   assert.equal(
     tokenomics.liveData?.endpoint,
-    `https://api.dexscreener.com/latest/dex/pairs/solana/${PAIR}`,
+    `https://api.dexscreener.com/latest/dex/tokens/${MINT}`,
   );
 });
 
@@ -1694,6 +1721,36 @@ check('for-ai.html advertises llms.txt in document metadata', () => {
       sources['for-ai.html'],
     ),
     'missing canonical llms.txt alternate link',
+  );
+});
+
+check('llms-full.txt starts with the current llms.txt', () => {
+  assert.ok(
+    sources['llms-full.txt'].startsWith(sources['llms.txt'].trimEnd()),
+    'llms-full.txt is stale: run python3 scripts/build_llms_full.py',
+  );
+});
+
+check('index FAQPage JSON-LD matches the visible FAQ', () => {
+  const index = humanSources['index.html'];
+  const faq = parseJsonLd(index).find((document) => document['@type'] === 'FAQPage');
+  const section = index.slice(index.indexOf('<section id="faq">'));
+  const clean = (value) =>
+    value
+      .replace(/<[^>]+>/g, '')
+      .replace(/&amp;/g, '&')
+      .replace(/\s+/g, ' ')
+      .trim();
+  const visible = [
+    ...section
+      .slice(0, section.indexOf('</section>'))
+      .matchAll(
+        /<button class="faq-question"[^>]*>([\s\S]*?)<span class="faq-arrow">[\s\S]*?<div class="faq-answer">([\s\S]*?)<\/div>/g,
+      ),
+  ].map(([, question, answer]) => [clean(question), clean(answer)]);
+  assert.deepEqual(
+    faq?.mainEntity?.map((item) => [item.name, item.acceptedAnswer?.text]),
+    visible,
   );
 });
 

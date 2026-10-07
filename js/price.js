@@ -5,7 +5,9 @@
 ═══════════════════════════════════════════════ */
 
 const DEXSCREENER_PAIR = '63amWndBz75z2j7jyKDbzXvzt36L9qdGw7CZAXbD4KNe';
-const DEXSCREENER_URL  = `https://api.dexscreener.com/latest/dex/pairs/solana/${DEXSCREENER_PAIR}`;
+const BUTTCOIN_MINT    = 'FasH397CeZLNYWkd3wWK9vrmjd1z93n3b59DssRXpump';
+// The pairs endpoint returns null for this pair (observed 2026-10-07); the tokens endpoint lists it.
+const DEXSCREENER_URL  = `https://api.dexscreener.com/latest/dex/tokens/${BUTTCOIN_MINT}`;
 const COINGECKO_URL    = 'https://api.coingecko.com/api/v3/global';
 
 let priceData = null;
@@ -48,7 +50,9 @@ async function fetchPriceData() {
     const res = await fetch(DEXSCREENER_URL);
     if (!res.ok) throw new Error('DexScreener fetch failed');
     const json = await res.json();
-    const pair = json.pairs?.[0];
+    const pairs = json.pairs ?? [];
+    const pair = pairs.find(p => p.pairAddress === DEXSCREENER_PAIR)
+      ?? [...pairs].sort((a, b) => (b.liquidity?.usd ?? 0) - (a.liquidity?.usd ?? 0))[0];
     if (!pair) throw new Error('No pair data');
     priceData = pair;
     updatePriceUI(pair);
