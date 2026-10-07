@@ -1,0 +1,21 @@
+// Firebase Storage rules for bucket buttcoin-fbe0f.firebasestorage.app.
+// Replace the whole rules text in Firebase Console -> Storage -> Rules
+// (or deploy it with the Firebase CLI) with this block.
+//
+// Since 2026-10 the site no longer uses Firebase Storage: the gallery is
+// served from the repo and Vercel Blob (memes.json), and visitor uploads
+// are paused (MEME_UPLOADS_OPEN = false in js/memes.js). The old rule let
+// anyone write to memes/pending/; a bot used that on 2026-05-22. Nothing
+// may be written anymore; existing approved files stay publicly readable.
+
+rules_version = '2';
+service firebase.storage {
+  match /b/{bucket}/o {
+    match /memes/approved/{allPaths=**} {
+      allow read: if true;
+    }
+    match /{allPaths=**} {
+      allow write: if false;
+    }
+  }
+}
