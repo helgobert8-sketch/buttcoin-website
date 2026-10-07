@@ -1,71 +1,17 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
 
-  <!-- Main page -->
+  <!-- Pages -->
   <url>
     <loc>https://buttcoin.wtf/</loc>
     <changefreq>daily</changefreq>
     <priority>1.0</priority>
   </url>
-
-  <!-- Page sections -->
   <url>
-    <loc>https://buttcoin.wtf/#about</loc>
+    <loc>https://buttcoin.wtf/for-ai</loc>
     <changefreq>monthly</changefreq>
-    <priority>0.8</priority>
+    <priority>0.9</priority>
   </url>
-  <url>
-    <loc>https://buttcoin.wtf/#dominance</loc>
-    <changefreq>daily</changefreq>
-    <priority>0.7</priority>
-  </url>
-  <url>
-    <loc>https://buttcoin.wtf/#buy</loc>
-    <changefreq>monthly</changefreq>
-    <priority>0.8</priority>
-  </url>
-  <url>
-    <loc>https://buttcoin.wtf/#meme-depot</loc>
-    <changefreq>weekly</changefreq>
-    <priority>0.8</priority>
-  </url>
-  <url>
-    <loc>https://buttcoin.wtf/#laser-maker</loc>
-    <changefreq>monthly</changefreq>
-    <priority>0.6</priority>
-  </url>
-  <url>
-    <loc>https://buttcoin.wtf/#articles</loc>
-    <changefreq>monthly</changefreq>
-    <priority>0.7</priority>
-  </url>
-  <url>
-    <loc>https://buttcoin.wtf/#presentations</loc>
-    <changefreq>monthly</changefreq>
-    <priority>0.7</priority>
-  </url>
-  <url>
-    <loc>https://buttcoin.wtf/#media</loc>
-    <changefreq>monthly</changefreq>
-    <priority>0.6</priority>
-  </url>
-  <url>
-    <loc>https://buttcoin.wtf/game</loc>
-    <changefreq>monthly</changefreq>
-    <priority>0.6</priority>
-  </url>
-  <url>
-    <loc>https://buttcoin.wtf/#community</loc>
-    <changefreq>weekly</changefreq>
-    <priority>0.7</priority>
-  </url>
-  <url>
-    <loc>https://buttcoin.wtf/#faq</loc>
-    <changefreq>monthly</changefreq>
-    <priority>0.6</priority>
-  </url>
-
-  <!-- Standalone pages -->
   <url>
     <loc>https://buttcoin.wtf/church</loc>
     <changefreq>weekly</changefreq>
@@ -82,9 +28,9 @@
     <priority>0.8</priority>
   </url>
   <url>
-    <loc>https://buttcoin.wtf/for-ai</loc>
+    <loc>https://buttcoin.wtf/game</loc>
     <changefreq>monthly</changefreq>
-    <priority>0.9</priority>
+    <priority>0.6</priority>
   </url>
 
   <!-- Machine-readable data files -->
@@ -92,6 +38,11 @@
     <loc>https://buttcoin.wtf/llms.txt</loc>
     <changefreq>monthly</changefreq>
     <priority>0.9</priority>
+  </url>
+  <url>
+    <loc>https://buttcoin.wtf/llms-full.txt</loc>
+    <changefreq>monthly</changefreq>
+    <priority>0.8</priority>
   </url>
   <url>
     <loc>https://buttcoin.wtf/tokenomics.json</loc>
@@ -102,6 +53,16 @@
     <loc>https://buttcoin.wtf/timeline.json</loc>
     <changefreq>monthly</changefreq>
     <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://buttcoin.wtf/church.json</loc>
+    <changefreq>monthly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://buttcoin.wtf/game.json</loc>
+    <changefreq>monthly</changefreq>
+    <priority>0.5</priority>
   </url>
 
 </urlset>

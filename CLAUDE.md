@@ -60,8 +60,9 @@ Stored in Firestore `users/{uid}.role`:
 
 ## AI-Readability Features
 - `llms.txt` — plain text summary for AI agents
+- `llms-full.txt` — llms.txt plus the static Church and Crossing texts, verbatim. Generated: run `python3 scripts/build_llms_full.py` after changing llms.txt, church.html or crossing.html (the canon test fails when it is stale)
 - `tokenomics.json` — machine-readable token facts
-- JSON-LD structured data in `<head>` (Organization + FinancialProduct schemas)
+- JSON-LD structured data in `<head>` (Organization + FinancialProduct + FAQPage schemas). The FAQPage must match the visible FAQ word for word; the canon test enforces it
 - Semantic HTML with proper heading hierarchy
 - OpenGraph + Twitter Card meta tags
 
