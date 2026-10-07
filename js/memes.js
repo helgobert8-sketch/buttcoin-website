@@ -55,7 +55,7 @@ const PLACEHOLDER_MEMES = [
 let currentCategory = 'all';
 let displayedMemes  = [];
 let page            = 0;
-const PAGE_SIZE     = 32;
+const PAGE_SIZE     = 30;  // divisible by 2, 3, 5 and 6 so grid rows fill evenly
 
 function emptyShelfMarkup(category) {
   const note = category === 'community'
