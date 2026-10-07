@@ -43,7 +43,7 @@ Stored in Firestore `users/{uid}.role`:
 
 ## Sections
 1. Hero — logo, tagline rotator, live price, CA copy button, CTAs
-2. About — lore, James McMurray YouTube video, pizza day
+2. About — lore, James McMurry YouTube video, pizza day
 3. Buttcoin Dominance — BUTTCOIN.D live metric vs BTC
 4. How to Buy — 3-step guide (Phantom → SOL → Jupiter)
 5. Quote of the Day — rotating from quotes library in app.js
