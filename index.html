@@ -252,6 +252,9 @@
             <span class="stat-val">Solana</span>
           </div>
         </div>
+        <p class="hero-stats-fallback" id="hero-stats-fallback" hidden>
+          Live price is unavailable right now. <a href="https://dexscreener.com/solana/63amWndBz75z2j7jyKDbzXvzt36L9qdGw7CZAXbD4KNe" target="_blank" rel="noopener">See it on DexScreener →</a>
+        </p>
 
         <div class="hero-ctas">
           <a href="https://jup.ag/swap/SOL-FasH397CeZLNYWkd3wWK9vrmjd1z93n3b59DssRXpump" target="_blank" rel="noopener" class="btn btn-primary btn-lg">Buy Buttcoin</a>
@@ -850,6 +853,7 @@
         <div class="laser-canvas-wrap">
           <canvas id="laser-canvas"></canvas>
           <p class="laser-hint" id="laser-placeholder">Your image will appear here</p>
+          <p class="laser-demo-note" id="laser-demo-note" hidden>Example. Upload your own image to start.</p>
         </div>
       </div>
     </div>
@@ -1079,10 +1083,12 @@
       <h2 class="section-title">The Buttcoin Game</h2>
       <p class="section-subtitle">Flip Bitcoin. One Butt at a time.</p>
 
-      <div class="game-teaser">
-        <a class="game-teaser-link" href="/game">The Flip</a>
-        <p class="game-teaser-copy">Tap to flip.</p>
-      </div>
+      <a class="game-teaser" href="/game">
+        <img class="game-teaser-coin" src="assets/logo.png" alt="" loading="lazy" />
+        <span class="game-teaser-link">The Flip</span>
+        <span class="game-teaser-copy">Tap to flip.</span>
+        <span class="btn btn-primary">Play The Flip →</span>
+      </a>
     </div>
   </section>
 
