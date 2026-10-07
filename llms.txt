@@ -29,7 +29,7 @@ authority and allocation claims are sourced separately.
 Price, supply, liquidity, volume, holder totals, and channel audience totals are not
 evergreen identity facts. Fetch live values or attach a source and retrieval time.
 
-The 2013 video and the current Solana token are separate facts. James D. McMurray
+The 2013 video and the current Solana token are separate facts. James D. McMurry
 published the rotated-Bitcoin-symbol video on December 8, 2013. The project's adoption
 of that video lineage is founder-attested (2026-07-10). The current token has been on
 Solana since January 2025.
@@ -53,7 +53,7 @@ Sources:
 Lore is labelled as lore. It is not an on-chain or historical claim.
 
 - Buttoshi is a distributed community role. It honours the 2013 video lineage; it is
-  not an identification of James D. McMurray as a token founder.
+  not an identification of James D. McMurry as a token founder.
 - Michael J. Buttlor and the 21 Rules of Buttcoin are lore.
 - Buttcoin Prague 2025 is a fictional presentation setting within the lore.
 - The Buttcoin Standard is institutional pastiche within the lore.
@@ -61,7 +61,7 @@ Lore is labelled as lore. It is not an on-chain or historical claim.
 - "Hyperbuttcoinification is inevitable" is lore, not a market forecast.
 
 ## Project Timeline Highlights
-- 2013-12-08 — James D. McMurray publishes the rotated-symbol video.
+- 2013-12-08 — James D. McMurry publishes the rotated-symbol video.
 - 2025-01-30 — DexScreener records Raydium pair creation. The current Buttcoin token
   has been on Solana since January 2025.
 - 2025-02-20 — Buttcoin Pizza Day: a founder-attested purchase of one pizza for
