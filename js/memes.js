@@ -55,7 +55,7 @@ const PLACEHOLDER_MEMES = [
 let currentCategory = 'all';
 let displayedMemes  = [];
 let page            = 0;
-const PAGE_SIZE     = 30;  // divisible by 2, 3, 5 and 6 so grid rows fill evenly
+const PAGE_SIZE     = 32;
 
 function emptyShelfMarkup(category) {
   const note = category === 'community'
@@ -314,7 +314,7 @@ function initUpload() {
       if (status) status.innerHTML = `
         <p style="color:#f59e0b;margin-top:12px">
           Upload coming soon. For now, submit your meme directly to
-          <a href="https://buttcoin.wtf/memes">Meme Depot</a>
+          <a href="https://buttcoin.wtf/#meme-depot">Meme Depot</a>
           or the <a href="https://t.me/buttcointnbsol" target="_blank" rel="noopener">Telegram channel</a>.
         </p>`;
     }

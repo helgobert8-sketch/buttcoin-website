@@ -58,7 +58,7 @@ Homepage (`index.html`):
 10. FAQ — accordion
 
 Subpages share the nav/footer markup (copied, no build step — keep them in sync) and `css/style.css`:
-- `/memes` — Meme Depot (gallery + upload, 30 per page), Laser Eyes Maker (shows an example until the first upload), Meme Randomizer (generates an example on scroll)
+- `/memes` — Meme Depot (gallery + upload), Laser Eyes Maker (shows an example until the first upload), Meme Randomizer (generates an example on scroll)
 - `/library` — Articles (modal reader), Presentations, Media
 - `/buttpost` — four essays + 15-step checklist (task state in localStorage `bp_tasks`, shared with the homepage)
 
