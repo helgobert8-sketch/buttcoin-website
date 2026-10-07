@@ -288,13 +288,7 @@ window.loadRandomMemes = async function() {
 const MEME_UPLOADS_OPEN = false;
 
 function initUpload() {
-  if (!MEME_UPLOADS_OPEN) {
-    // Drop the "Submit a meme yourself" invitation after the live count
-    const count = document.getElementById('meme-count');
-    const tail  = count && count.nextSibling;
-    if (tail && tail.nodeType === Node.TEXT_NODE) tail.textContent = ' memes and counting.';
-    return;
-  }
+  if (!MEME_UPLOADS_OPEN) return;
 
   const input = document.getElementById('meme-upload-input');
   if (!input) return;
