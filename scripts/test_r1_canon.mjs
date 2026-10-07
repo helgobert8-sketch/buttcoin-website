@@ -10,7 +10,7 @@ const execFileAsync = promisify(execFile);
 const MINT = 'FasH397CeZLNYWkd3wWK9vrmjd1z93n3b59DssRXpump';
 const PAIR = '63amWndBz75z2j7jyKDbzXvzt36L9qdGw7CZAXbD4KNe';
 const DOMAIN = 'https://buttcoin.wtf';
-const MEME_DEPOT = `${DOMAIN}/#meme-depot`;
+const MEME_DEPOT = `${DOMAIN}/memes`;
 const RETIRED_DEPOT_DOMAIN = new RegExp(['meme', 'depot', '\\.com'].join(''), 'i');
 const RETIRED_SITE_DOMAIN = new RegExp(['buttcoin', '\\.meme'].join(''), 'i');
 // D6 cutover: 2026-07-15 is replaced with the launch date on launch day.
@@ -51,6 +51,7 @@ const sourceUrls = {
 
 const humanSourceUrls = {
   'index.html': new URL('../index.html', import.meta.url),
+  'memes.html': new URL('../memes.html', import.meta.url),
   'church.html': new URL('../church.html', import.meta.url),
   'crossing.html': new URL('../crossing.html', import.meta.url),
   'css/style.css': new URL('../css/style.css', import.meta.url),
@@ -641,7 +642,7 @@ reviewCheck('for-ai current-channel instruction is exact', () => {
   );
 
   const depotHrefs = [...instruction.matchAll(
-    /href="([^"]*(?:memedepot|meme[-_]?depot|#meme-depot)[^"]*)"/gi,
+    /href="([^"]*(?:memedepot|meme[-_]?depot|#meme-depot|buttcoin\.wtf\/memes\b)[^"]*)"/gi,
   )].map((match) => match[1]);
   assert.deepEqual(depotHrefs, [MEME_DEPOT]);
   assert.ok(
@@ -701,7 +702,7 @@ reviewCheck('publication set rejects alternate Depot and discovery URLs', () => 
       (match) => match[0].replace(/[),.;]+$/, ''),
     );
     for (const url of urls) {
-      if (/memedepot|meme[-_]?depot/i.test(url)) depotUrls.push(url);
+      if (/memedepot|meme[-_]?depot|buttcoin\.wtf\/memes\b/i.test(url)) depotUrls.push(url);
       const parsed = new URL(url);
       if (expectedMachineUrls.has(parsed.pathname)) {
         assert.equal(
@@ -1189,8 +1190,8 @@ check('human X surfaces publish non-clickable historical status and the exact tr
 });
 
 check('Meme Depot uses the 3,018 count and only the on-site target', () => {
-  const index = humanSources['index.html'];
-  const count = index.match(/<span\b[^>]*id="meme-count"[^>]*>([\s\S]*?)<\/span>/i);
+  const memesPage = humanSources['memes.html'];
+  const count = memesPage.match(/<span\b[^>]*id="meme-count"[^>]*>([\s\S]*?)<\/span>/i);
   assert.ok(count, 'meme count missing');
   assert.equal(visibleText(count[1]), '3,018');
   assert.doesNotMatch(humanSources['js/memes.js'], /\bcountUp\s*\(/);
