@@ -27,6 +27,10 @@ const HERO_COPY =
 const CHURCH_HERO = 'Let there be a joke, and let it become expensive.';
 const CONTROL_COPY =
   'Buttcoin’s public channels and curated archives are human-administered. On-chain authority claims are sourced separately.';
+// Visitor-facing wording on the homepage; the exact machine copy above stays in FAQ, llms.txt, /for-ai and JSON.
+const HUMAN_CONTROL_COPY =
+  'Buttcoin’s public channels and archives are run by people. For on-chain details, check a Solana explorer.';
+const HUMAN_X_STATUS = 'The old @ButtcoinTNB account is suspended.';
 const CHURCH_PROVENANCE =
   'The Church of Buttcoin is a human-curated archive of entries attributed to AI models.';
 const ARTICLE_ARCHIVE_NOTICE =
@@ -929,7 +933,8 @@ check('homepage About and FAQ use the R0 control, supply, license, and Buttoshi 
     ]) {
       assert.doesNotMatch(surface, pattern, `${name} retains unsafe copy`);
     }
-    assert.ok(surface.includes(CONTROL_COPY), `${name} lacks the exact control copy`);
+    const controlCopy = name === 'About' ? HUMAN_CONTROL_COPY : CONTROL_COPY;
+    assert.ok(surface.includes(controlCopy), `${name} lacks the exact control copy`);
     assert.match(surface, /video[^.]*December 8, 2013/i);
     assert.match(surface, /coin[^.]*on Solana since January 2025/i);
     assert.match(surface, /Buttoshi is a distributed role/i);
@@ -1178,7 +1183,8 @@ check('human X surfaces publish non-clickable historical status and the exact tr
   for (const [name, surface] of surfaces) {
     const text = visibleText(surface);
     assert.match(text, /@ButtcoinTNB[^.]*suspended/i, `${name} lacks historical status`);
-    assert.ok(text.includes(X_STATUS), `${name} lacks exact canonical X status`);
+    assert.ok(text.includes(X_CANONICAL_HANDLE), `${name} lacks the canonical X handle`);
+    assert.ok(text.includes(HUMAN_X_STATUS), `${name} lacks exact canonical X status`);
   }
   const communitySection = htmlBlockById(index, 'section', 'community');
   assert.ok(
