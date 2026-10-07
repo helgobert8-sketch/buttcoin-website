@@ -283,7 +283,13 @@ window.loadRandomMemes = async function() {
 };
 
 // ─── UPLOAD ───────────────────────────────────
+// Paused while Firebase Storage is unavailable (2026-10); the tab bar and
+// upload panel are hidden in css/style.css. Reopen both together.
+const MEME_UPLOADS_OPEN = false;
+
 function initUpload() {
+  if (!MEME_UPLOADS_OPEN) return;
+
   const input = document.getElementById('meme-upload-input');
   if (!input) return;
 

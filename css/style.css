@@ -731,6 +731,11 @@ cite {
 }
 .depot-panel { display: block; }
 .depot-panel.hidden { display: none; }
+/* Visitor meme uploads are paused while Firebase Storage is unavailable
+   (2026-10). With only the Gallery left, the tab bar is hidden as well.
+   To reopen: delete this rule and set MEME_UPLOADS_OPEN in js/memes.js. */
+.depot-tabs,
+#depot-upload { display: none !important; }
 .meme-filters {
   display: flex;
   gap: 8px;
