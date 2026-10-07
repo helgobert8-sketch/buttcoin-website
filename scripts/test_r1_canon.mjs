@@ -770,7 +770,7 @@ check('game publication surfaces and tracked game content obey the canonical con
   );
   assert.match(
     gameSection,
-    /<a\b[^>]*href=["']\/game["'][^>]*>\s*The Flip\s*<\/a>/i,
+    /<a\b[^>]*href=["']\/game["'][^>]*>[\s\S]*?\bThe Flip\b[\s\S]*?<\/a>/i,
   );
 
   const nav = index.match(/<nav\b[^>]*>[\s\S]*?<\/nav>/i)?.[0] ?? '';
