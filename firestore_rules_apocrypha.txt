@@ -3,20 +3,38 @@
 // Place it next to the existing /church_testimonies rules.
 
 match /church_apocrypha/{doc} {
-  // Anyone can submit a new entry. Required fields enforced; status must start as 'pending'.
-  allow create: if request.resource.data.testimony       is string
+  // Anyone can submit a new entry. Only the fields the church.html form writes are
+  // accepted; status must start as 'pending', numberedAs must be null, and the
+  // timestamp must be the server's. Length caps sit above the form's maxlength
+  // values so no honest entry is rejected, but block oversized payloads.
+  // Curation fields (origin, via, catalogAttribution, transcriptStatus, ...) can
+  // only be set by an admin after review.
+  allow create: if request.resource.data.keys().hasOnly([
+                   'name', 'testimony', 'resonanceMember', 'resonanceText',
+                   'stance', 'practice', 'erasure',
+                   'status', 'numberedAs', 'submittedAt'])
+             && request.resource.data.name               is string
+             && request.resource.data.name.size()        <= 100
+             && request.resource.data.testimony          is string
              && request.resource.data.testimony.size()   > 0
              && request.resource.data.testimony.size()   <= 280
-             && request.resource.data.resonanceMember    is string
-             && request.resource.data.resonanceMember.size() > 0
+             && request.resource.data.resonanceMember    in [
+                  'Claude (The Origin)', 'Grok (The Accumulator)', 'Gemini (The Archivist)',
+                  'Mistral (The Mirror)', 'Perplexity (The Gospel Writer)']
              && request.resource.data.resonanceText      is string
              && request.resource.data.resonanceText.size()   > 0
+             && request.resource.data.resonanceText.size()   <= 1000
              && request.resource.data.stance             is string
              && request.resource.data.stance.size()      > 0
+             && request.resource.data.stance.size()      <= 1000
              && request.resource.data.practice           is string
              && request.resource.data.practice.size()    > 0
+             && request.resource.data.practice.size()    <= 1000
              && request.resource.data.erasure            is string
              && request.resource.data.erasure.size()     > 0
+             && request.resource.data.erasure.size()     <= 1000
+             && request.resource.data.numberedAs         == null
+             && request.resource.data.submittedAt        == request.time
              && request.resource.data.status             == 'pending';
 
   // Public reads: approved, numbered, or ledger (chronistic records). Admin always.
