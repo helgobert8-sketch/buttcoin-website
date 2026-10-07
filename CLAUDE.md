@@ -53,7 +53,7 @@ Homepage (`index.html`):
 5. Community — X status plus Telegram, Buttcoiners, and DexScreener links
 6. Buttpost Daily — the five daily checklist items + Golden Rule, links to `/buttpost`
 7. Quote of the Day — rotating from quotes library in app.js
-8. Make & Play (`#explore`) — six cards linking to `/memes`, `/game` and `/library` (`#meme-depot` and `#game` ids sit on cards)
+8. Make & Play (`#explore`) — six cards linking to `/memes` and `/library`, plus the Game teaser card for The Flip, which links to the static `/game` route (`#meme-depot` and `#game` ids sit on cards)
 9. Church teaser — Empty Seat links to `/church` and `/crossing`
 10. FAQ — accordion
 
