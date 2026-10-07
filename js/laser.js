@@ -9,6 +9,13 @@ let laserEyes     = [];   // [{x, y}]
 let laserColor    = '#a855f7';
 let laserSize     = 30;
 let laserIntensity = 0.85;
+let laserDemo     = false;  // true while the example image is shown
+
+// Example shown before the first upload (eye positions as fractions of the image)
+const LASER_DEMO = {
+  src:  'assets/characters/buttlor/G6N4nHPWUAEJqBB.jpg',
+  eyes: [{ x: 0.4925, y: 0.24 }, { x: 0.59, y: 0.2375 }],
+};
 
 const canvas  = document.getElementById('laser-canvas');
 const ctx     = canvas ? canvas.getContext('2d') : null;
@@ -28,6 +35,9 @@ function initLaser() {
       img.onload = () => {
         laserImg  = img;
         laserEyes = [];
+        laserDemo = false;
+        const note = document.getElementById('laser-demo-note');
+        if (note) note.hidden = true;
 
         // Scale canvas to image (max 800px wide)
         const maxW = 800;
@@ -37,6 +47,7 @@ function initLaser() {
 
         // Show canvas, hide placeholder
         canvas.style.display   = 'block';
+        canvas.style.cursor    = '';
         const ph = document.getElementById('laser-placeholder');
         if (ph) ph.style.display = 'none';
 
@@ -57,7 +68,7 @@ function initLaser() {
 
   // Click on canvas to place eye
   canvas.addEventListener('click', e => {
-    if (!laserImg) return;
+    if (!laserImg || laserDemo) return;
     const rect = canvas.getBoundingClientRect();
     const scaleX = canvas.width  / rect.width;
     const scaleY = canvas.height / rect.height;
@@ -66,6 +77,39 @@ function initLaser() {
     laserEyes.push({ x, y });
     drawLaser();
   });
+}
+
+// ─── EXAMPLE ──────────────────────────────────
+function showLaserDemo() {
+  if (!canvas || !ctx || laserImg) return;
+  const img = new Image();
+  img.onload = () => {
+    if (laserImg) return;  // the user uploaded meanwhile
+    const scale = img.width > 800 ? 800 / img.width : 1;
+    canvas.width  = img.width  * scale;
+    canvas.height = img.height * scale;
+    laserImg  = img;
+    laserDemo = true;
+    laserEyes = LASER_DEMO.eyes.map(e => ({ x: e.x * canvas.width, y: e.y * canvas.height }));
+    canvas.style.display = 'block';
+    canvas.style.cursor  = 'default';
+    const ph = document.getElementById('laser-placeholder');
+    if (ph) ph.style.display = 'none';
+    const note = document.getElementById('laser-demo-note');
+    if (note) note.hidden = false;
+    drawLaser();
+  };
+  img.src = LASER_DEMO.src;
+}
+
+function initLaserDemo() {
+  const section = document.getElementById('laser-maker');
+  if (!section) return;
+  if (!('IntersectionObserver' in window)) { showLaserDemo(); return; }
+  const io = new IntersectionObserver(entries => {
+    if (entries.some(e => e.isIntersecting)) { io.disconnect(); showLaserDemo(); }
+  }, { rootMargin: '400px 0px' });
+  io.observe(section);
 }
 
 // ─── DRAW ─────────────────────────────────────
@@ -209,4 +253,7 @@ function hexToRgb(hex) {
 }
 
 // ─── INIT ─────────────────────────────────────
-document.addEventListener('DOMContentLoaded', initLaser);
+document.addEventListener('DOMContentLoaded', () => {
+  initLaser();
+  initLaserDemo();
+});

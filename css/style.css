@@ -15,7 +15,7 @@
   --purple-glow:  rgba(168, 85, 247, 0.3);
   --white:        #ffffff;
   --text:         #d4d4d4;
-  --muted:        #777777;
+  --muted:        #8f8f8f;
   --font:         'Ubuntu', system-ui, -apple-system, sans-serif;
   --radius:       12px;
   --radius-sm:    8px;
@@ -359,6 +359,13 @@ h1, h2, h3, h4 { color: var(--white); font-weight: 700; line-height: 1.2; }
   gap: 12px;
   margin-bottom: 32px;
 }
+.hero-stats[hidden] { display: none; }
+.hero-stats-fallback {
+  color: var(--muted);
+  font-size: 0.9rem;
+  margin-bottom: 32px;
+}
+.hero-stats-fallback[hidden] { display: none; }
 .stat-item {
   background: var(--bg-card);
   border: 1px solid var(--border);
@@ -1039,6 +1046,19 @@ cite {
 #laser-placeholder {
   color: var(--muted);
 }
+.laser-demo-note {
+  position: absolute;
+  bottom: 12px;
+  left: 50%;
+  transform: translateX(-50%);
+  padding: 4px 12px;
+  border-radius: 100px;
+  background: rgba(13,13,13,0.8);
+  color: var(--text);
+  font-size: 0.8rem;
+  white-space: nowrap;
+}
+.laser-demo-note[hidden] { display: none; }
 
 /* ─── MEME RANDOMIZER ─── */
 #meme-randomizer { background: var(--bg); }
@@ -1153,6 +1173,7 @@ cite {
   display: flex;
   flex-direction: column;
   gap: 12px;
+  position: relative;
 }
 .presentation-card:hover {
   border-color: var(--orange);
@@ -1179,6 +1200,10 @@ cite {
   transform: scale(1.04);
 }
 .lore-badge {
+  position: absolute;
+  top: 12px;
+  left: 12px;
+  background: rgba(13,13,13,0.85);
   width: fit-content;
   padding: 3px 9px;
   border: 1px solid rgba(247,147,26,0.45);
@@ -1266,20 +1291,41 @@ cite {
   flex-direction: column;
   align-items: center;
   gap: 12px;
-  padding: 64px 0;
+  max-width: 420px;
+  margin: 40px auto 0;
+  padding: 40px 32px;
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  text-decoration: none;
+  transition: border-color var(--transition), transform var(--transition);
+}
+.game-teaser:hover,
+.game-teaser:focus-visible {
+  border-color: var(--orange);
+  transform: translateY(-3px);
+}
+.game-teaser-coin {
+  width: 140px;
+  height: 140px;
+  object-fit: contain;
+  transform: rotate(90deg);
+  transition: transform 0.6s ease;
+}
+.game-teaser:hover .game-teaser-coin,
+.game-teaser:focus-visible .game-teaser-coin {
+  transform: rotate(0deg);
+}
+@media (prefers-reduced-motion: reduce) {
+  .game-teaser-coin { transition: none; }
 }
 .game-teaser-link {
   color: var(--orange);
   font-size: 2.5rem;
   font-weight: 800;
-  text-decoration: none;
-}
-.game-teaser-link:hover,
-.game-teaser-link:focus-visible {
-  text-decoration: underline;
 }
 .game-teaser-copy {
-  margin: 0;
+  margin: 0 0 8px;
   color: var(--muted);
 }
 .game-card {
