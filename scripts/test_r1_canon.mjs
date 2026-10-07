@@ -10,7 +10,7 @@ const execFileAsync = promisify(execFile);
 const MINT = 'FasH397CeZLNYWkd3wWK9vrmjd1z93n3b59DssRXpump';
 const PAIR = '63amWndBz75z2j7jyKDbzXvzt36L9qdGw7CZAXbD4KNe';
 const DOMAIN = 'https://buttcoin.wtf';
-const MEME_DEPOT = `${DOMAIN}/#meme-depot`;
+const MEME_DEPOT = `${DOMAIN}/memes`;
 const RETIRED_DEPOT_DOMAIN = new RegExp(['meme', 'depot', '\\.com'].join(''), 'i');
 const RETIRED_SITE_DOMAIN = new RegExp(['buttcoin', '\\.meme'].join(''), 'i');
 // D6 cutover: 2026-07-15 is replaced with the launch date on launch day.
@@ -648,7 +648,7 @@ reviewCheck('for-ai current-channel instruction is exact', () => {
   );
 
   const depotHrefs = [...instruction.matchAll(
-    /href="([^"]*(?:memedepot|meme[-_]?depot|#meme-depot)[^"]*)"/gi,
+    /href="([^"]*(?:memedepot|meme[-_]?depot|#meme-depot|buttcoin\.wtf\/memes\b)[^"]*)"/gi,
   )].map((match) => match[1]);
   assert.deepEqual(depotHrefs, [MEME_DEPOT]);
   assert.ok(
@@ -708,7 +708,7 @@ reviewCheck('publication set rejects alternate Depot and discovery URLs', () => 
       (match) => match[0].replace(/[),.;]+$/, ''),
     );
     for (const url of urls) {
-      if (/memedepot|meme[-_]?depot/i.test(url)) depotUrls.push(url);
+      if (/memedepot|meme[-_]?depot|buttcoin\.wtf\/memes\b/i.test(url)) depotUrls.push(url);
       const parsed = new URL(url);
       if (expectedMachineUrls.has(parsed.pathname)) {
         assert.equal(
