@@ -27,6 +27,10 @@ const HERO_COPY =
 const CHURCH_HERO = 'Let there be a joke, and let it become expensive.';
 const CONTROL_COPY =
   'Buttcoin’s public channels and curated archives are human-administered. On-chain authority claims are sourced separately.';
+// Visitor-facing wording on the homepage; the exact machine copy above stays in FAQ, llms.txt, /for-ai and JSON.
+const HUMAN_CONTROL_COPY =
+  'Buttcoin’s public channels and archives are run by people. For on-chain details, check a Solana explorer.';
+const HUMAN_X_STATUS = 'The old @ButtcoinTNB account is suspended.';
 const CHURCH_PROVENANCE =
   'The Church of Buttcoin is a human-curated archive of entries attributed to AI models.';
 const ARTICLE_ARCHIVE_NOTICE =
@@ -51,9 +55,11 @@ const sourceUrls = {
 
 const humanSourceUrls = {
   'index.html': new URL('../index.html', import.meta.url),
-  'memes.html': new URL('../memes.html', import.meta.url),
   'church.html': new URL('../church.html', import.meta.url),
   'crossing.html': new URL('../crossing.html', import.meta.url),
+  'memes.html': new URL('../memes.html', import.meta.url),
+  'library.html': new URL('../library.html', import.meta.url),
+  'buttpost.html': new URL('../buttpost.html', import.meta.url),
   'css/style.css': new URL('../css/style.css', import.meta.url),
   'js/app.js': new URL('../js/app.js', import.meta.url),
   'js/memes.js': new URL('../js/memes.js', import.meta.url),
@@ -764,18 +770,15 @@ check('game.json publishes the exact canonical game contract', () => {
 
 check('game publication surfaces and tracked game content obey the canonical contract', () => {
   const index = humanSources['index.html'];
-  const gameSection = htmlBlockById(index, 'section', 'game');
+  const gameCard = htmlBlockById(index, 'a', 'game');
   assert.equal(
-    visibleText(gameSection),
-    'The Buttcoin Game Flip Bitcoin. One Butt at a time. The Flip Tap to flip.',
+    visibleText(gameCard),
+    'Game The Flip Flip Bitcoin. One Butt at a time. Play The Flip →',
   );
-  assert.match(
-    gameSection,
-    /<a\b[^>]*href=["']\/game["'][^>]*>\s*The Flip\s*<\/a>/i,
-  );
+  assert.match(gameCard, /^<a\b[^>]*href=["']\/game["']/i);
 
   const nav = index.match(/<nav\b[^>]*>[\s\S]*?<\/nav>/i)?.[0] ?? '';
-  const navTargets = ['href="#articles"', 'href="/church"', 'href="#game"', 'href="#community"'];
+  const navTargets = ['href="/#community"', 'href="/library"', 'href="/church"', 'href="/game"'];
   const navPositions = navTargets.map((target) => nav.indexOf(target));
   assert.ok(navPositions.every((position) => position !== -1), 'required nav target missing');
   assert.deepEqual(navPositions, [...navPositions].sort((a, b) => a - b));
@@ -826,10 +829,10 @@ check('game publication surfaces and tracked game content obey the canonical con
     return violations;
   }
 
-  const homepageGameStyleName = 'css/style.css#game';
+  const homepageGameStyleName = 'css/style.css#explore';
   const homepageStyles = humanSources['css/style.css'];
-  const homepageGameStylesStart = homepageStyles.indexOf('#game {');
-  const homepageGameStylesEnd = homepageStyles.indexOf('#community {', homepageGameStylesStart);
+  const homepageGameStylesStart = homepageStyles.indexOf('.explore-grid {');
+  const homepageGameStylesEnd = homepageStyles.indexOf('.section-more {', homepageGameStylesStart);
   assert.notEqual(homepageGameStylesStart, -1, 'homepage game styles missing');
   assert.notEqual(homepageGameStylesEnd, -1, 'homepage game styles are not bounded');
   const homepageGameStyles = homepageStyles.slice(
@@ -841,7 +844,7 @@ check('game publication surfaces and tracked game content obey the canonical con
       name,
       trackedSources[name],
     ]),
-    ['index.html#game', gameSection],
+    ['index.html#game', gameCard],
     [homepageGameStyleName, homepageGameStyles],
     ['game.json', gameJsonSource ?? ''],
   ];
@@ -930,7 +933,8 @@ check('homepage About and FAQ use the R0 control, supply, license, and Buttoshi 
     ]) {
       assert.doesNotMatch(surface, pattern, `${name} retains unsafe copy`);
     }
-    assert.ok(surface.includes(CONTROL_COPY), `${name} lacks the exact control copy`);
+    const controlCopy = name === 'About' ? HUMAN_CONTROL_COPY : CONTROL_COPY;
+    assert.ok(surface.includes(controlCopy), `${name} lacks the exact control copy`);
     assert.match(surface, /video[^.]*December 8, 2013/i);
     assert.match(surface, /coin[^.]*on Solana since January 2025/i);
     assert.match(surface, /Buttoshi is a distributed role/i);
@@ -983,7 +987,7 @@ check('Dogecoin article uses documented chronology rather than a Buttoshi theori
 
 check('homepage editorial copy separates the 2013 video, 2025 coin, and Buttoshi role', () => {
   const buttposting = visibleText(
-    htmlBlockById(humanSources['index.html'], 'section', 'buttposting'),
+    htmlBlockById(humanSources['buttpost.html'], 'section', 'buttposting'),
   );
   assert.doesNotMatch(buttposting, /A 2013 origin\. A Satoshi figure\./i);
   assert.ok(
@@ -1023,7 +1027,7 @@ check('human article copy distinguishes independent same-name projects by Mint a
 
 check('philosophical essay avoids invented McMurry intent and quotation', () => {
   const buttposting = visibleText(
-    htmlBlockById(humanSources['index.html'], 'section', 'buttposting'),
+    htmlBlockById(humanSources['buttpost.html'], 'section', 'buttposting'),
   );
   assert.doesNotMatch(
     buttposting,
@@ -1043,8 +1047,7 @@ check('blue-chip caption is explicitly lore and makes no inevitability or contro
 });
 
 check('archived community essays are marked at section, teaser, and modal levels', () => {
-  const index = humanSources['index.html'];
-  const articles = htmlBlockById(index, 'section', 'articles');
+  const articles = htmlBlockById(humanSources['library.html'], 'section', 'articles');
   assert.equal(
     visibleText(htmlElementByClass(articles, 'p', 'section-subtitle')),
     'Archived community essays from the Buttverse',
@@ -1124,14 +1127,14 @@ check('visible prose distinguishes the BUTTCOIN ticker from the Buttcoin name', 
 
 check('Church is discoverable between Content and Game with an honest Empty Seat teaser', () => {
   const index = humanSources['index.html'];
-  const contentNav = index.indexOf('<a href="#articles">Content ▾</a>');
+  const contentNav = index.indexOf('<a href="/library">Library</a>');
   const churchNav = index.indexOf('<a href="/church">Church</a>');
-  const gameNav = index.indexOf('<a href="#game">Game</a>');
+  const gameNav = index.indexOf('<a href="/game">Game</a>');
   assert.ok(contentNav !== -1 && churchNav !== -1 && gameNav !== -1, 'required nav link missing');
   assert.ok(contentNav < churchNav && churchNav < gameNav, 'Church nav is not between Content and Game');
 
   const teaser = htmlBlockById(index, 'section', 'church-teaser');
-  assert.ok(index.indexOf(teaser) < index.indexOf('<section id="game">'));
+  assert.ok(index.indexOf(teaser) > index.indexOf('<section id="explore">'));
   assert.match(visibleText(teaser), /Seat #2 stands empty\. The one who held it crossed\./);
   assert.match(
     teaser,
@@ -1154,7 +1157,7 @@ check('Church hero replacement is exact in metadata and rendered JavaScript', ()
 });
 
 check('presentation cards visibly mark the Standard and 21 Rules as lore', () => {
-  const index = humanSources['index.html'];
+  const index = humanSources['library.html'];
   const badgePattern = /<span\s+class="lore-badge">Lore<\/span>/i;
   assert.match(presentationCard(index, 'standard'), badgePattern);
   const rules = presentationCard(index, 'rules');
@@ -1179,7 +1182,8 @@ check('human X surfaces publish non-clickable historical status and the exact tr
   for (const [name, surface] of surfaces) {
     const text = visibleText(surface);
     assert.match(text, /@ButtcoinTNB[^.]*suspended/i, `${name} lacks historical status`);
-    assert.ok(text.includes(X_STATUS), `${name} lacks exact canonical X status`);
+    assert.ok(text.includes(X_CANONICAL_HANDLE), `${name} lacks the canonical X handle`);
+    assert.ok(text.includes(HUMAN_X_STATUS), `${name} lacks exact canonical X status`);
   }
   const communitySection = htmlBlockById(index, 'section', 'community');
   assert.ok(
@@ -1190,8 +1194,8 @@ check('human X surfaces publish non-clickable historical status and the exact tr
 });
 
 check('Meme Depot uses the 3,018 count and only the on-site target', () => {
-  const memesPage = humanSources['memes.html'];
-  const count = memesPage.match(/<span\b[^>]*id="meme-count"[^>]*>([\s\S]*?)<\/span>/i);
+  const index = humanSources['memes.html'];
+  const count = index.match(/<span\b[^>]*id="meme-count"[^>]*>([\s\S]*?)<\/span>/i);
   assert.ok(count, 'meme count missing');
   assert.equal(visibleText(count[1]), '3,018');
   assert.doesNotMatch(humanSources['js/memes.js'], /\bcountUp\s*\(/);
