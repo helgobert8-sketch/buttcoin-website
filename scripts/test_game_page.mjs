@@ -309,8 +309,8 @@ test('repo guidance documents The Flip files and current homepage section', asyn
 
   const gameSection = guidance
     .split(/\r?\n/)
-    .find((line) => line.startsWith('13. Game'));
-  assert.ok(gameSection, 'section 13 must document the game');
+    .find((line) => /^\d+\. (?:Game|Make & Play)\b/.test(line));
+  assert.ok(gameSection, 'a homepage section must document the game');
   assert.match(gameSection, /The Flip/);
   assert.match(gameSection, /teaser/i);
   assert.match(gameSection, /static/i);
