@@ -88,6 +88,13 @@ function setErrorUI() {
   setText('stat-price', 'N/A');
   setText('stat-mcap', 'N/A');
   setText('stat-vol', 'N/A');
+  // Hide the empty hero tiles and point to the live chart instead
+  const stats = document.querySelector('.hero-stats');
+  const fallback = document.getElementById('hero-stats-fallback');
+  if (stats && fallback) {
+    stats.hidden = true;
+    fallback.hidden = false;
+  }
 }
 
 function setText(id, val) {

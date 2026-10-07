@@ -12,7 +12,10 @@ Domain: buttcoin.wtf | Hosted: Vercel | Code: GitHub (helgobert8-sketch)
 
 ## File Structure
 ```
-index.html          — Single-page app (all sections)
+index.html          — Homepage (hero, about, dominance, buy, community, daily buttposts, quote, Make & Play cards, church, FAQ)
+memes.html          — `/memes`: Meme Depot, Laser Eyes Maker, Meme Randomizer
+library.html        — `/library`: Articles, Presentations, Media
+buttpost.html       — `/buttpost`: Buttposting essays + full 15-step checklist
 game.html           — Static `/game` route for The Flip
 game.json           — Machine-readable contract for The Flip
 css/style.css       — All styles (dark theme, orange/purple accents)
@@ -42,21 +45,24 @@ Stored in Firestore `users/{uid}.role`:
 - (no account) — public visitor, read-only
 
 ## Sections
-1. Hero — logo, tagline rotator, live price, CA copy button, CTAs
+Homepage (`index.html`):
+1. Hero — logo, tagline rotator, live price (falls back to a DexScreener link), CA copy button, CTAs
 2. About — lore, James McMurry YouTube video, pizza day
 3. Buttcoin Dominance — BUTTCOIN.D live metric vs BTC
 4. How to Buy — 3-step guide (Phantom → SOL → Jupiter)
-5. Quote of the Day — rotating from quotes library in app.js
-6. Meme Depot — gallery (Firebase) + public upload + Phase 3 link
-7. Laser Maker — Canvas tool: upload image, click to add purple laser eyes
-8. Meme Randomizer — Canvas: random tagline/quote + optional characters
-9. Articles — 5+ articles with modal reader
-10. Presentations — Legend of Buttcoin plus Lore-labelled Buttcoin Standard and 21 Rules
-11. Media — Anthem (MP3) + video gallery
-12. Church teaser — Empty Seat links to `/church` and `/crossing`
-13. Game — The Flip teaser links to the static `/game` route
-14. Community — historical X status plus Telegram, Buttcoiners, and DexScreener links
-15. FAQ — accordion
+5. Community — X status plus Telegram, Buttcoiners, and DexScreener links
+6. Buttpost Daily — the five daily checklist items + Golden Rule, links to `/buttpost`
+7. Quote of the Day — rotating from quotes library in app.js
+8. Make & Play (`#explore`) — six cards linking to `/memes`, `/game` and `/library` (`#meme-depot` and `#game` ids sit on cards)
+9. Church teaser — Empty Seat links to `/church` and `/crossing`
+10. FAQ — accordion
+
+Subpages share the nav/footer markup (copied, no build step — keep them in sync) and `css/style.css`:
+- `/memes` — Meme Depot (gallery + upload), Laser Eyes Maker (shows an example until the first upload), Meme Randomizer (generates an example on scroll)
+- `/library` — Articles (modal reader), Presentations, Media
+- `/buttpost` — four essays + 15-step checklist (task state in localStorage `bp_tasks`, shared with the homepage)
+
+Old homepage anchors `#meme-depot`, `#laser-maker`, `#meme-randomizer`, `#articles`, `#presentations`, `#media` are redirected client-side to the subpage (script in the `index.html` head).
 
 ## AI-Readability Features
 - `llms.txt` — plain text summary for AI agents

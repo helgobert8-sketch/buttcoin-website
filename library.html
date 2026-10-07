@@ -1,0 +1,282 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Buttcoin Library — Articles, Presentations, Media</title>
+  <meta name="description" content="Archived community essays, the Buttcoin presentations, the Buttcoin anthem and videos." />
+  <link rel="canonical" href="https://buttcoin.wtf/library" />
+  <meta property="og:title" content="Buttcoin Library — Articles, Presentations, Media" />
+  <meta property="og:description" content="Archived community essays, the Buttcoin presentations, the Buttcoin anthem and videos." />
+  <meta property="og:image" content="https://buttcoin.wtf/assets/logo.png" />
+  <meta property="og:type" content="website" />
+  <meta property="og:url" content="https://buttcoin.wtf/library" />
+  <meta name="twitter:card" content="summary_large_image" />
+  <meta name="twitter:title" content="Buttcoin Library — Articles, Presentations, Media" />
+  <meta name="twitter:description" content="Archived community essays, the Buttcoin presentations, the Buttcoin anthem and videos." />
+  <meta name="twitter:image" content="https://buttcoin.wtf/assets/logo.png" />
+
+  <!-- Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Ubuntu:ital,wght@0,400;0,500;0,700;1,700&display=swap" rel="stylesheet" />
+  <link rel="alternate" type="text/plain" href="https://buttcoin.wtf/llms.txt" />
+
+  <link rel="stylesheet" href="css/style.css" />
+</head>
+<body class="subpage">
+
+  <!-- ═══════════════════════════════════════════════
+       NAVIGATION
+  ═══════════════════════════════════════════════ -->
+  <nav id="navbar">
+    <div class="nav-inner">
+      <a href="/" class="nav-logo">
+        <img src="assets/logo.png" alt="Buttcoin logo" class="nav-logo-img" />
+        <span class="nav-logo-text">buttcoin</span>
+      </a>
+
+      <ul class="nav-links" id="nav-links">
+        <li><a href="/#about">About</a></li>
+        <li><a href="/#how-to-buy">Buy</a></li>
+        <li><a href="/#community">Community</a></li>
+        <li><a href="/buttpost">Buttpost</a></li>
+        <li><a href="/memes">Memes</a></li>
+        <li><a href="/library">Library</a></li>
+        <li><a href="/church">Church</a></li>
+        <li><a href="/game">Game</a></li>
+      </ul>
+      <div class="nav-right">
+        <div class="nav-price" id="nav-price">
+          <span class="price-label">Ticker: BUTTCOIN</span>
+          <span class="price-value" id="live-price">Loading…</span>
+        </div>
+        <a href="https://jup.ag/swap/SOL-FasH397CeZLNYWkd3wWK9vrmjd1z93n3b59DssRXpump" target="_blank" rel="noopener" class="btn btn-primary btn-sm">Trade</a>
+        <button class="hamburger" id="hamburger" aria-label="Menu">
+          <span></span><span></span><span></span>
+        </button>
+      </div>
+    </div>
+  </nav>
+
+  <!-- Floating nav button (mobile only) -->
+  <button id="fab-nav" aria-label="Open navigation">
+    <img src="assets/logo.png" alt="Buttcoin" />
+  </button>
+
+  <header class="page-hero">
+    <div class="container">
+      <a class="page-back" href="/">← buttcoin.wtf</a>
+      <h1 class="page-title">Library</h1>
+      <p class="section-subtitle">Essays, presentations, the anthem and videos from the Buttverse.</p>
+      <nav class="page-jump" aria-label="On this page"><a href="#articles">Articles</a><a href="#presentations">Presentations</a><a href="#media">Media</a></nav>
+    </div>
+  </header>
+
+  <!-- ═══════════════════════════════════════════════
+       ARTICLES
+  ═══════════════════════════════════════════════ -->
+  <section id="articles">
+    <div class="container">
+      <h2 class="section-title">Articles</h2>
+      <p class="section-subtitle">Archived community essays from the Buttverse</p>
+
+      <div class="articles-grid">
+        <article class="article-card">
+          <div class="article-tag">Analysis</div>
+          <h3>Fundamentals vs. FUD</h3>
+          <p>An archived community essay on Buttcoin's memetic premise: Bitcoin, parody, and The Next Bitcoin.</p>
+          <span class="article-author">by paronthes</span>
+          <button class="btn btn-ghost btn-sm article-read-btn" onclick="openArticle('fundamentals')">Read →</button>
+        </article>
+
+        <article class="article-card">
+          <div class="article-tag">Strategy</div>
+          <h3>Why Big Retracements in Memecoins Are Not Only Healthy</h3>
+          <p>A deep look at memecoin price cycles, community resilience, and why Buttcoin holders have diamond butts.</p>
+          <span class="article-author">by Locke</span>
+          <button class="btn btn-ghost btn-sm article-read-btn" onclick="openArticle('retracements')">Read →</button>
+        </article>
+
+        <article class="article-card">
+          <div class="article-tag">Education</div>
+          <h3>How to Buy Buttcoin: An Educational Article</h3>
+          <p>A comprehensive walkthrough for newcomers entering the Buttverse for the first time.</p>
+          <span class="article-author">by Locke</span>
+          <button class="btn btn-ghost btn-sm article-read-btn" onclick="openArticle('how-to-buy-article')">Read →</button>
+        </article>
+
+        <article class="article-card">
+          <div class="article-tag">Culture</div>
+          <h3>Believing in Yourself</h3>
+          <p>What it means to hold conviction in something the rest of the world isn't ready for yet.</p>
+          <span class="article-author">by Sully</span>
+          <button class="btn btn-ghost btn-sm article-read-btn" onclick="openArticle('believing')">Read →</button>
+        </article>
+
+        <article class="article-card">
+          <div class="article-tag">Culture</div>
+          <h3>Dr. DOGE-Love, or How I Learned to Stop BONK-ing and Love the Buttcoin</h3>
+          <p>An archived community essay reflecting on meme culture, crypto cycles, and community practice.</p>
+          <span class="article-author">by Sully</span>
+          <button class="btn btn-ghost btn-sm article-read-btn" onclick="openArticle('doge-love')">Read →</button>
+        </article>
+
+        <article class="article-card">
+          <div class="article-tag">Analysis</div>
+          <h3>Buttcoin = Blue Chip Meme</h3>
+          <p>What happens when you can't find a single thing you can't meme with it? A midnight wake-up call, a rabbit hole, and a conviction that never went away.</p>
+          <span class="article-author">by paronthes</span>
+          <button class="btn btn-ghost btn-sm article-read-btn" onclick="openArticle('blue-chip')">Read →</button>
+        </article>
+
+      </div>
+    </div>
+  </section>
+
+  <!-- Article Modal -->
+  <div class="modal" id="article-modal">
+    <div class="modal-backdrop" onclick="closeModal('article-modal')"></div>
+    <div class="modal-content">
+      <button class="modal-close" onclick="closeModal('article-modal')">✕</button>
+      <div class="modal-body" id="article-modal-body"></div>
+    </div>
+  </div>
+
+
+  <!-- ═══════════════════════════════════════════════
+       PRESENTATIONS
+  ═══════════════════════════════════════════════ -->
+  <section id="presentations">
+    <div class="container">
+      <h2 class="section-title">Presentations</h2>
+      <p class="section-subtitle">The Buttcoin canon — study up</p>
+
+      <div class="presentations-grid">
+        <div class="presentation-card" onclick="openPresentation('legend')">
+          <div class="presentation-thumb">
+            <img src="assets/presentations/thumbs/legend.jpg" alt="The Legend of Buttcoin">
+          </div>
+          <h3>The Legend of Buttcoin</h3>
+          <p>The origin story. 25 slides. Everything you need to know about where Buttcoin came from and why it matters.</p>
+          <span class="pres-slides">25 slides</span>
+          <button class="btn btn-primary btn-sm">View →</button>
+        </div>
+
+        <div class="presentation-card" onclick="openPresentation('standard')">
+          <div class="presentation-thumb">
+            <img src="assets/presentations/thumbs/standard.jpg" alt="The Buttcoin Standard">
+          </div>
+          <span class="lore-badge">Lore</span>
+          <h3>The Buttcoin Standard</h3>
+          <p>The definitive Buttcoin manifesto. Why Buttcoin is the standard. Why hyperbuttcoinification is inevitable.</p>
+          <span class="pres-slides">PDF</span>
+          <button class="btn btn-primary btn-sm">View →</button>
+        </div>
+
+        <div class="presentation-card" onclick="openPresentation('rules')">
+          <div class="presentation-thumb">
+            <img src="assets/presentations/thumbs/rules.jpg" alt="21 Rules of Buttcoin">
+          </div>
+          <span class="lore-badge">Lore</span>
+          <h3>21 Rules of Buttcoin</h3>
+          <p>A fictional lore setting: Buttcoin Prague 2025, with a keynote address by Michael J. Buttlor. 25 slides of pure Buttlor wisdom.</p>
+          <span class="pres-slides">25 slides</span>
+          <button class="btn btn-primary btn-sm">View →</button>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Presentation Modal -->
+  <div class="modal" id="presentation-modal">
+    <div class="modal-backdrop" onclick="closeModal('presentation-modal')"></div>
+    <div class="modal-content modal-large">
+      <button class="modal-close" onclick="closeModal('presentation-modal')">✕</button>
+      <div class="modal-body" id="pres-modal-body">
+        <div class="slideshow-wrap">
+          <div class="slideshow" id="slideshow"></div>
+          <div class="slideshow-controls">
+            <button class="btn btn-outline" onclick="prevSlide()">← Prev</button>
+            <span id="slide-counter">1 / 1</span>
+            <button class="btn btn-outline" onclick="nextSlide()">Next →</button>
+          </div>
+          <div id="slide-page-nav"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+
+  <!-- ═══════════════════════════════════════════════
+       MEDIA (ANTHEM + VIDS)
+  ═══════════════════════════════════════════════ -->
+  <section id="media">
+    <div class="container">
+      <h2 class="section-title">Media</h2>
+      <p class="section-subtitle">Sound and vision from the Buttverse</p>
+
+      <div class="media-grid" id="media-grid"></div>
+      <div class="meme-pagination" id="media-pagination"></div>
+    </div>
+  </section>
+
+  <!-- ═══════════════════════════════════════════════
+       FOOTER
+  ═══════════════════════════════════════════════ -->
+  <footer id="footer">
+    <div class="container footer-inner">
+      <div class="footer-brand">
+        <img src="assets/logo.png" alt="Buttcoin" class="footer-logo" />
+        <p class="footer-tagline">Buttcoin — The Next Bitcoin</p>
+        <p class="footer-legal">Not financial advice.<br>Buttcoin is a community memecoin.<br>Do your own research.<br>Stack butts responsibly.</p>
+        <div class="footer-verification">
+          <span class="footer-verification-title">Verify</span>
+          <p>Mint: <code>FasH397CeZLNYWkd3wWK9vrmjd1z93n3b59DssRXpump</code> <button type="button" onclick="copyCA()">Copy</button></p>
+          <p>Domain: <a href="https://buttcoin.wtf">buttcoin.wtf</a></p>
+        </div>
+      </div>
+
+      <div class="footer-links">
+        <div class="footer-col">
+          <h4>Navigate</h4>
+          <a href="/#about">About</a>
+          <a href="/#how-to-buy">How to Buy</a>
+          <a href="/buttpost">Buttpost</a>
+          <a href="/memes">Memes</a>
+          <a href="/library">Library</a>
+          <a href="/church">Church</a>
+          <a href="/game">Game</a>
+          <a href="/#faq">FAQ</a>
+        </div>
+        <div class="footer-col">
+          <h4>Community</h4>
+          <span class="footer-status">Official X: @ButtcoinBitcoin. The old @ButtcoinTNB account is suspended.</span>
+          <a href="https://x.com/ButtcoinBitcoin" target="_blank" rel="noopener">X — @ButtcoinBitcoin</a>
+          <a href="https://t.me/buttcointnbsol" target="_blank" rel="noopener">Telegram</a>
+          <a href="https://x.com/i/communities/1889649634051592571" target="_blank" rel="noopener">Buttcoiners</a>
+          <a href="/memes">Meme Depot</a>
+        </div>
+        <div class="footer-col">
+          <h4>Trade</h4>
+          <a href="https://dexscreener.com/solana/63amWndBz75z2j7jyKDbzXvzt36L9qdGw7CZAXbD4KNe" target="_blank" rel="noopener">DexScreener</a>
+          <a href="https://jup.ag/swap/SOL-FasH397CeZLNYWkd3wWK9vrmjd1z93n3b59DssRXpump" target="_blank" rel="noopener">Jupiter</a>
+        </div>
+      </div>
+    </div>
+
+    <div class="footer-bottom">
+      <div class="container">
+        <span>© 2025 Buttcoin Community — We are all Buttoshi</span>
+        <span class="footer-ai-note">AI-readable data: <a href="/llms.txt">llms.txt</a> · <a href="/tokenomics.json">tokenomics.json</a> · <a href="/church.json">church.json</a></span>
+      </div>
+    </div>
+  </footer>
+
+
+  <!-- App Scripts -->
+  <script src="js/app.js"></script>
+  <script src="js/price.js"></script>
+  <script src="js/easter.js"></script>
+</body>
+</html>

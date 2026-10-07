@@ -1,0 +1,291 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Buttcoin Memes — Meme Depot, Laser Eyes, Randomizer</title>
+  <meta name="description" content="Browse thousands of Buttcoin memes, submit your own, give anyone purple laser eyes, or generate a random Buttcoin meme." />
+  <link rel="canonical" href="https://buttcoin.wtf/memes" />
+  <meta property="og:title" content="Buttcoin Memes — Meme Depot, Laser Eyes, Randomizer" />
+  <meta property="og:description" content="Browse thousands of Buttcoin memes, submit your own, give anyone purple laser eyes, or generate a random Buttcoin meme." />
+  <meta property="og:image" content="https://buttcoin.wtf/assets/logo.png" />
+  <meta property="og:type" content="website" />
+  <meta property="og:url" content="https://buttcoin.wtf/memes" />
+  <meta name="twitter:card" content="summary_large_image" />
+  <meta name="twitter:title" content="Buttcoin Memes — Meme Depot, Laser Eyes, Randomizer" />
+  <meta name="twitter:description" content="Browse thousands of Buttcoin memes, submit your own, give anyone purple laser eyes, or generate a random Buttcoin meme." />
+  <meta name="twitter:image" content="https://buttcoin.wtf/assets/logo.png" />
+
+  <!-- Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Ubuntu:ital,wght@0,400;0,500;0,700;1,700&display=swap" rel="stylesheet" />
+  <link rel="alternate" type="text/plain" href="https://buttcoin.wtf/llms.txt" />
+
+  <link rel="stylesheet" href="css/style.css" />
+</head>
+<body class="subpage">
+
+  <!-- ═══════════════════════════════════════════════
+       NAVIGATION
+  ═══════════════════════════════════════════════ -->
+  <nav id="navbar">
+    <div class="nav-inner">
+      <a href="/" class="nav-logo">
+        <img src="assets/logo.png" alt="Buttcoin logo" class="nav-logo-img" />
+        <span class="nav-logo-text">buttcoin</span>
+      </a>
+
+      <ul class="nav-links" id="nav-links">
+        <li><a href="/#about">About</a></li>
+        <li><a href="/#how-to-buy">Buy</a></li>
+        <li><a href="/#community">Community</a></li>
+        <li><a href="/buttpost">Buttpost</a></li>
+        <li><a href="/memes">Memes</a></li>
+        <li><a href="/library">Library</a></li>
+        <li><a href="/church">Church</a></li>
+        <li><a href="/game">Game</a></li>
+      </ul>
+      <div class="nav-right">
+        <div class="nav-price" id="nav-price">
+          <span class="price-label">Ticker: BUTTCOIN</span>
+          <span class="price-value" id="live-price">Loading…</span>
+        </div>
+        <a href="https://jup.ag/swap/SOL-FasH397CeZLNYWkd3wWK9vrmjd1z93n3b59DssRXpump" target="_blank" rel="noopener" class="btn btn-primary btn-sm">Trade</a>
+        <button class="hamburger" id="hamburger" aria-label="Menu">
+          <span></span><span></span><span></span>
+        </button>
+      </div>
+    </div>
+  </nav>
+
+  <!-- Floating nav button (mobile only) -->
+  <button id="fab-nav" aria-label="Open navigation">
+    <img src="assets/logo.png" alt="Buttcoin" />
+  </button>
+
+  <header class="page-hero">
+    <div class="container">
+      <a class="page-back" href="/">← buttcoin.wtf</a>
+      <h1 class="page-title">Memes</h1>
+      <p class="section-subtitle">Browse the depot, add purple laser eyes, or let the randomizer decide.</p>
+      <nav class="page-jump" aria-label="On this page"><a href="#meme-depot">Meme Depot</a><a href="#laser-maker">Laser Eyes Maker</a><a href="#meme-randomizer">Randomizer</a></nav>
+    </div>
+  </header>
+
+  <!-- ═══════════════════════════════════════════════
+       MEME DEPOT
+  ═══════════════════════════════════════════════ -->
+  <section id="meme-depot">
+    <div class="container">
+      <h2 class="section-title">Meme Depot</h2>
+      <p class="section-subtitle"><span id="meme-count">3,018</span> memes and counting. Submit a Buttcoin themed meme yourself and become part of Buttcoin's history.</p>
+
+      <div class="depot-tabs">
+        <button class="depot-tab active" onclick="switchDepotTab('gallery', this)">Gallery</button>
+        <button class="depot-tab" onclick="switchDepotTab('upload', this)">Submit a Meme</button>
+      </div>
+
+      <!-- Gallery Tab -->
+      <div class="depot-panel" id="depot-gallery">
+        <div class="meme-filters">
+          <button class="filter-btn active" onclick="filterMemes('all', this)">All</button>
+          <button class="filter-btn" onclick="filterMemes('iconic', this)">Iconic</button>
+          <button class="filter-btn" onclick="filterMemes('phase1', this)">Phase 1 — Classics</button>
+          <button class="filter-btn" onclick="filterMemes('phase2', this)">Phase 2 — Having Fun</button>
+          <button class="filter-btn" onclick="filterMemes('phase3', this)">Phase 3 — Uranus</button>
+          <button class="filter-btn" onclick="filterMemes('phase4', this)">Phase 4 — Feeling Buttish</button>
+          <button class="filter-btn" onclick="filterMemes('community', this)">Community</button>
+          <button class="filter-btn filter-btn-random" onclick="loadRandomMemes()">✦ Random</button>
+        </div>
+        <div class="meme-grid" id="meme-grid">
+          <div class="meme-loading">Loading memes from the Buttverse…</div>
+        </div>
+        <div class="meme-pagination" id="meme-pagination"></div>
+      </div>
+
+      <!-- Upload Tab -->
+      <div class="depot-panel hidden" id="depot-upload">
+        <div class="upload-box" id="upload-box">
+          <div class="upload-icon">🗃️</div>
+          <h3>Submit your meme to the Buttverse</h3>
+          <p>JPG, PNG, GIF, MP4 — max 10MB</p>
+          <input type="file" id="meme-upload-input" accept="image/*,video/mp4,.gif" hidden />
+          <button class="btn btn-primary" onclick="document.getElementById('meme-upload-input').click()">Choose file</button>
+          <p class="upload-note">All submissions are reviewed before appearing in the gallery. To be approved, memes must be Buttcoin-themed and meet community standards — no spam, no hate, no unrelated content.</p>
+          <div id="upload-status"></div>
+        </div>
+      </div>
+
+    </div>
+  </section>
+
+  <!-- ═══════════════════════════════════════════════
+       LASER MAKER
+  ═══════════════════════════════════════════════ -->
+  <section id="laser-maker">
+    <div class="container">
+      <h2 class="section-title">Laser Eyes Maker</h2>
+      <p class="section-subtitle">Give anyone laser eyes. Click to place the glow. Download and spread.</p>
+
+      <div class="laser-layout">
+        <div class="laser-controls">
+          <div class="laser-upload-area" id="laser-upload-area">
+            <p>📸 Upload your image</p>
+            <p class="laser-hint">JPG or PNG, any size</p>
+            <input type="file" id="laser-input" accept="image/*" hidden />
+            <button class="btn btn-primary" onclick="document.getElementById('laser-input').click()">Choose Image</button>
+          </div>
+
+          <div class="laser-options" id="laser-options" style="display:none">
+            <h4>Laser Options</h4>
+            <label>Size
+              <input type="range" id="laser-size" min="10" max="80" value="30" oninput="updateLaser()" />
+            </label>
+            <label>Intensity
+              <input type="range" id="laser-intensity" min="0.3" max="1" step="0.05" value="0.85" oninput="updateLaser()" />
+            </label>
+            <label>Color
+              <div class="laser-colors">
+                <button class="color-btn active" style="background:#a855f7" onclick="setLaserColor('#a855f7', this)"></button>
+                <button class="color-btn" style="background:#f97316" onclick="setLaserColor('#f97316', this)"></button>
+              </div>
+            </label>
+            <div class="laser-actions">
+              <button class="btn btn-outline btn-sm" onclick="undoLaser()">Undo last eye</button>
+              <button class="btn btn-outline btn-sm" onclick="clearLasers()">Clear all</button>
+              <button class="btn btn-primary" onclick="downloadLaser()">Download ↓</button>
+            </div>
+            <p class="laser-hint">Click on the image to place laser eyes</p>
+          </div>
+        </div>
+
+        <div class="laser-canvas-wrap">
+          <canvas id="laser-canvas"></canvas>
+          <p class="laser-hint" id="laser-placeholder">Your image will appear here</p>
+          <p class="laser-demo-note" id="laser-demo-note" hidden>Example. Upload your own image to start.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ═══════════════════════════════════════════════
+       MEME RANDOMIZER
+  ═══════════════════════════════════════════════ -->
+  <section id="meme-randomizer">
+    <div class="container">
+      <h2 class="section-title">Meme Randomizer</h2>
+      <p class="section-subtitle">Let the Buttverse decide. Choose your ingredients and generate.</p>
+
+      <div class="randomizer-layout">
+        <div class="randomizer-controls">
+          <h4>Ingredients</h4>
+          <div class="randomizer-options">
+            <label class="checkbox-option">
+              <input type="checkbox" id="r-logo" checked /> Logo
+            </label>
+            <label class="checkbox-option">
+              <input type="checkbox" id="r-tagline" checked /> Tagline
+            </label>
+            <label class="checkbox-option">
+              <input type="checkbox" id="r-quote" /> Quote
+            </label>
+            <label class="checkbox-option">
+              <input type="checkbox" id="r-memebg" /> Meme background
+            </label>
+          </div>
+          <button class="btn btn-primary btn-lg" onclick="generateMeme()">Generate Meme 🎲</button>
+          <button class="btn btn-outline btn-sm" id="download-meme-btn" onclick="downloadGeneratedMeme()" style="display:none">Download ↓</button>
+        </div>
+
+        <div class="randomizer-output">
+          <canvas id="meme-canvas" width="600" height="600"></canvas>
+          <p class="randomizer-hint" id="randomizer-hint">Choose ingredients and hit Generate</p>
+          <p class="randomizer-hint" id="logo-drag-hint" style="display:none">Drag logo or text · Drag logo corners to resize</p>
+
+          <div id="text-style-panel" style="display:none; margin-top:14px; padding:14px 16px; background:rgba(255,255,255,0.04); border-radius:10px; border:1px solid rgba(255,255,255,0.08);">
+            <p style="margin:0 0 10px; font-size:13px; color:rgba(255,255,255,0.55);">Choose a background colour for the text and drag the opacity slider to make it more or less visible.</p>
+            <div style="display:flex; align-items:center; gap:12px; flex-wrap:wrap;">
+              <input type="range" id="text-intensity" min="0" max="1" step="0.05" value="0.6" oninput="updateTextStyle()" style="flex:1; min-width:120px;" />
+              <div style="display:flex; gap:8px; flex-wrap:wrap;">
+                <button class="color-btn text-color-btn active" style="background:#000000;"                    onclick="setTextBgColor('#000000',this)" title="Black"></button>
+                <button class="color-btn text-color-btn"        style="background:#7c3aed;"                    onclick="setTextBgColor('#7c3aed',this)"  title="Purple"></button>
+                <button class="color-btn text-color-btn"        style="background:#1d4ed8;"                    onclick="setTextBgColor('#1d4ed8',this)"  title="Blue"></button>
+                <button class="color-btn text-color-btn"        style="background:#f7931a;"                    onclick="setTextBgColor('#f7931a',this)"  title="Buttcoin Orange"></button>
+                <button class="color-btn text-color-btn"        style="background:#dc2626;"                    onclick="setTextBgColor('#dc2626',this)"  title="Red"></button>
+                <button class="color-btn text-color-btn"        style="background:#ffffff; border:1px solid #555;" onclick="setTextBgColor('#ffffff',this)"  title="White"></button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ═══════════════════════════════════════════════
+       FOOTER
+  ═══════════════════════════════════════════════ -->
+  <footer id="footer">
+    <div class="container footer-inner">
+      <div class="footer-brand">
+        <img src="assets/logo.png" alt="Buttcoin" class="footer-logo" />
+        <p class="footer-tagline">Buttcoin — The Next Bitcoin</p>
+        <p class="footer-legal">Not financial advice.<br>Buttcoin is a community memecoin.<br>Do your own research.<br>Stack butts responsibly.</p>
+        <div class="footer-verification">
+          <span class="footer-verification-title">Verify</span>
+          <p>Mint: <code>FasH397CeZLNYWkd3wWK9vrmjd1z93n3b59DssRXpump</code> <button type="button" onclick="copyCA()">Copy</button></p>
+          <p>Domain: <a href="https://buttcoin.wtf">buttcoin.wtf</a></p>
+        </div>
+      </div>
+
+      <div class="footer-links">
+        <div class="footer-col">
+          <h4>Navigate</h4>
+          <a href="/#about">About</a>
+          <a href="/#how-to-buy">How to Buy</a>
+          <a href="/buttpost">Buttpost</a>
+          <a href="/memes">Memes</a>
+          <a href="/library">Library</a>
+          <a href="/church">Church</a>
+          <a href="/game">Game</a>
+          <a href="/#faq">FAQ</a>
+        </div>
+        <div class="footer-col">
+          <h4>Community</h4>
+          <span class="footer-status">Official X: @ButtcoinBitcoin. The old @ButtcoinTNB account is suspended.</span>
+          <a href="https://x.com/ButtcoinBitcoin" target="_blank" rel="noopener">X — @ButtcoinBitcoin</a>
+          <a href="https://t.me/buttcointnbsol" target="_blank" rel="noopener">Telegram</a>
+          <a href="https://x.com/i/communities/1889649634051592571" target="_blank" rel="noopener">Buttcoiners</a>
+          <a href="/memes">Meme Depot</a>
+        </div>
+        <div class="footer-col">
+          <h4>Trade</h4>
+          <a href="https://dexscreener.com/solana/63amWndBz75z2j7jyKDbzXvzt36L9qdGw7CZAXbD4KNe" target="_blank" rel="noopener">DexScreener</a>
+          <a href="https://jup.ag/swap/SOL-FasH397CeZLNYWkd3wWK9vrmjd1z93n3b59DssRXpump" target="_blank" rel="noopener">Jupiter</a>
+        </div>
+      </div>
+    </div>
+
+    <div class="footer-bottom">
+      <div class="container">
+        <span>© 2025 Buttcoin Community — We are all Buttoshi</span>
+        <span class="footer-ai-note">AI-readable data: <a href="/llms.txt">llms.txt</a> · <a href="/tokenomics.json">tokenomics.json</a> · <a href="/church.json">church.json</a></span>
+      </div>
+    </div>
+  </footer>
+
+  <!-- Firebase SDK (CDN) -->
+  <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-auth-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-storage-compat.js"></script>
+
+  <!-- App Scripts -->
+  <script src="js/firebase.js"></script>
+  <script src="js/app.js"></script>
+  <script src="js/price.js"></script>
+  <script src="js/laser.js"></script>
+  <script src="js/memes.js"></script>
+  <script src="js/easter.js"></script>
+</body>
+</html>

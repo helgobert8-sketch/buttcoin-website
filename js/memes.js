@@ -833,6 +833,18 @@ document.addEventListener('DOMContentLoaded', () => {
     memeCanvas.addEventListener('touchstart', _onMemePointerDown, { passive: false });
     memeCanvas.addEventListener('touchmove',  _onMemePointerMove, { passive: false });
     memeCanvas.addEventListener('touchend',   _onMemePointerUp);
+
+    // Show one generated example instead of an empty canvas
+    const section = document.getElementById('meme-randomizer');
+    const showExample = () => { if (!_memeState) generateMeme(); };
+    if (section && 'IntersectionObserver' in window) {
+      const io = new IntersectionObserver(entries => {
+        if (entries.some(e => e.isIntersecting)) { io.disconnect(); showExample(); }
+      }, { rootMargin: '400px 0px' });
+      io.observe(section);
+    } else {
+      showExample();
+    }
   }
 
 });
