@@ -770,11 +770,11 @@ check('game publication surfaces and tracked game content obey the canonical con
   const gameSection = htmlBlockById(index, 'section', 'game');
   assert.equal(
     visibleText(gameSection),
-    'The Buttcoin Game Flip Bitcoin. One Butt at a time. The Flip Tap to flip.',
+    'The Buttcoin Game Flip Bitcoin. One Butt at a time. The Flip Tap to flip. Play The Flip →',
   );
   assert.match(
     gameSection,
-    /<a\b[^>]*href=["']\/game["'][^>]*>\s*The Flip\s*<\/a>/i,
+    /<a\b[^>]*href=["']\/game["'][^>]*>[\s\S]*?\bThe Flip\b[\s\S]*?<\/a>/i,
   );
 
   const nav = index.match(/<nav\b[^>]*>[\s\S]*?<\/nav>/i)?.[0] ?? '';
