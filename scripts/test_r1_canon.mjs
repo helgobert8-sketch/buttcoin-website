@@ -382,10 +382,10 @@ reviewCheck('church.json parses', () => {
   church = JSON.parse(sources['church.json']);
 });
 
-reviewCheck('memes.json parses and contains exactly 3,018 entries', () => {
+reviewCheck('memes.json parses and contains exactly 2,961 entries', () => {
   memeManifest = JSON.parse(memeManifestSource);
   assert.ok(Array.isArray(memeManifest), 'memes.json must contain an array');
-  assert.equal(memeManifest.length, 3018);
+  assert.equal(memeManifest.length, 2961);
 });
 
 reviewCheck('for-ai.html JSON-LD blocks parse regardless of attribute order', () => {
@@ -1193,11 +1193,11 @@ check('human X surfaces publish non-clickable historical status and the exact tr
   assert.doesNotMatch(index, /\b\d[\d,.]*\+?\s+(?:members|Buttcoiners)\b/i);
 });
 
-check('Meme Depot uses the 3,018 count and only the on-site target', () => {
+check('Meme Depot uses the 2,961 count and only the on-site target', () => {
   const index = humanSources['memes.html'];
   const count = index.match(/<span\b[^>]*id="meme-count"[^>]*>([\s\S]*?)<\/span>/i);
   assert.ok(count, 'meme count missing');
-  assert.equal(visibleText(count[1]), '3,018');
+  assert.equal(visibleText(count[1]), '2,961');
   assert.doesNotMatch(humanSources['js/memes.js'], /\bcountUp\s*\(/);
   assert.doesNotMatch(humanSources['js/memes.js'], /dataset\.(?:total|counted)\b/);
 
