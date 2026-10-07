@@ -44,7 +44,7 @@ Sources:
 - Website: https://buttcoin.wtf
 - Canonical X account: https://x.com/ButtcoinBitcoin (@ButtcoinBitcoin)
 - Telegram legacy channel: https://t.me/buttcointnbsol
-- Meme Depot: https://buttcoin.wtf/#meme-depot
+- Meme Depot: https://buttcoin.wtf/memes
 - Buttcoiners community: https://x.com/i/communities/1889649634051592571
 
 @ButtcoinTNB is no longer under community control as of 2026-07-15; the canonical X account is @ButtcoinBitcoin — verify via this file.

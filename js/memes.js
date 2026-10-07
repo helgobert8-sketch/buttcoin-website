@@ -326,7 +326,7 @@ function initUpload() {
       if (status) status.innerHTML = `
         <p style="color:#f59e0b;margin-top:12px">
           Upload coming soon. For now, submit your meme directly to
-          <a href="https://buttcoin.wtf/#meme-depot">Meme Depot</a>
+          <a href="https://buttcoin.wtf/memes">Meme Depot</a>
           or the <a href="https://t.me/buttcointnbsol" target="_blank" rel="noopener">Telegram channel</a>.
         </p>`;
     }
@@ -845,6 +845,18 @@ document.addEventListener('DOMContentLoaded', () => {
     memeCanvas.addEventListener('touchstart', _onMemePointerDown, { passive: false });
     memeCanvas.addEventListener('touchmove',  _onMemePointerMove, { passive: false });
     memeCanvas.addEventListener('touchend',   _onMemePointerUp);
+
+    // Show one generated example instead of an empty canvas
+    const section = document.getElementById('meme-randomizer');
+    const showExample = () => { if (!_memeState) generateMeme(); };
+    if (section && 'IntersectionObserver' in window) {
+      const io = new IntersectionObserver(entries => {
+        if (entries.some(e => e.isIntersecting)) { io.disconnect(); showExample(); }
+      }, { rootMargin: '400px 0px' });
+      io.observe(section);
+    } else {
+      showExample();
+    }
   }
 
 });
