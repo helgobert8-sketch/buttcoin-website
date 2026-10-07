@@ -933,7 +933,7 @@ check('homepage About and FAQ use the R0 control, supply, license, and Buttoshi 
     assert.match(surface, /video[^.]*December 8, 2013/i);
     assert.match(surface, /coin[^.]*on Solana since January 2025/i);
     assert.match(surface, /Buttoshi is a distributed role/i);
-    assert.doesNotMatch(surface, /James(?: D\. McMurray)?[^.]{0,120}(?:Buttoshi|Satoshi)/i);
+    assert.doesNotMatch(surface, /James(?: D\. McMurry)?[^.]{0,120}(?:Buttoshi|Satoshi)/i);
   }
 
   assert.match(faq, /Supply is live on-chain data/i);
@@ -1020,13 +1020,13 @@ check('human article copy distinguishes independent same-name projects by Mint a
   );
 });
 
-check('philosophical essay avoids invented McMurray intent and quotation', () => {
+check('philosophical essay avoids invented McMurry intent and quotation', () => {
   const buttposting = visibleText(
     htmlBlockById(humanSources['index.html'], 'section', 'buttposting'),
   );
   assert.doesNotMatch(
     buttposting,
-    /McMurray[^.]{0,160}\b(?:understood|believed|thought|asked|wanted|intended)\b/i,
+    /McMurry[^.]{0,160}\b(?:understood|believed|thought|asked|wanted|intended)\b/i,
   );
   assert.doesNotMatch(buttposting, /what if we just agreed that this was worth something/i);
   assert.ok(buttposting.includes(PHILOSOPHICAL_SAFE_COPY));
