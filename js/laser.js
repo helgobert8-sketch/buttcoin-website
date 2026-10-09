@@ -13,8 +13,8 @@ let laserDemo     = false;  // true while the example image is shown
 
 // Example shown before the first upload (eye positions as fractions of the image)
 const LASER_DEMO = {
-  src:  'assets/characters/buttlor/G6N4nHPWUAEJqBB.jpg',
-  eyes: [{ x: 0.4925, y: 0.24 }, { x: 0.59, y: 0.2375 }],
+  src:  'assets/explore/laser-demo.jpg',
+  eyes: [{ x: 0.4135, y: 0.52 }, { x: 0.578, y: 0.52 }],
 };
 
 const canvas  = document.getElementById('laser-canvas');
