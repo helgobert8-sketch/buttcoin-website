@@ -610,7 +610,8 @@ h1, h2, h3, h4 { color: var(--white); font-weight: 700; line-height: 1.2; }
 }
 .ca-mini {
   display: flex;
-  align-items: center;
+  flex-direction: column;
+  align-items: stretch;
   gap: 8px;
   background: var(--bg-card);
   border: 1px solid var(--border);
@@ -625,7 +626,22 @@ h1, h2, h3, h4 { color: var(--white); font-weight: 700; line-height: 1.2; }
   flex: 1;
   font-family: 'Courier New', monospace;
 }
+/* Keep the 44-character address on one line: shrink the font to the row width
+   (floor 9px) and scroll sideways only if even that does not fit. */
+@supports (width: 1cqi) {
+  .ca-row, .ca-mini { container-type: inline-size; }
+  .ca-address, .ca-mini code {
+    word-break: normal;
+    white-space: nowrap;
+    overflow-x: auto;
+    min-width: 0;
+    max-width: 100%;
+    font-size: max(9px, min(0.8rem, calc(100cqi / 26.6)));
+  }
+  .ca-mini code { font-size: max(8.5px, min(0.8rem, calc(100cqi / 26.6))); }
+}
 .btn-copy-mini {
+  align-self: flex-start;
   background: var(--bg-card-2);
   color: var(--orange);
   border: 1px solid var(--border);
@@ -640,17 +656,7 @@ h1, h2, h3, h4 { color: var(--white); font-weight: 700; line-height: 1.2; }
 }
 .btn-copy-mini:hover { background: var(--orange-glow); }
 .exchanges-section { text-align: center; }
-.exchanges-title { font-size: 1rem; color: var(--muted); font-weight: 400; margin-bottom: 20px; }
-.exchanges-list { display: flex; gap: 12px; flex-wrap: wrap; justify-content: center; }
-.exchange-tag {
-  background: var(--bg-card-2);
-  border: 1px solid var(--border);
-  padding: 8px 20px;
-  border-radius: 100px;
-  font-size: 0.9rem;
-  color: var(--text);
-  font-weight: 500;
-}
+.exchanges-note { font-size: 0.95rem; color: var(--muted); }
 
 /* ─── QUOTE ─── */
 #quote-section {
@@ -1404,6 +1410,7 @@ cite {
 .community-card h3 { font-size: 1rem; color: var(--white); }
 .community-card p { font-size: 0.85rem; color: var(--muted); flex: 1; }
 .community-handle { font-size: 0.8rem; color: var(--orange); font-weight: 600; }
+.community-status { color: var(--muted); font-weight: 400; }
 
 /* ─── FAQ ─── */
 #faq { background: var(--bg); }
@@ -2013,7 +2020,8 @@ footer {
   .hero-title { font-size: 3rem; }
   .hero-ctas { flex-direction: column; }
   .hero-stats { grid-template-columns: repeat(2, 1fr); }
-  .ca-address { font-size: 0.65rem; }
+  .ca-row { flex-direction: column; align-items: stretch; gap: 10px; }
+  .ca-row .btn-copy { align-self: center; }
   .meme-grid { gap: 6px; }
   .meme-item { flex: 0 1 calc(33.333% - 4px); width: calc(33.333% - 4px); }
 }
@@ -2056,3 +2064,6 @@ footer {
     transform: rotate(20deg);
   }
 }
+
+/* Keep short compounds such as "on-chain" from breaking at the hyphen */
+.nowrap { white-space: nowrap; }
